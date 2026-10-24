@@ -14,7 +14,17 @@ def main():
     parser.add_argument('--runtime', required=True)
     parser.add_argument('--socket', required=True)
     parser.add_argument('--workspace', required=True)
+    parser.add_argument('--parent-pid', type=int)
     args = parser.parse_args()
+    if args.parent_pid:
+        import threading,time,signal
+        def watch_parent():
+            while True:
+                if os.getppid()!=args.parent_pid:
+                    Path(args.socket).unlink(missing_ok=True)
+                    os.killpg(os.getpgrp(),signal.SIGKILL)
+                time.sleep(0.25)
+        threading.Thread(target=watch_parent,daemon=True).start()
     sys.path.insert(0, str(Path(args.runtime) / 'usr/lib'))
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     import FreeCAD as App

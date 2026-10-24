@@ -10,8 +10,8 @@ def shape_metrics(shape):
     return dict(solids=1,volume=shape.Volume,bbox=[box.XLength,box.YLength,box.ZLength])
 
 def compare(metrics,criteria):
-    if abs(metrics['volume']-criteria['volume'])>max(1e-6,abs(criteria['volume'])*1e-8):raise ValueError('Volume acceptance mismatch')
-    if any(abs(a-b)>1e-5 for a,b in zip(metrics['bbox'],criteria['bbox'])):raise ValueError('Bounding box acceptance mismatch')
+    if abs(metrics['volume']-criteria['volume'])>max(1e-6,abs(criteria['volume'])*1e-9):raise ValueError('Volume acceptance mismatch')
+    if any(abs(a-b)>1e-6 for a,b in zip(metrics['bbox'],criteria['bbox'])):raise ValueError('Bounding box acceptance mismatch')
 
 def validate_document(doc,criteria):
     assert_contract('criteria',criteria)

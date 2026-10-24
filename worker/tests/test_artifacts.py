@@ -72,3 +72,11 @@ with tempfile.TemporaryDirectory() as t:
  else:raise AssertionError('export failure accepted')
  assert not (p/'manifest.json').exists()
 ''')
+ def test_acceptance_tolerances_match_recorded_engineering_defaults(self):
+  for mutation in ["fixture['criteria']['bbox'][2]+=0.000005", "fixture['criteria']['volume']+=0.0002"]:
+   with self.subTest(mutation=mutation):
+    native(BUILD+mutation+'''
+try:validate_document(doc,fixture['criteria'])
+except ValueError:pass
+else:raise AssertionError('out-of-tolerance model accepted')
+''')

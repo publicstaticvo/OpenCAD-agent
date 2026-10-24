@@ -21,6 +21,7 @@ export class RevisionStore {
   this.db.exec(`PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000;
    CREATE TABLE IF NOT EXISTS documents(id TEXT PRIMARY KEY,head INTEGER NOT NULL DEFAULT 0,health TEXT NOT NULL DEFAULT 'healthy');
    CREATE TABLE IF NOT EXISTS revisions(document_id TEXT NOT NULL,revision INTEGER NOT NULL,candidate_id TEXT NOT NULL UNIQUE,manifest_hash TEXT NOT NULL,tree TEXT NOT NULL,validation TEXT NOT NULL,PRIMARY KEY(document_id,revision),FOREIGN KEY(document_id) REFERENCES documents(id));
+   CREATE TABLE IF NOT EXISTS jobs(document_id TEXT NOT NULL,operation_id TEXT NOT NULL,status TEXT NOT NULL,request_hash TEXT NOT NULL,job TEXT NOT NULL,PRIMARY KEY(document_id,operation_id));
    CREATE TABLE IF NOT EXISTS operations(document_id TEXT NOT NULL,operation_id TEXT NOT NULL,request_hash TEXT NOT NULL,result TEXT NOT NULL,PRIMARY KEY(document_id,operation_id));
    CREATE TABLE IF NOT EXISTS events(document_id TEXT NOT NULL,seq INTEGER NOT NULL,event TEXT NOT NULL,PRIMARY KEY(document_id,seq));`);
   this.reconcile();
@@ -88,6 +89,8 @@ export class RevisionStore {
    const event=this.appendEvent(documentId,'committed',{candidateId,revision,operationId},operationId,revision,candidateId);
    result={documentId,revision,candidateId,operationId,seq:event.seq,status:'committed'};
    this.db.prepare('INSERT INTO operations VALUES(?,?,?,?)').run(documentId,operationId,stableHash({baseRevision,request}),JSON.stringify(result));
+   const jobRow:any=this.db.prepare('SELECT job FROM jobs WHERE document_id=? AND operation_id=?').get(documentId,operationId);
+   if(jobRow){const job=JSON.parse(jobRow.job);job.status='committed';job.result=result;job.error=null;this.db.prepare('UPDATE jobs SET status=?,job=? WHERE document_id=? AND operation_id=?').run('committed',JSON.stringify(job),documentId,operationId);}
    this.db.exec('COMMIT');
   }catch(e){this.db.exec('ROLLBACK');throw e;}
   this.boundary('dbCommitted');return result;
@@ -103,7 +106,8 @@ export class RevisionStore {
   let tree:any[]=[],artifacts:Record<string,string>={};
   if(doc.head){const row:any=this.db.prepare('SELECT * FROM revisions WHERE document_id=? AND revision=?').get(id,doc.head);this.verify(this.packagePath(row.candidate_id),row.manifest_hash);tree=JSON.parse(row.tree);artifacts=Object.fromEntries(FILES.map(name=>[name,`/api/documents/${id}/revisions/${doc.head}/artifacts/${name}`]));}
   const seq:any=this.db.prepare('SELECT COALESCE(MAX(seq),0) AS seq FROM events WHERE document_id=?').get(id);
-  return{documentId:id,revision:doc.head,lastSeq:seq.seq,tree,artifacts,jobs:[]};
+  const jobs=this.db.prepare('SELECT job FROM jobs WHERE document_id=? ORDER BY rowid').all(id).map((r:any)=>JSON.parse(r.job));
+  return{documentId:id,revision:doc.head,lastSeq:seq.seq,tree,artifacts,jobs};
  }
  artifactPath(id:string,revision:number,name:string){
   this.document(id);if(!Number.isSafeInteger(revision)||revision<1||!FILES.includes(name))throw new StoreError('not_found','Artifact not found');
@@ -114,6 +118,9 @@ export class RevisionStore {
  private reconcile(){
   const revisions=this.db.prepare('SELECT * FROM revisions').all() as any[],refs=new Set(revisions.map(r=>r.candidate_id));
   for(const row of revisions){try{this.verify(this.packagePath(row.candidate_id),row.manifest_hash);}catch{this.db.prepare("UPDATE documents SET health='corrupt' WHERE id=?").run(row.document_id);}}
+ }
+ quarantineOrphans(){
+  const refs=new Set((this.db.prepare('SELECT candidate_id FROM revisions').all() as any[]).map(r=>r.candidate_id));
   for(const name of readdirSync(join(this.root,'revisions'))){this.id(name);if(!refs.has(name))renameSync(join(this.root,'revisions',name),join(this.root,'quarantine',`${name}-${Date.now()}`));}
  }
  close(){if(!this.closed){this.closed=true;this.db.close();}}

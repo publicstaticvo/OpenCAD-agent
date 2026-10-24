@@ -20,7 +20,7 @@ export class WorkerClient {
   try{await stat(join(root,'usr/bin/python'));}catch{throw new Error('Invalid runtime: bundled Python missing');}
   c.directory=await mkdtemp(join(tmpdir(),'cad-w-'));c.socketPath=join(c.directory,'worker.sock');
   const env={...process.env,PYTHONDONTWRITEBYTECODE:'1'};for(const k of ['PYTHONHOME','PYTHONPATH','LD_LIBRARY_PATH','DISPLAY','WAYLAND_DISPLAY'])delete (env as Record<string,string|undefined>)[k];
-  c.process=spawn(join(root,'usr/bin/python'),[resolve('worker/main.py'),'--runtime',root,'--socket',c.socketPath,'--workspace',resolve(opts.workspace??c.directory)],{env,stdio:['ignore','pipe','pipe']});
+  c.process=spawn(join(root,'usr/bin/python'),[resolve('worker/main.py'),'--runtime',root,'--socket',c.socketPath,'--workspace',resolve(opts.workspace??c.directory),'--parent-pid',String(process.pid)],{env,detached:true,stdio:['ignore','pipe','pipe']});
   for(const stream of [c.process.stdout,c.process.stderr])stream?.on('data',b=>{c.logs=(c.logs+b.toString()).slice(-65536);});
   c.process.once('error',e=>c.fail(e));c.process.once('exit',(code,signal)=>c.fail(new Error(`Worker exit ${code??signal}`)));
   try{
@@ -65,7 +65,7 @@ export class WorkerClient {
  private fail(error:Error){
   if(this.closed)return;this.closed=error;
   for(const p of this.pending.values()){clearTimeout(p.timer);p.reject(error);}this.pending.clear();
-  this.socket?.destroy();this.process?.kill('SIGKILL');
+  this.socket?.destroy();if(this.process?.pid){try{process.kill(-this.process.pid,'SIGKILL');}catch{this.process.kill('SIGKILL');}}
  }
  async close(){
   this.fail(new Error('Worker closed'));
