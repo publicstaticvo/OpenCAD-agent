@@ -1,0 +1,156 @@
+{
+  "recorded_on": "2026-10-24",
+  "runtime_root": "/tmp/cad-web-readiness-runtime/squashfs-root",
+  "scope": "readiness probe only; no production Gateway/Worker exists",
+  "cases": {
+    "build": {
+      "volume_mm3": 47717.256661176914,
+      "solids": 1,
+      "valid": true,
+      "hole_diameter_mm": 6,
+      "features": {
+        "Body": "PartDesign::Body",
+        "BaseSketch": "Sketcher::SketchObject",
+        "Pad": "PartDesign::Pad",
+        "HoleSketch": "Sketcher::SketchObject",
+        "Pocket": "PartDesign::Pocket"
+      },
+      "fully_constrained": [
+        true,
+        true
+      ],
+      "freecad": [
+        "1",
+        "1",
+        "3",
+        "20260725 (Git shallow)",
+        "Unknown",
+        "2026/07/25 04:52:02",
+        "grafted,grafted",
+        "145529fe741292ff0b3977a01195bf0247425794"
+      ],
+      "python": "3.11.14 | packaged by conda-forge | (main, Oct 13 2025, 14:09:32) [GCC 14.3.0]",
+      "occt": "7.8.1",
+      "gui_up": 0
+    },
+    "reopen": {
+      "volume_mm3": 47717.256661176914,
+      "solids": 1,
+      "valid": true,
+      "hole_diameter_mm": 6,
+      "features": {
+        "Body": "PartDesign::Body",
+        "BaseSketch": "Sketcher::SketchObject",
+        "Pad": "PartDesign::Pad",
+        "HoleSketch": "Sketcher::SketchObject",
+        "Pocket": "PartDesign::Pocket"
+      },
+      "fully_constrained": [
+        true,
+        true
+      ]
+    },
+    "edit": {
+      "volume_mm3": 47497.34517542564,
+      "solids": 1,
+      "valid": true,
+      "hole_diameter_mm": 8,
+      "features": {
+        "Body": "PartDesign::Body",
+        "BaseSketch": "Sketcher::SketchObject",
+        "Pad": "PartDesign::Pad",
+        "HoleSketch": "Sketcher::SketchObject",
+        "Pocket": "PartDesign::Pocket"
+      },
+      "fully_constrained": [
+        true,
+        true
+      ]
+    },
+    "edit_reopen": {
+      "volume_mm3": 47497.34517542564,
+      "solids": 1,
+      "valid": true,
+      "hole_diameter_mm": 8,
+      "features": {
+        "Body": "PartDesign::Body",
+        "BaseSketch": "Sketcher::SketchObject",
+        "Pad": "PartDesign::Pad",
+        "HoleSketch": "Sketcher::SketchObject",
+        "Pocket": "PartDesign::Pocket"
+      },
+      "fully_constrained": [
+        true,
+        true
+      ]
+    },
+    "invalid": {
+      "rejected": true,
+      "pocket_state": [
+        "Up-to-date"
+      ],
+      "status": "Valid",
+      "shape_null": false,
+      "solid_count": 0,
+      "volume_mm3": 0.0
+    },
+    "crash": {
+      "signal": -9,
+      "timed_out": false,
+      "canonical_sha256_unchanged": true
+    },
+    "timeout": {
+      "signal": -9,
+      "timed_out": true,
+      "canonical_sha256_unchanged": true
+    },
+    "export": {
+      "volume_mm3": 47717.256661176914,
+      "solids": 1,
+      "valid": true,
+      "hole_diameter_mm": 6,
+      "features": {
+        "Body": "PartDesign::Body",
+        "BaseSketch": "Sketcher::SketchObject",
+        "Pad": "PartDesign::Pad",
+        "HoleSketch": "Sketcher::SketchObject",
+        "Pocket": "PartDesign::Pocket"
+      },
+      "fully_constrained": [
+        true,
+        true
+      ],
+      "step_reimport": {
+        "valid": true,
+        "volume_mm3": 47717.256661176914
+      },
+      "headless_glb": {
+        "bytes": 18832,
+        "meshes": 1,
+        "position_counts": [
+          4,
+          4,
+          4,
+          130,
+          130,
+          4,
+          254
+        ],
+        "bounds_m": [
+          [
+            0.0,
+            0.0,
+            -0.06
+          ],
+          [
+            0.08,
+            0.01,
+            0.0
+          ]
+        ],
+        "cad_to_glb": "(x,y,z) mm -> (x,z,-y)/1000 m for this fixture"
+      }
+    }
+  },
+  "canonical_sha256": "56d4effaa4cc6dc86c98b88189eef5750d8411d83379cb1f4bc24bdec79752a4"
+}

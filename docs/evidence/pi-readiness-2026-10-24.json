@@ -1,0 +1,74 @@
+{
+  "scope": "local Pi 1.2.0 source + two borrowed exact dependencies, not a package install or CAD integration test",
+  "reports": [
+    {
+      "label": "numeric",
+      "executed": [
+        8
+      ],
+      "hooks": [
+        {
+          "raw": 8,
+          "normalized": 8
+        },
+        "after"
+      ],
+      "event_types": [
+        "agent_start",
+        "turn_start",
+        "message_start",
+        "message_end",
+        "message_update",
+        "tool_execution_start",
+        "tool_execution_end",
+        "turn_end",
+        "agent_end"
+      ]
+    },
+    {
+      "label": "coercion",
+      "executed": [
+        1
+      ],
+      "hooks": [
+        {
+          "raw": true,
+          "normalized": 1
+        },
+        "after"
+      ],
+      "event_types": [
+        "agent_start",
+        "turn_start",
+        "message_start",
+        "message_end",
+        "message_update",
+        "tool_execution_start",
+        "tool_execution_end",
+        "turn_end",
+        "agent_end"
+      ]
+    },
+    {
+      "label": "strict_guard",
+      "executed": [],
+      "hooks": [
+        {
+          "raw": true,
+          "normalized": 1
+        }
+      ],
+      "event_types": [
+        "agent_start",
+        "turn_start",
+        "message_start",
+        "message_end",
+        "message_update",
+        "tool_execution_start",
+        "tool_execution_end",
+        "turn_end",
+        "agent_end"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "recorded_on": "2026-10-24",
+  "timezone": "Asia/Shanghai",
+  "product_directory": "/home/lenovo/ai4s/cad-web",
+  "root_is_git_repository": false,
+  "pi_checkout": {
+    "commit": "b45e0ebcc5ae2fc42a6f2f23104d10e656e6bedb",
+    "package_version": "1.2.0",
+    "working_tree_clean": true,
+    "dependencies_installed_in_checkout": false,
+    "scope": "source/fake probe passed with two read-only borrowed dependencies; no full suite or real provider tested"
+  },
+  "node": "25.9.0",
+  "npm": "11.12.1",
+  "default_python": "3.14.3",
+  "default_python_freecad_module_found": false,
+  "conda_freecad_environment_python": "3.12.3",
+  "conda_freecad_environment_module_found": false,
+  "appimage": {
+    "file": "FreeCAD_1.1.3-Linux-x86_64-py311.AppImage",
+    "sha256": "3a853eb69ee595f779f2255dbf80a765926981d8ff68903cefee4dfb03a8f5ef",
+    "freecad": "1.1.3",
+    "freecad_commit": "145529fe741292ff0b3977a01195bf0247425794",
+    "python": "3.11.14",
+    "occt": "7.8.1",
+    "gui_up": 0
+  },
+  "snap": {
+    "revision": "2741",
+    "metadata_version": "1.1-g0108fd4b",
+    "runtime_test": "not completed",
+    "launch_failure": "sandbox cannot create /run/user/1000/snap.freecad: read-only file system"
+  },
+  "sqlite": {
+    "version": "3.51.3",
+    "in_memory_open": true,
+    "file_wal_mode": "wal",
+    "synchronous_full_set": true,
+    "committed_revision_after_close_and_reopen": 1,
+    "crash_or_power_loss_tested": false
+  },
+  "uds": {
+    "sandbox_bind": "EPERM",
+    "host_bind": "not verified",
+    "outside_sandbox_attempt": "not executed: automatic approval review failed with HTTP 404 because reviewer model was unsupported",
+    "scope": "environment restriction only; no production CAD RPC implementation exists"
+  },
+  "shell_network": {
+    "github_dns": "could not resolve raw.githubusercontent.com and api.github.com",
+    "alternative": "upstream research completed through the web tool",
+    "npm_registry_install_verified": false
+  }
+}
