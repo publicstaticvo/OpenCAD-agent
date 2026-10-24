@@ -1,31 +1,33 @@
+import {acquireOwner,writeLeaseJson,readLeaseJson} from './lease.ts';
 import type {TextRunner,CadSession} from './agent.ts';
 import {WorkerClient} from './worker-client.ts';
 import {RevisionStore,StoreError,stableHash} from './revision-store.ts';
 import {assertContract,budgets,type Envelope,type ModelProgram} from '../shared/cad-contracts.ts';
 import {randomUUID} from 'node:crypto';
-import {readFileSync,writeFileSync,mkdirSync,copyFileSync,unlinkSync,existsSync,rmSync} from 'node:fs';
+import {readFileSync,mkdirSync,copyFileSync,unlinkSync,existsSync,rmSync,closeSync,readdirSync} from 'node:fs';
 import {join,resolve} from 'node:path';
 export interface Job{documentId:string;operationId:string;status:string;candidateId:string;baseRevision:number;request:any;result:any;error:string|null;agent?:any}
-type Options={textRunner?:TextRunner;operationMs?:number;taskMs?:number;observe?:(phase:string,job:Job)=>void|Promise<void>};
+type Options={metadataBoundary?:(phase:string)=>void;textRunner?:TextRunner;operationMs?:number;taskMs?:number;observe?:(phase:string,job:Job)=>void|Promise<void>};
 const terminal=new Set(['committed','failed','cancelled','interrupted']);
 function startTime(pid:number){try{const data=readFileSync(`/proc/${pid}/stat`,'utf8');return data.slice(data.lastIndexOf(')')+2).split(' ')[19];}catch{return null;}}
 export class Supervisor{
  activeWorker:WorkerClient|null=null;
- private store:RevisionStore;private options:Options;private nonce=randomUUID();private closed=false;
+ private store:RevisionStore;private options:Options;private nonce=randomUUID();private closed=false;private ownerFd:number|null=null;
  private queue:Promise<void>=Promise.resolve();private running=new Map<string,Promise<void>>();private active:Job|null=null;private controller:AbortController|null=null;
  private constructor(store:RevisionStore,options:Options){this.store=store;this.options=options;}
  static async start(store:RevisionStore,options:Options={}):Promise<Supervisor>{
   const s=new Supervisor(store,options),lock=join(store.root,'supervisor.lock');
-  if(existsSync(lock)){
-   const previous=JSON.parse(readFileSync(lock,'utf8'));
-   if(Number.isInteger(previous.pid)&&previous.pid>1&&startTime(previous.pid)===previous.start)throw new StoreError('busy','Gateway already owns this data directory');
-   unlinkSync(lock);
-  }
-  writeFileSync(lock,JSON.stringify({pid:process.pid,start:startTime(process.pid),nonce:s.nonce}),{flag:'wx',mode:0o600});
+  s.ownerFd=acquireOwner(join(store.root,'supervisor.owner.lock'));
   try{
+   if(existsSync(lock)){
+    readLeaseJson(lock); // diagnostic validation only; kernel fd is the ownership authority
+   }
+   // Only these known temporary diagnostic names belong to this lease protocol.
+   for(const name of readdirSync(store.root))if(/^\.(supervisor\.lock|worker-lease\.json)\.[0-9a-f-]+\.tmp$/.test(name))unlinkSync(join(store.root,name));
+   writeLeaseJson(lock,{pid:process.pid,start:startTime(process.pid),nonce:s.nonce},options.metadataBoundary);
    const lease=join(store.root,'worker-lease.json');
    if(existsSync(lease)){
-    const worker=JSON.parse(readFileSync(lease,'utf8'));
+    const worker=readLeaseJson(lease);
     if(Number.isInteger(worker.pid)&&worker.pid>1&&startTime(worker.pid)===worker.start){
      const command=readFileSync(`/proc/${worker.pid}/cmdline`,'utf8').split('\0');
      if(!command.includes(resolve('worker/main.py'))||!command.includes(join(store.root,'staging')))throw new StoreError('unsafe','Worker lease identity mismatch');
@@ -39,7 +41,7 @@ export class Supervisor{
     store.db.exec('COMMIT');
    }catch(e){store.db.exec('ROLLBACK');throw e;}
    store.quarantineOrphans();s.prune();return s;
-  }catch(e){unlinkSync(lock);throw e;}
+  }catch(e){if(existsSync(lock)){try{if(readLeaseJson(lock).nonce===s.nonce)unlinkSync(lock);}catch{}}if(s.ownerFd!==null){closeSync(s.ownerFd);s.ownerFd=null;}throw e;}
  }
  private key(doc:string,op:string){return `${doc}/${op}`;}
  job(doc:string,op:string):Job{
@@ -101,7 +103,7 @@ export class Supervisor{
    this.state(job,'running');const directory=this.store.candidatePath(job.candidateId);mkdirSync(directory,{mode:0o700});
    if(job.baseRevision)copyFileSync(this.store.artifactPath(job.documentId,job.baseRevision,'model.FCStd'),join(directory,'model.FCStd'));
    this.activeWorker=await WorkerClient.start({workspace:join(this.store.root,'staging')});this.check();
-   writeFileSync(join(this.store.root,'worker-lease.json'),JSON.stringify({pid:this.activeWorker.process.pid,start:startTime(this.activeWorker.process.pid!)}),{mode:0o600});
+   writeLeaseJson(join(this.store.root,'worker-lease.json'),{pid:this.activeWorker.process.pid,start:startTime(this.activeWorker.process.pid!)},this.options.metadataBoundary);
    await this.activeWorker.request('begin_candidate',{envelope},this.options.operationMs);await this.phase('opened',job);
    const apply=async(operations:unknown,stepId:string)=>{this.check();const result=await this.activeWorker!.request('apply_operations',{envelope,stepId,operations},this.options.operationMs);await this.phase('modified',job);return result;};
    const prepare=async(criteria:any)=>{this.check();this.state(job,'validating');const result=await this.activeWorker!.request('prepare_candidate',{envelope,criteria},this.options.operationMs);await this.phase('prepared',job);return result.validation;};
@@ -125,6 +127,6 @@ export class Supervisor{
  async close(){
   if(this.closed)return;this.closed=true;this.controller?.abort(new Error('Gateway shutting down'));await this.activeWorker?.close();await this.queue;
   for(const row of this.store.db.prepare("SELECT job FROM jobs WHERE status='queued'").all() as any[]){const job:Job=JSON.parse(row.job);this.state(job,'interrupted','Gateway shut down before execution');}
-  const lock=join(this.store.root,'supervisor.lock');if(existsSync(lock)&&JSON.parse(readFileSync(lock,'utf8')).nonce===this.nonce)unlinkSync(lock);
+  const lock=join(this.store.root,'supervisor.lock');try{if(existsSync(lock)&&readLeaseJson(lock).nonce===this.nonce)unlinkSync(lock);}finally{if(this.ownerFd!==null){closeSync(this.ownerFd);this.ownerFd=null;}}
  }
 }

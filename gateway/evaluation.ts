@@ -41,3 +41,11 @@ export function matches(actual:any,criteria:Criteria,tree:any[]):boolean{
  if(!actual||actual.solids!==1||!finitePositive(actual.volume)||!Array.isArray(actual.bbox)||actual.bbox.length!==3||!actual.bbox.every(finitePositive)||Math.abs(actual.volume-criteria.volume)>Math.max(1e-6,criteria.volume*1e-9)||criteria.bbox.some((v,i)=>Math.abs(v-actual.bbox[i])>1e-6))return false;
  return(criteria.parameters??[]).every(p=>{const v=tree.find(f=>f.id===p.feature)?.parameters?.[p.parameter];return typeof v==='number'&&Math.abs(v-p.value)<1e-6;});
 }
+
+export function benchmarkPrompt(c:EvaluationCase):string{
+ const name=c.fixture??c.seed;if(!name)return c.prompt;
+ const program=fixture(name);
+ const features=program.operations.filter(op=>['create_body','create_sketch','pad','pocket'].includes(op.op)).map(op=>`${op.id}=${op.op}`);
+ const dimensions=program.operations.filter(op=>op.op==='add_constraint'&&['Distance','DistanceX','DistanceY','Diameter','Radius'].includes(op.kind as string)).map(op=>`${op.sketch}.${op.name}`);
+ return c.prompt+'\n命名约定（本固定评测必须遵守，不代表通用零件命名限制）：特征 '+features.join(', ')+'；尺寸约束 '+dimensions.join(', ')+'；拉伸/切除长度使用 Length。孔位以固定参考坐标系与明确原点验收。';
+}

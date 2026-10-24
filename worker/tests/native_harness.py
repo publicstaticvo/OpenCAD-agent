@@ -3,7 +3,10 @@ import json,os,subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 def runtime():
-    return Path(os.environ.get('FREECAD_RUNTIME_ROOT',json.loads((ROOT/'runtime.local.json').read_text())['freecadRuntimeRoot']))
+    configured=os.environ.get('FREECAD_RUNTIME_ROOT')
+    if configured is not None:return Path(configured)
+    try:return Path(json.loads((ROOT/'runtime.local.json').read_text())['freecadRuntimeRoot'])
+    except (OSError,ValueError,KeyError,TypeError) as exc:raise RuntimeError('Configure FREECAD_RUNTIME_ROOT or runtime.local.json with the verified native runtime') from exc
 def native(script,*args,timeout=30):
     root=runtime();env=dict(os.environ)
     for k in ('PYTHONHOME','PYTHONPATH','LD_LIBRARY_PATH','DISPLAY','WAYLAND_DISPLAY'):env.pop(k,None)

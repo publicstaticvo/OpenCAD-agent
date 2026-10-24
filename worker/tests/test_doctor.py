@@ -19,3 +19,5 @@ class DoctorTests(unittest.TestCase):
         self.assertIn('1.1.3', p.stdout)
         self.assertIn('7.8.1', p.stdout)
         self.assertIn('"uds": true', p.stdout)
+
+        self.assertIn('\"flock\": true', p.stdout)

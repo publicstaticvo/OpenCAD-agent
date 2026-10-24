@@ -47,8 +47,10 @@ export class WorkerClient {
    if(pos>budgets.frameBytes){this.fail(new Error('Worker frame too large'));return;}
    const line=this.buffer.subarray(0,pos);this.buffer=this.buffer.subarray(pos+1);
    try{const msg=JSON.parse(line.toString('utf8'));if(msg.jsonrpc!=='2.0'||typeof msg.id!=='number'||!this.pending.has(msg.id))throw new Error('Unmatched Worker response');
+    const hasResult=Object.hasOwn(msg,'result'),hasError=Object.hasOwn(msg,'error');
+    if(hasResult===hasError||hasError&&(!msg.error||typeof msg.error!=='object'||Array.isArray(msg.error)||!Number.isSafeInteger(msg.error.code)||typeof msg.error.message!=='string'))throw new Error('Invalid Worker response');
     const p=this.pending.get(msg.id)!;this.pending.delete(msg.id);clearTimeout(p.timer);
-    if(msg.error)p.reject(new RpcError(msg.error.code,msg.error.message));else if('result'in msg)p.resolve(msg.result);else throw new Error('Invalid Worker response');
+    if(hasError)p.reject(new RpcError(msg.error.code,msg.error.message));else p.resolve(msg.result);
    }catch(e){this.fail(e as Error);return;}
   }
   if(this.buffer.length>budgets.frameBytes)this.fail(new Error('Worker frame too large'));

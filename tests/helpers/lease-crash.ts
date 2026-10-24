@@ -1,0 +1,3 @@
+import {RevisionStore} from '../../gateway/revision-store.ts';import {Supervisor} from '../../gateway/supervisor.ts';import plate from '../fixtures/models/plate.json';
+const store=new RevisionStore(process.argv[2]);
+try{const s=await Supervisor.start(store,{metadataBoundary(phase:string){if(phase===process.argv[3])process.kill(process.pid,'SIGKILL');}} as any);if(process.argv[3]?.startsWith('worker-lease')){s.submit('plate',0,'interrupted',plate);await s.waitForJob('plate','interrupted');}process.stdout.write('LOCKED\n');process.stdin.resume();process.stdin.once('end',async()=>{await s.close();store.close();});}catch(e){process.stdout.write('BUSY '+(e as Error).message+'\n');store.close();}

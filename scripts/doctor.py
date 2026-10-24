@@ -28,7 +28,13 @@ def main():
         test.write_text('staging writable')
         with socket.socket(socket.AF_UNIX) as sock:
             sock.bind(str(Path(directory) / 'worker.sock'))
-    print(json.dumps(dict(info, uds=True, staging=True)))
+        owner=Path(directory)/'owner.lock'
+        with owner.open('a') as handle:
+            acquired=subprocess.run(['/usr/bin/flock','-n',str(handle.fileno())],pass_fds=(handle.fileno(),),capture_output=True)
+            blocked=subprocess.run(['/usr/bin/flock','-n',str(owner),'true'],capture_output=True)
+            if acquired.returncode!=0 or blocked.returncode!=1:raise RuntimeError('Linux flock shared-descriptor ownership unavailable')
+        if subprocess.run(['/usr/bin/flock','-n',str(owner),'true'],capture_output=True).returncode!=0:raise RuntimeError('Linux flock ownership did not release')
+    print(json.dumps(dict(info, uds=True, staging=True, flock=True)))
 
 if __name__ == '__main__':
     try:
