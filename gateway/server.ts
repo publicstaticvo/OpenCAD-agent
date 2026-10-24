@@ -4,7 +4,8 @@ import {timingSafeEqual,randomUUID} from 'node:crypto';
 import {WebSocketServer} from 'ws';
 import {RevisionStore,StoreError} from './revision-store.ts';import {Supervisor} from './supervisor.ts';import {EventHub} from './events.ts';
 export interface Gateway {baseUrl:string;store:RevisionStore;supervisor:Supervisor;close():Promise<void>}
-type Options={dataDir:string;accessToken:string;port?:number;host?:string;allowedOrigins?:string[]};
+import type {TextRunner} from './agent.ts';
+type Options={textRunner?:TextRunner;dataDir:string;accessToken:string;port?:number;host?:string;allowedOrigins?:string[]};
 function keys(value:unknown,required:string[],optional:string[]=[]):asserts value is Record<string,any>{if(!value||typeof value!=='object'||Array.isArray(value)||required.some(k=>!Object.hasOwn(value,k))||Object.keys(value).some(k=>![...required,...optional].includes(k)))throw new StoreError('invalid','Invalid request fields');}
 async function body(req:IncomingMessage){
  if(!req.headers['content-type']?.startsWith('application/json'))throw new StoreError('invalid','JSON body required');
@@ -16,7 +17,7 @@ function json(res:ServerResponse,status:number,value:unknown){res.writeHead(stat
 export async function createGateway(options:Options):Promise<Gateway>{
  if(typeof options.accessToken!=='string'||options.accessToken.length<24)throw new Error('Configure a shared access token of at least 24 characters');
  const store=new RevisionStore(options.dataDir);let supervisor:Supervisor;
- try{supervisor=await Supervisor.start(store);}catch(e){store.close();throw e;}
+ try{supervisor=await Supervisor.start(store,{textRunner:options.textRunner});}catch(e){store.close();throw e;}
  const events=new EventHub(store),wss=new WebSocketServer({noServer:true,maxPayload:1048576,handleProtocols:protocols=>protocols.has('cad-v1')?'cad-v1':false});
  let baseUrl='',closed=false;
  const allowed=(origin:string|undefined)=>!!origin&&[baseUrl,...options.allowedOrigins??[]].includes(origin);
@@ -24,7 +25,7 @@ export async function createGateway(options:Options):Promise<Gateway>{
  const server=createServer(async(req,res)=>{
   try{
    const url=new URL(req.url??'/',baseUrl||'http://127.0.0.1');
-   if(url.pathname==='/api/health'&&req.method==='GET'){json(res,200,{status:'ok'});return;}
+   if(url.pathname==='/api/health'&&req.method==='GET'){json(res,200,{status:'ok',providerMode:options.textRunner?.mode??'none'});return;}
    if(!authenticated(req.headers.authorization?.replace(/^Bearer /,''))){json(res,401,{error:'unauthorized',message:'Access key required'});return;}
    if(req.headers.origin&&!allowed(req.headers.origin)){json(res,403,{error:'origin',message:'Origin not allowed'});return;}
    if(url.pathname==='/api/documents'&&req.method==='POST'){
@@ -35,8 +36,9 @@ export async function createGateway(options:Options):Promise<Gateway>{
    const [,id,suffix='']=match;
    if(!suffix&&req.method==='GET'){json(res,200,store.snapshot(id));return;}
    if(suffix==='jobs'&&req.method==='POST'){
-    const input=await body(req);keys(input,['baseRevision','operationId','program']);
-    json(res,202,supervisor.submit(id,input.baseRevision,input.operationId,input.program));return;
+    const input=await body(req);keys(input,['baseRevision','operationId'],['program','text']);
+    if(Object.hasOwn(input,'program')===Object.hasOwn(input,'text'))throw new StoreError('invalid','Choose exactly one program or text task');
+    json(res,202,Object.hasOwn(input,'text')?supervisor.submitText(id,input.baseRevision,input.operationId,input.text):supervisor.submit(id,input.baseRevision,input.operationId,input.program));return;
    }
    const job=suffix.match(/^jobs\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})(\/cancel)?$/);
    if(job){if(!job[2]&&req.method==='GET'){json(res,200,supervisor.job(id,job[1]));return;}if(job[2]&&req.method==='POST'){const input=await body(req);keys(input,[]);json(res,200,supervisor.cancelJob(id,job[1]));return;}}
@@ -49,7 +51,7 @@ export async function createGateway(options:Options):Promise<Gateway>{
    }
    throw new StoreError('not_found','Route not found');
   }catch(e){
-   const error=e as any,code=error.code;const status=code==='not_found'?404:['conflict','idempotency'].includes(code)||[1555,2067].includes(error.errcode)?409:code==='invalid'||error.message?.startsWith('Invalid ')?400:['corrupt','busy','closed'].includes(code)?503:500;
+   const error=e as any,code=error.code;const status=code==='not_found'?404:['conflict','idempotency'].includes(code)||[1555,2067].includes(error.errcode)?409:code==='invalid'||error.message?.startsWith('Invalid ')?400:['corrupt','busy','closed','unavailable'].includes(code)?503:500;
    if(!res.headersSent)json(res,status,{error:code??'request_failed',message:status===500?'Internal Gateway error':error.message});else res.destroy();
   }
  });

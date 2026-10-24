@@ -1,4 +1,5 @@
 """Save, independently reopen and verify a complete candidate package. No HEAD writes."""
+import math
 import hashlib
 import json
 import os
@@ -26,11 +27,39 @@ def glb_metrics(path,shape):
     primitives=[p for mesh in data.get('meshes',[]) for p in mesh.get('primitives',[])]
     if not primitives:raise ValueError('Missing GLB mesh')
     accessors=data['accessors'];triangles=0;positions=[]
+    end=20+size
+    if end+8>len(raw):raise ValueError('Missing GLB binary chunk')
+    binary_size,binary_kind=struct.unpack_from('<II',raw,end)
+    if binary_kind!=0x004e4942 or end+8+binary_size!=len(raw):raise ValueError('Invalid GLB binary chunk')
+    binary=raw[end+8:]
+    def values(accessor,expected_type):
+        a=accessors[accessor]
+        if a['type']!=expected_type or a.get('sparse'):raise ValueError('Unsupported GLB accessor')
+        view=data['bufferViews'][a['bufferView']]
+        if view.get('buffer',0)!=0:raise ValueError('External GLB buffer rejected')
+        count=a['count'];width=3 if expected_type=='VEC3' else 1
+        formats={5126:('f',4),5125:('I',4),5123:('H',2),5121:('B',1)}
+        if a['componentType'] not in formats:raise ValueError('Unsupported GLB component')
+        fmt,bytes_per=formats[a['componentType']];stride=view.get('byteStride',width*bytes_per)
+        start=view.get('byteOffset',0)+a.get('byteOffset',0)
+        limit=view.get('byteOffset',0)+view['byteLength']
+        if count<=0 or stride<width*bytes_per or start<0 or start+(count-1)*stride+width*bytes_per>min(limit,len(binary)):raise ValueError('GLB buffer bounds error')
+        return [struct.unpack_from('<'+fmt*width,binary,start+i*stride) for i in range(count)]
     # Native exporter emits the verified CAD mm/Z-up -> m/Y-up coordinates.
     for p in primitives:
         a=accessors[p['attributes']['POSITION']]
         if a['count']<=0 or p.get('mode',4)!=4:raise ValueError('Missing GLB triangles')
-        count=accessors[p['indices']]['count'] if 'indices'in p else a['count']
+        vertices=values(p['attributes']['POSITION'],'VEC3')
+        if a['componentType']!=5126 or any(not math.isfinite(v) for row in vertices for v in row):raise ValueError('Invalid GLB vertex')
+        actual_low=[min(v[i] for v in vertices) for i in range(3)];actual_high=[max(v[i] for v in vertices) for i in range(3)]
+        if any(abs(x-y)>1e-7 for x,y in zip(actual_low+actual_high,a['min']+a['max'])):raise ValueError('GLB accessor bounds mismatch')
+        if 'indices' in p:
+            index_accessor=accessors[p['indices']]
+            if index_accessor['componentType']==5126:raise ValueError('Non-integer GLB index')
+            indices=[v[0] for v in values(p['indices'],'SCALAR')]
+            if any(i>=len(vertices) for i in indices):raise ValueError('GLB index out of bounds')
+            count=len(indices)
+        else:count=len(vertices)
         if count<3 or count%3:raise ValueError('Invalid triangle index count')
         triangles+=count//3;positions.append(a)
     low=[min(a['min'][i] for a in positions) for i in range(3)]
@@ -38,7 +67,7 @@ def glb_metrics(path,shape):
     b=shape.BoundBox
     want_low=[b.XMin/1000,b.ZMin/1000,-b.YMax/1000]
     want_high=[b.XMax/1000,b.ZMax/1000,-b.YMin/1000]
-    if any(abs(a-b)>1e-6 for a,b in zip(low+high,want_low+want_high)):raise ValueError('GLB axis/scale mismatch')
+    if any(abs(a-b)>0.0001+1e-7 for a,b in zip(low+high,want_low+want_high)):raise ValueError('GLB axis/scale mismatch')
     return dict(triangles=triangles,bounds=[low,high],mapping='(x,z,-y)/1000',meshes=len(data['meshes']))
 
 def verify_saved(directory):

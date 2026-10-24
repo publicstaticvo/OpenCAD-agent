@@ -41,3 +41,10 @@ test('authentication, Origin, strict payloads and user paths rejected before Wor
   const code=await new Promise<number>((r,j)=>{ws.once('unexpected-response',(_q,res)=>{r(res.statusCode!);res.resume();});ws.once('open',()=>j(new Error('Foreign origin accepted')));ws.once('error',()=>{});});expect(code).toBe(403);ws.terminate();
  }finally{await x.close();}
 });
+test('HTTP text request uses explicitly configured Pi runner and persists completed conversation',async()=>{
+ const {scriptedTextRunner}=await import('../gateway/agent.ts');
+ const root=mkdtempSync(join(tmpdir(),'cad-http-agent-'));
+ const runner=scriptedTextRunner([{calls:[{name:'cad_apply',args:{operations:plate.operations}}]},{calls:[{name:'cad_finish',args:{criteria:plate.criteria}}]},{text:'validated candidate'}]);
+ const app=await createGateway({dataDir:root,accessToken:token,port:0,textRunner:runner});
+ try{await request(app.baseUrl,'/api/documents',{id:'plate'});const res=await request(app.baseUrl,'/api/documents/plate/jobs',{baseRevision:0,operationId:'text',text:'create plate'});expect(res.status).toBe(202);expect((await app.supervisor.waitForJob('plate','text')).status).toBe('committed');const snap=await (await request(app.baseUrl,'/api/documents/plate')).json();expect(snap.jobs[0].agent.messages.some((m:any)=>m.role==='assistant')).toBe(true);}finally{await app.close();rmSync(root,{recursive:true,force:true});}
+});

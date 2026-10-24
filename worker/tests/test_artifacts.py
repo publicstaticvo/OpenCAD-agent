@@ -80,3 +80,31 @@ try:validate_document(doc,fixture['criteria'])
 except ValueError:pass
 else:raise AssertionError('out-of-tolerance model accepted')
 ''')
+ def test_curved_mesh_uses_tessellation_tolerance_not_brep_tolerance(self):
+  native('''
+import json,tempfile,FreeCAD as A
+from pathlib import Path
+from worker.model_ops import apply_operations
+from worker.artifacts import prepare_revision
+for name in ['ring','step']:
+ f=json.load(open('tests/fixtures/models/'+name+'.json'));d=A.newDocument('Other')
+ apply_operations(d,f['operations'],'create','1')
+ with tempfile.TemporaryDirectory() as t:
+  r=prepare_revision(d,Path(t),f['criteria'])
+  assert r['validation']['solids']==1
+  assert r['validation']['glb']['triangles']>0
+ A.closeDocument(d.Name)
+''')
+ def test_glb_checks_actual_binary_vertices_not_only_declared_metadata(self):
+  native(BUILD+'''
+import struct
+with tempfile.TemporaryDirectory() as t:
+ p=Path(t);prepare_revision(doc,p,fixture['criteria'])
+ raw=bytearray((p/'preview.glb').read_bytes());size=struct.unpack_from('<I',raw,12)[0];g=json.loads(raw[20:20+size]);a=g['accessors'][g['meshes'][0]['primitives'][0]['attributes']['POSITION']];view=g['bufferViews'][a['bufferView']]
+ offset=20+size+8+view.get('byteOffset',0)+a.get('byteOffset',0)
+ struct.pack_into('<f',raw,offset,float('nan'));(p/'preview.glb').write_bytes(raw)
+ from worker.artifacts import glb_metrics
+ try:glb_metrics(p/'preview.glb',feature(doc,'Body').Tip.Shape)
+ except ValueError:pass
+ else:raise AssertionError('non-finite binary vertex accepted')
+''')

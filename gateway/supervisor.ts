@@ -1,11 +1,12 @@
+import type {TextRunner,CadSession} from './agent.ts';
 import {WorkerClient} from './worker-client.ts';
 import {RevisionStore,StoreError,stableHash} from './revision-store.ts';
 import {assertContract,budgets,type Envelope,type ModelProgram} from '../shared/cad-contracts.ts';
 import {randomUUID} from 'node:crypto';
 import {readFileSync,writeFileSync,mkdirSync,copyFileSync,unlinkSync,existsSync,rmSync} from 'node:fs';
 import {join,resolve} from 'node:path';
-export interface Job{documentId:string;operationId:string;status:string;candidateId:string;baseRevision:number;request:any;result:any;error:string|null}
-type Options={operationMs?:number;taskMs?:number;observe?:(phase:string,job:Job)=>void|Promise<void>};
+export interface Job{documentId:string;operationId:string;status:string;candidateId:string;baseRevision:number;request:any;result:any;error:string|null;agent?:any}
+type Options={textRunner?:TextRunner;operationMs?:number;taskMs?:number;observe?:(phase:string,job:Job)=>void|Promise<void>};
 const terminal=new Set(['committed','failed','cancelled','interrupted']);
 function startTime(pid:number){try{const data=readFileSync(`/proc/${pid}/stat`,'utf8');return data.slice(data.lastIndexOf(')')+2).split(' ')[19];}catch{return null;}}
 export class Supervisor{
@@ -51,9 +52,17 @@ export class Supervisor{
   job.status=status;job.error=error;
   this.store.db.exec('BEGIN IMMEDIATE');try{this.persist(job);this.store.appendEvent(job.documentId,'job_updated',job,job.operationId);this.store.db.exec('COMMIT');}catch(e){this.store.db.exec('ROLLBACK');throw e;}
  }
+ submitText(documentId:string,baseRevision:number,operationId:string,text:string):Job{
+  if(!this.options.textRunner)throw new StoreError('unavailable','No explicitly configured model provider; fake mode must also be enabled explicitly');
+  if(typeof text!=='string'||!text.trim()||text.length>8000)throw new StoreError('invalid','Invalid task text (1–8000 characters)');
+  return this.enqueue(documentId,baseRevision,operationId,{kind:'text',text});
+ }
  submit(documentId:string,baseRevision:number,operationId:string,program:unknown):Job{
   if(this.closed)throw new StoreError('closed','Gateway closed');
-  assertContract('program',program);
+  assertContract('program',program);return this.enqueue(documentId,baseRevision,operationId,program);
+ }
+ private enqueue(documentId:string,baseRevision:number,operationId:string,program:unknown):Job{
+  if(this.closed)throw new StoreError('closed','Gateway closed');
   const envelope={documentId,baseRevision,operationId,candidateId:randomUUID()};assertContract('envelope',envelope);
   const requestHash=stableHash({baseRevision,request:program});
   const prior:any=this.store.db.prepare('SELECT * FROM jobs WHERE document_id=? AND operation_id=?').get(documentId,operationId);
@@ -94,8 +103,12 @@ export class Supervisor{
    this.activeWorker=await WorkerClient.start({workspace:join(this.store.root,'staging')});this.check();
    writeFileSync(join(this.store.root,'worker-lease.json'),JSON.stringify({pid:this.activeWorker.process.pid,start:startTime(this.activeWorker.process.pid!)}),{mode:0o600});
    await this.activeWorker.request('begin_candidate',{envelope},this.options.operationMs);await this.phase('opened',job);
-   await this.activeWorker.request('apply_operations',{envelope,stepId:'program',operations:job.request.operations},this.options.operationMs);await this.phase('modified',job);
-   this.state(job,'validating');await this.activeWorker.request('prepare_candidate',{envelope,criteria:job.request.criteria},this.options.operationMs);await this.phase('prepared',job);
+   const apply=async(operations:unknown,stepId:string)=>{this.check();const result=await this.activeWorker!.request('apply_operations',{envelope,stepId,operations},this.options.operationMs);await this.phase('modified',job);return result;};
+   const prepare=async(criteria:any)=>{this.check();this.state(job,'validating');const result=await this.activeWorker!.request('prepare_candidate',{envelope,criteria},this.options.operationMs);await this.phase('prepared',job);return result.validation;};
+   if(job.request.kind==='text'){
+    const session:CadSession={baseRevision:job.baseRevision,inspect:()=>this.activeWorker!.request('inspect_document',{}),apply,prepare,snapshot:async()=>this.store.snapshot(job.documentId),progress:event=>this.store.appendEvent(job.documentId,'agent_progress',event,job.operationId),transcript:report=>{const current=this.job(job.documentId,job.operationId);current.agent=report;job.agent=report;this.persist(current);}};
+    await this.options.textRunner!(job,session,this.controller.signal);this.check();
+   }else{await apply(job.request.operations,'program');await prepare(job.request.criteria);}
    this.state(job,'committing');this.check();this.store.commitCandidate(envelope,job.request);
   }catch(e){
    const current=this.job(job.documentId,job.operationId);
