@@ -12,9 +12,12 @@
     "verify:pi": "tsx scripts/verify-pi.ts",
     "dev": "tsx gateway/main.ts",
     "web": "vite --host 127.0.0.1",
-    "build": "vite build"
+    "build": "vite build",
+    "test:eval": "tsx scripts/eval-text-to-cad.ts --offline",
+    "test:live": "tsx scripts/eval-text-to-cad.ts"
   },
   "dependencies": {
+    "openai": "7.19.0",
     "partial-json": "0.1.7",
     "react": "19.3.1",
     "react-dom": "19.3.1",

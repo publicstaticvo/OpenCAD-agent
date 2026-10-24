@@ -1,0 +1,17 @@
+{
+  "approved": false,
+  "approvalId": "",
+  "expiresAt": "",
+  "datasetSha256": "",
+  "dataScope": "text-and-structured-cad-summary-only",
+  "maxUsd": null,
+  "providerBillingCapConfirmed": false,
+  "provider": {
+    "protocol": "openai-completions",
+    "baseUrl": "https://invalid.example/v1",
+    "model": "",
+    "contextWindow": null,
+    "maxTokens": null,
+    "ratesUsdPerMillion": {"input": null, "output": null}
+  }
+}

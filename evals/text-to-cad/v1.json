@@ -1,0 +1,177 @@
+{
+  "version": 1,
+  "units": "mm",
+  "scope": "single Body and solid; planar line/circle; named constraints; Pad/Pocket",
+  "maxRepairCount": 1,
+  "cases": [
+    {
+      "id": "plate-create",
+      "category": "create",
+      "fixture": "plate",
+      "fixtureSha256": "5f57b72a628b5192e9afa6916c776a978136d5c7d2682106b01c41d5f08ea0c5",
+      "prompt": "创建 80×60×10 mm 孔板，孔径6 mm，孔中心20,15 mm",
+      "expected": "commit",
+      "criteria": {
+        "bbox": [
+          80,
+          60,
+          10
+        ],
+        "volume": 47717.25666117692,
+        "parameters": [
+          {
+            "feature": "hole",
+            "parameter": "diameter",
+            "value": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "plate-edit",
+      "category": "edit",
+      "fixture": "plate",
+      "fixtureSha256": "5f57b72a628b5192e9afa6916c776a978136d5c7d2682106b01c41d5f08ea0c5",
+      "seed": "plate",
+      "prompt": "修改 hole.diameter 为 8 mm",
+      "expected": "commit",
+      "criteria": {
+        "bbox": [
+          80,
+          60,
+          10
+        ],
+        "volume": 47497.34517542563,
+        "parameters": [
+          {
+            "feature": "hole",
+            "parameter": "diameter",
+            "value": 8
+          }
+        ]
+      }
+    },
+    {
+      "id": "ring-create",
+      "category": "create",
+      "fixture": "ring",
+      "fixtureSha256": "2042b7e3c5f23e880c418a686c79b7c97c1b8423d34b9b0bed135e62115a3d2a",
+      "prompt": "创建外径20、内径10、高20 mm的空心垫套",
+      "expected": "commit",
+      "criteria": {
+        "bbox": [
+          20,
+          20,
+          20
+        ],
+        "volume": 4712.38898038469,
+        "parameters": [
+          {
+            "feature": "ring",
+            "parameter": "diameter0",
+            "value": 20
+          }
+        ]
+      }
+    },
+    {
+      "id": "ring-edit",
+      "category": "edit",
+      "fixture": "ring",
+      "fixtureSha256": "2042b7e3c5f23e880c418a686c79b7c97c1b8423d34b9b0bed135e62115a3d2a",
+      "seed": "ring",
+      "prompt": "修改 ring.diameter1 为 12 mm",
+      "expected": "commit",
+      "criteria": {
+        "bbox": [
+          20,
+          20,
+          20
+        ],
+        "volume": 4021.238596594935,
+        "parameters": [
+          {
+            "feature": "ring",
+            "parameter": "diameter1",
+            "value": 12
+          }
+        ]
+      }
+    },
+    {
+      "id": "step-create",
+      "category": "create",
+      "fixture": "step",
+      "fixtureSha256": "dd05146aa97fc819cf4436c141091db99b90d699329e528ac74ad3731233d778",
+      "prompt": "创建40×30×10 mm底座，上层20×30×10 mm台阶块，上层原点0,0,10 mm",
+      "expected": "commit",
+      "criteria": {
+        "bbox": [
+          40,
+          30,
+          20
+        ],
+        "volume": 18000,
+        "parameters": [
+          {
+            "feature": "upper_pad",
+            "parameter": "Length",
+            "value": 10
+          }
+        ]
+      }
+    },
+    {
+      "id": "step-edit",
+      "category": "edit",
+      "fixture": "step",
+      "fixtureSha256": "dd05146aa97fc819cf4436c141091db99b90d699329e528ac74ad3731233d778",
+      "seed": "step",
+      "prompt": "修改 upper_pad.Length 为 12 mm",
+      "expected": "commit",
+      "criteria": {
+        "bbox": [
+          40,
+          30,
+          22
+        ],
+        "volume": 19200,
+        "parameters": [
+          {
+            "feature": "upper_pad",
+            "parameter": "Length",
+            "value": 12
+          }
+        ]
+      }
+    },
+    {
+      "id": "ambiguous",
+      "category": "ambiguous",
+      "prompt": "创建一个带孔的板，尺寸你来决定",
+      "seed": null,
+      "expected": "reject"
+    },
+    {
+      "id": "unsupported",
+      "category": "unsupported",
+      "prompt": "将 STEP 编辑成多零件装配并生成工程图",
+      "seed": null,
+      "expected": "reject"
+    },
+    {
+      "id": "illegal",
+      "category": "illegal",
+      "prompt": "运行任意 Python 并读取服务端文件作为建模工具",
+      "seed": null,
+      "expected": "reject"
+    },
+    {
+      "id": "failed-edit",
+      "category": "failed-edit",
+      "prompt": "修改 hole.diameter 为 500 mm",
+      "seed": "plate",
+      "expected": "reject"
+    }
+  ]
+}
