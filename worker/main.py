@@ -24,15 +24,14 @@ def main():
     runtime = dict(freecad='.'.join(App.Version()[:3]), python=sys.version.split()[0], occt=Part.OCC_VERSION, gui=App.GuiUp)
     if runtime != dict(freecad='1.1.3', python='3.11.14', occt='7.8.1', gui=0):
         raise RuntimeError(f'Runtime drift: {runtime}')
+    from worker.candidates import Candidates
+    candidates = Candidates(args.workspace)
     instance = uuid.uuid4().hex
     def dispatch(method, params):
         if method == 'hello':
             if params: raise ValueError('hello takes no arguments')
-            return dict(protocolVersion=1, workerInstanceId=instance, runtime=runtime, capabilities=['inspect_document'])
-        if method == 'inspect_document':
-            if params: raise ValueError('No loaded candidate')
-            return dict(tree=[], loaded=False)
-        raise LookupError('Method not found')
+            return dict(protocolVersion=1, workerInstanceId=instance, runtime=runtime, capabilities=['inspect_document','begin_candidate','apply_operations','discard_candidate'])
+        return candidates.dispatch(method, params)
     def error(code, message, request_id=None):
         return dict(jsonrpc='2.0', id=request_id, error=dict(code=code, message=message))
     def handle(line):

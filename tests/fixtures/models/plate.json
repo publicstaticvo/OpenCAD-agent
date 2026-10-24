@@ -1,0 +1,282 @@
+{
+  "operations": [
+    {
+      "op": "create_body",
+      "id": "Body"
+    },
+    {
+      "op": "create_sketch",
+      "id": "base",
+      "body": "Body",
+      "plane": "XY",
+      "origin": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "op": "add_geometry",
+      "sketch": "base",
+      "geometryId": 0,
+      "geometry": {
+        "kind": "line",
+        "from": [
+          0,
+          0
+        ],
+        "to": [
+          80,
+          0
+        ]
+      }
+    },
+    {
+      "op": "add_geometry",
+      "sketch": "base",
+      "geometryId": 1,
+      "geometry": {
+        "kind": "line",
+        "from": [
+          80,
+          0
+        ],
+        "to": [
+          80,
+          60
+        ]
+      }
+    },
+    {
+      "op": "add_geometry",
+      "sketch": "base",
+      "geometryId": 2,
+      "geometry": {
+        "kind": "line",
+        "from": [
+          80,
+          60
+        ],
+        "to": [
+          0,
+          60
+        ]
+      }
+    },
+    {
+      "op": "add_geometry",
+      "sketch": "base",
+      "geometryId": 3,
+      "geometry": {
+        "kind": "line",
+        "from": [
+          0,
+          60
+        ],
+        "to": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "corner0",
+      "kind": "Coincident",
+      "args": [
+        0,
+        2,
+        1,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "axis0",
+      "kind": "Horizontal",
+      "args": [
+        0
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "corner1",
+      "kind": "Coincident",
+      "args": [
+        1,
+        2,
+        2,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "axis1",
+      "kind": "Vertical",
+      "args": [
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "corner2",
+      "kind": "Coincident",
+      "args": [
+        2,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "axis2",
+      "kind": "Horizontal",
+      "args": [
+        2
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "corner3",
+      "kind": "Coincident",
+      "args": [
+        3,
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "axis3",
+      "kind": "Vertical",
+      "args": [
+        3
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "origin",
+      "kind": "Coincident",
+      "args": [
+        0,
+        1,
+        -1,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "width",
+      "kind": "Distance",
+      "args": [
+        0,
+        80
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "height",
+      "kind": "Distance",
+      "args": [
+        1,
+        60
+      ]
+    },
+    {
+      "op": "pad",
+      "id": "pad",
+      "sketch": "base",
+      "length": 10
+    },
+    {
+      "op": "create_sketch",
+      "id": "hole",
+      "body": "Body",
+      "plane": "XY",
+      "origin": [
+        0,
+        0,
+        10
+      ]
+    },
+    {
+      "op": "add_geometry",
+      "sketch": "hole",
+      "geometryId": 0,
+      "geometry": {
+        "kind": "circle",
+        "center": [
+          20,
+          15
+        ],
+        "radius": 3
+      }
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "hole",
+      "name": "diameter",
+      "kind": "Diameter",
+      "args": [
+        0,
+        6
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "hole",
+      "name": "center_x",
+      "kind": "DistanceX",
+      "args": [
+        0,
+        3,
+        20
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "hole",
+      "name": "center_y",
+      "kind": "DistanceY",
+      "args": [
+        0,
+        3,
+        15
+      ]
+    },
+    {
+      "op": "pocket",
+      "id": "pocket",
+      "sketch": "hole",
+      "length": 10
+    }
+  ],
+  "criteria": {
+    "bbox": [
+      80,
+      60,
+      10
+    ],
+    "volume": 47717.25666117692,
+    "parameters": [
+      {
+        "feature": "hole",
+        "parameter": "diameter",
+        "value": 6
+      }
+    ]
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "operations": [
+    {
+      "op": "create_body",
+      "id": "Body"
+    },
+    {
+      "op": "create_sketch",
+      "id": "ring",
+      "body": "Body",
+      "plane": "XY",
+      "origin": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "op": "add_geometry",
+      "sketch": "ring",
+      "geometryId": 0,
+      "geometry": {
+        "kind": "circle",
+        "center": [
+          0,
+          0
+        ],
+        "radius": 10.0
+      }
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "ring",
+      "name": "center0",
+      "kind": "Coincident",
+      "args": [
+        0,
+        3,
+        -1,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "ring",
+      "name": "diameter0",
+      "kind": "Diameter",
+      "args": [
+        0,
+        20
+      ]
+    },
+    {
+      "op": "add_geometry",
+      "sketch": "ring",
+      "geometryId": 1,
+      "geometry": {
+        "kind": "circle",
+        "center": [
+          0,
+          0
+        ],
+        "radius": 5.0
+      }
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "ring",
+      "name": "center1",
+      "kind": "Coincident",
+      "args": [
+        1,
+        3,
+        -1,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "ring",
+      "name": "diameter1",
+      "kind": "Diameter",
+      "args": [
+        1,
+        10
+      ]
+    },
+    {
+      "op": "pad",
+      "id": "pad",
+      "sketch": "ring",
+      "length": 20
+    }
+  ],
+  "criteria": {
+    "bbox": [
+      20,
+      20,
+      20
+    ],
+    "volume": 4712.38898038469,
+    "parameters": [
+      {
+        "feature": "ring",
+        "parameter": "diameter0",
+        "value": 20
+      }
+    ]
+  }
+}

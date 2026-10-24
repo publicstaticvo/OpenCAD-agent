@@ -1,0 +1,417 @@
+{
+  "operations": [
+    {
+      "op": "create_body",
+      "id": "Body"
+    },
+    {
+      "op": "create_sketch",
+      "id": "base",
+      "body": "Body",
+      "plane": "XY",
+      "origin": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "op": "add_geometry",
+      "sketch": "base",
+      "geometryId": 0,
+      "geometry": {
+        "kind": "line",
+        "from": [
+          0,
+          0
+        ],
+        "to": [
+          40,
+          0
+        ]
+      }
+    },
+    {
+      "op": "add_geometry",
+      "sketch": "base",
+      "geometryId": 1,
+      "geometry": {
+        "kind": "line",
+        "from": [
+          40,
+          0
+        ],
+        "to": [
+          40,
+          30
+        ]
+      }
+    },
+    {
+      "op": "add_geometry",
+      "sketch": "base",
+      "geometryId": 2,
+      "geometry": {
+        "kind": "line",
+        "from": [
+          40,
+          30
+        ],
+        "to": [
+          0,
+          30
+        ]
+      }
+    },
+    {
+      "op": "add_geometry",
+      "sketch": "base",
+      "geometryId": 3,
+      "geometry": {
+        "kind": "line",
+        "from": [
+          0,
+          30
+        ],
+        "to": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "corner0",
+      "kind": "Coincident",
+      "args": [
+        0,
+        2,
+        1,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "axis0",
+      "kind": "Horizontal",
+      "args": [
+        0
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "corner1",
+      "kind": "Coincident",
+      "args": [
+        1,
+        2,
+        2,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "axis1",
+      "kind": "Vertical",
+      "args": [
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "corner2",
+      "kind": "Coincident",
+      "args": [
+        2,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "axis2",
+      "kind": "Horizontal",
+      "args": [
+        2
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "corner3",
+      "kind": "Coincident",
+      "args": [
+        3,
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "axis3",
+      "kind": "Vertical",
+      "args": [
+        3
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "origin",
+      "kind": "Coincident",
+      "args": [
+        0,
+        1,
+        -1,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "width",
+      "kind": "Distance",
+      "args": [
+        0,
+        40
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "base",
+      "name": "height",
+      "kind": "Distance",
+      "args": [
+        1,
+        30
+      ]
+    },
+    {
+      "op": "pad",
+      "id": "pad",
+      "sketch": "base",
+      "length": 10
+    },
+    {
+      "op": "create_sketch",
+      "id": "upper",
+      "body": "Body",
+      "plane": "XY",
+      "origin": [
+        0,
+        0,
+        10
+      ]
+    },
+    {
+      "op": "add_geometry",
+      "sketch": "upper",
+      "geometryId": 0,
+      "geometry": {
+        "kind": "line",
+        "from": [
+          0,
+          0
+        ],
+        "to": [
+          20,
+          0
+        ]
+      }
+    },
+    {
+      "op": "add_geometry",
+      "sketch": "upper",
+      "geometryId": 1,
+      "geometry": {
+        "kind": "line",
+        "from": [
+          20,
+          0
+        ],
+        "to": [
+          20,
+          30
+        ]
+      }
+    },
+    {
+      "op": "add_geometry",
+      "sketch": "upper",
+      "geometryId": 2,
+      "geometry": {
+        "kind": "line",
+        "from": [
+          20,
+          30
+        ],
+        "to": [
+          0,
+          30
+        ]
+      }
+    },
+    {
+      "op": "add_geometry",
+      "sketch": "upper",
+      "geometryId": 3,
+      "geometry": {
+        "kind": "line",
+        "from": [
+          0,
+          30
+        ],
+        "to": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "upper",
+      "name": "corner0",
+      "kind": "Coincident",
+      "args": [
+        0,
+        2,
+        1,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "upper",
+      "name": "axis0",
+      "kind": "Horizontal",
+      "args": [
+        0
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "upper",
+      "name": "corner1",
+      "kind": "Coincident",
+      "args": [
+        1,
+        2,
+        2,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "upper",
+      "name": "axis1",
+      "kind": "Vertical",
+      "args": [
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "upper",
+      "name": "corner2",
+      "kind": "Coincident",
+      "args": [
+        2,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "upper",
+      "name": "axis2",
+      "kind": "Horizontal",
+      "args": [
+        2
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "upper",
+      "name": "corner3",
+      "kind": "Coincident",
+      "args": [
+        3,
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "upper",
+      "name": "axis3",
+      "kind": "Vertical",
+      "args": [
+        3
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "upper",
+      "name": "origin",
+      "kind": "Coincident",
+      "args": [
+        0,
+        1,
+        -1,
+        1
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "upper",
+      "name": "width",
+      "kind": "Distance",
+      "args": [
+        0,
+        20
+      ]
+    },
+    {
+      "op": "add_constraint",
+      "sketch": "upper",
+      "name": "height",
+      "kind": "Distance",
+      "args": [
+        1,
+        30
+      ]
+    },
+    {
+      "op": "pad",
+      "id": "upper_pad",
+      "sketch": "upper",
+      "length": 10
+    }
+  ],
+  "criteria": {
+    "bbox": [
+      40,
+      30,
+      20
+    ],
+    "volume": 18000,
+    "parameters": [
+      {
+        "feature": "upper_pad",
+        "parameter": "Length",
+        "value": 10
+      }
+    ]
+  }
+}
