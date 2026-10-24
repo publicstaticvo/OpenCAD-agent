@@ -1,6 +1,6 @@
 # 工程裁决（按发生顺序）
 
-本清单逐条保留执行者依据设计和证据作出的裁决及代价，未经负责人授权的live不在其中。英文原文来自持久化执行账本，避免摘要掩盖改动。
+逐条保留执行者依据设计和证据作出的裁决及代价。英文原文来自持久化执行账本，避免摘要掩盖改动；它们不构成live授权。
 
 1. Ruling: use this root feature branch in place, protecting the existing user files — user explicitly requests work in this directory, and source Pi is untracked — cost: isolation is branch/commits and baseline archive rather than a second worktree.
 
@@ -47,3 +47,25 @@
 22. Task 11: Ruling: no task-done “Task 11 complete” line until live authorization and real evaluation exist — authorized preparation can complete independently but cannot satisfy the plan's live gate — cost: phase-one product qualification remains open. Offline pass always records modelQualityQualified=false.
 
 23. Task 11: Ruling: keep the plan workspace and local fault-test artifacts until handoff rather than deleting diagnostic evidence mechanically — user requested actual commands/evidence and protection of existing data — cost: local disk retention; it is git-ignored, not production state. Full durable decisions/report are copied to tracked docs before completion.
+
+24. Final: Ruling: Linux kernel flock held by parent fd over a persistent owner inode is authoritative; JSON is atomic fsync/rename diagnostic only — actual same-description child-flock probe and real concurrent/kill tests verify ownership without new daemons — cost: Linux util-linux /usr/bin/flock is now an explicit doctor-verified dependency; local filesystems only, do not remove/replace the inode.
+
+25. Final: Ruling: corrupted historical diagnostic leases fail closed with actionable manual inspection rather than guessing which PID to kill — atomic publication prevents new partial public JSON in tested crash/write windows — cost: historical corruption requires stopping all Gateways and manual recovery; no unattended repair of ambiguous ownership.
+
+26. Final: Ruling: independent eval native process builds a fixed reference body and checks both directed BRep differences; benchmark naming contract is explicit in model-visible input — bbox/volume/name-only checks miss moved holes or falsely reject unannounced IDs — cost: stricter coordinate/naming benchmark and additional native startup per positive attempt, not a general CAD semantic equivalence engine.
+
+27. Final: Ruling: declined live ability/real success rate remains pending — authorization explicitly absent — cost: cannot call phase-one model quality accepted from fake evidence.
+
+28. Final: Ruling: declined hardware GPU, other browsers and desktop platforms remain unqualified — evidence is actual Chrome with software WebGL only — cost: deployment/browser compatibility requires its own qualification.
+
+29. Final: Ruling: declined power-loss, hardware storage faults and network-filesystem guarantees remain unqualified — actual evidence covers process death and software file errors on local FS — cost: production storage certification/backup drills remain outside this result.
+
+30. Final: Ruling: declined public multi-tenant, arbitrary Python/upload execution and STEP editing remain excluded — follows phase-one restricted scope, no exposed route for these — cost: those use cases need later design/testing rather than inference from present tools.
+
+31. Final: Ruling: declined natural-language rejection quality requires human/live review; current negative gate proves no commit/pollution only — failed job cannot by itself prove a helpful refusal — cost: language UX/semantic correctness remains pending.
+
+32. Final: Ruling: finish on the authorized local feature branch without merge/push/PR or another confirmation menu — user requested implementation with no remote publication and no per-task stopping, and supplied no integration authorization — cost: integration remains the user's later choice; all commits and review evidence retained.
+
+## Deferred minors
+
+- Final: minor (deferred): TS schema.properties inherited constructor/toString/__proto__ fields pass TS while Python rejects — final native boundary still prevents mutation; entrance strictness/cross-language consistency remain imperfect. Do not claim those special keys are rejected at the TS entrance; add Object.hasOwn/shared negatives in a later scoped change.

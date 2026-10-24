@@ -1,0 +1,96 @@
+bash: /home/lenovo/miniconda3/envs/freecad/lib/libtinfo.so.6: no version information available (required by bash)
+
+> cad-agent-workspace@0.1.0 verify:pi
+> tsx scripts/verify-pi.ts
+
+Pi source fingerprint verified
+
+> cad-agent-workspace@0.1.0 doctor
+> python scripts/doctor.py
+
+{"freecad": "1.1.3", "python": "3.11.14", "occt": "7.8.1", "gui": 0, "uds": true, "staging": true, "flock": true}
+
+> cad-agent-workspace@0.1.0 typecheck
+> tsc --noEmit
+
+
+> cad-agent-workspace@0.1.0 test:unit
+> vitest run
+
+
+ RUN  v4.1.12 /home/lenovo/ai4s/cad-web
+
+
+ Test Files  14 passed (14)
+      Tests  84 passed (84)
+   Start at  23:47:39
+   Duration  43.95s (transform 615ms, setup 0ms, import 1.43s, tests 40.77s, environment 1ms)
+
+
+> cad-agent-workspace@0.1.0 test:cad
+> python -m unittest discover -s worker/tests -v
+
+test_acceptance_tolerances_match_recorded_engineering_defaults (test_artifacts.ArtifactTests.test_acceptance_tolerances_match_recorded_engineering_defaults) ... ok
+test_corrupt_and_empty_files_rejected_without_ready_manifest (test_artifacts.ArtifactTests.test_corrupt_and_empty_files_rejected_without_ready_manifest) ... ok
+test_curved_mesh_uses_tessellation_tolerance_not_brep_tolerance (test_artifacts.ArtifactTests.test_curved_mesh_uses_tessellation_tolerance_not_brep_tolerance) ... ok
+test_export_failure_or_verifier_exit_never_marks_ready (test_artifacts.ArtifactTests.test_export_failure_or_verifier_exit_never_marks_ready) ... ok
+test_glb_checks_actual_binary_vertices_not_only_declared_metadata (test_artifacts.ArtifactTests.test_glb_checks_actual_binary_vertices_not_only_declared_metadata) ... ok
+test_independent_reopen_exports_and_editability (test_artifacts.ArtifactTests.test_independent_reopen_exports_and_editability) ... ok
+test_missing_identity_parameter_and_wrong_acceptance_criteria_rejected (test_artifacts.ArtifactTests.test_missing_identity_parameter_and_wrong_acceptance_criteria_rejected) ... ok
+test_no_solid_even_if_native_status_valid (test_artifacts.ArtifactTests.test_no_solid_even_if_native_status_valid) ... ok
+test_nonfinite (test_contracts.ContractTests.test_nonfinite) ... ok
+test_shared_fixtures (test_contracts.ContractTests.test_shared_fixtures) ... ok
+test_missing_runtime_fails_with_actionable_error (test_doctor.DoctorTests.test_missing_runtime_fails_with_actionable_error) ... ok
+test_real_runtime_reports_verified_versions_and_uds (test_doctor.DoctorTests.test_real_runtime_reports_verified_versions_and_uds) ... ok
+test_conflicting_constraint_and_missing_feature_rejected (test_model_ops.ModelTests.test_conflicting_constraint_and_missing_feature_rejected) ... ok
+test_invalid_input_never_mutates_document (test_model_ops.ModelTests.test_invalid_input_never_mutates_document) ... ok
+test_named_diameter_survives_labels_and_edit (test_model_ops.ModelTests.test_named_diameter_survives_labels_and_edit) ... ok
+test_three_editable_parametric_models (test_model_ops.ModelTests.test_three_editable_parametric_models) ... ok
+test_underconstrained_conflicting_or_unknown_reference_rejected (test_model_ops.ModelTests.test_underconstrained_conflicting_or_unknown_reference_rejected) ... ok
+test_environment_configuration_does_not_read_ignored_file (test_native_harness.NativeHarnessConfigurationTests.test_environment_configuration_does_not_read_ignored_file) ... ok
+test_local_fallback_and_missing_configuration_diagnostic (test_native_harness.NativeHarnessConfigurationTests.test_local_fallback_and_missing_configuration_diagnostic) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 6.956s
+
+OK
+
+> cad-agent-workspace@0.1.0 test:e2e
+> playwright test
+
+[WebServer] (node:126740) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] [plugin builtin:vite-reporter] 
+[WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[WebServer] (node:126795) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:126808) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:126822) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/e2e/text-to-cad.spec.ts:5:1 › chat creates editable plate, property edit commits, failed candidate protects official model, downloads reopen (6.9s)
+  ✓  2 tests/e2e/text-to-cad.spec.ts:19:1 › cancel uses persisted job state and stale/history views cannot edit (2.5s)
+  ✓  3 tests/e2e/text-to-cad.spec.ts:26:1 › a real stale submit returns 409 and refreshes without overwriting the newer revision (4.4s)
+  ✓  4 tests/e2e/viewer.spec.ts:2:1 › real browser renders GLB geometry, correct top-view hole and synchronized tree/parameters (3.3s)
+  ✓  5 tests/e2e/viewer.spec.ts:21:1 › late GLB cannot replace a newer complete revision; before/after uses complete versions (5.9s)
+  ✓  6 tests/e2e/viewer.spec.ts:31:1 › actual socket disconnect, duplicate/out-of-order events and reconnect recover authoritative snapshot (5.7s)
+  ✓  7 tests/e2e/viewer.spec.ts:39:1 › missing preview is an explicit failure and keeps the last complete version until retry (3.8s)
+
+  7 passed (35.4s)
+
+> cad-agent-workspace@0.1.0 test:eval
+> tsx scripts/eval-text-to-cad.ts --offline evals/text-to-cad/v1.json
+
+{"output":"/home/lenovo/ai4s/cad-web/.superpowers/sdd/2026-10-24-text-to-cad/offline-check-1792856946/result.json","mode":"offline","passed":10,"total":10,"modelQualityQualified":false}
+
+> cad-agent-workspace@0.1.0 test:live
+> tsx scripts/eval-text-to-cad.ts evals/text-to-cad/v1.json
+
+Live NOT RUN: RUN_LIVE_CAD=1 and explicit approval required. Use npm run test:eval for offline harness only.
+Task 11 preparation: deterministic suite and offline harness passed; live intentionally not authorized or executed
