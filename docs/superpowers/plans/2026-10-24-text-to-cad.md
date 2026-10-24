@@ -45,7 +45,7 @@
 
 ## 按依赖顺序执行
 
-### 0. 固化可启动环境与 SDK 导入（可立即开始）
+### Task 0: 固化可启动环境与 SDK 导入（可立即开始）
 
 **目标/行为：**新环境可以报告精确 runtime 版本并跑通无网络的基线，不依赖交互 shell/全局 Pi 安装。仅建立必要的根 package.json、锁文件、tsconfig、测试配置和环境检查；根目录 Git 初始化/上游版本记录由工程处理，不把整个 Pi checkout 当不明 gitlink 提交。
 
@@ -59,7 +59,7 @@
 
 **当前状态：**CAD 8 个 action 和本地 Pi source/fake 的 3 个场景已经单独通过；产品 doctor、构建、独立安装、所选 LTS 测试还不存在。普通 shell DNS 受限；UDS 在执行沙箱 bind 为 EPERM，沙箱外探针的自动审批因审核模型不可用（404）失败，宿主机结果未知。工程上先准备可绑定 socket 的本机/CI 测试环境，不将此误判为架构不可行或默默跳过 RPC 测试。
 
-### 1. 定义跨端最小契约
+### Task 1: 定义跨端最小契约
 
 **依赖：**0。**目标/行为：**错误输入在进入 FreeCAD 前被拒绝；TS 与 Python 使用同一组 JSON fixtures，不各自解释协议。
 
@@ -69,7 +69,7 @@
 - [ ] 实现严格验证和初始预算配置：建议最多 20 次工具调用、任务 180s、CAD 操作 30s、启动 15s，可由测试缩短；这些是工程初值，获准成本上限另行配置。最终尺寸/体积验收采用准备审查中的公差。
 - [ ] 执行：`npm run test:unit -- tests/contracts.test.ts`；`python -m unittest discover -s worker/tests -p test_contracts.py -v`。必须验证坏参数不会触发建模调用。
 
-### 2. 跑通一个真实 Worker 的通信与生命周期
+### Task 2: 跑通一个真实 Worker 的通信与生命周期
 
 **依赖：**1。**目标/行为：**Gateway 能启动指定 runtime、握手、发只读请求并识别退出；仅一个 Worker，不预建调度平台。
 
@@ -79,7 +79,7 @@
 - [ ] 实现 `WorkerClient.request(method, params, deadline)`；信号/退出映射为应用错误，不对超时写命令盲重试。
 - [ ] 执行：`npm run test:unit -- tests/rpc.test.ts`。连续请求有界完成；错误 runtime 不能静默切换到另一套 FreeCAD。
 
-### 3. 实现可重算的核心参数化操作
+### Task 3: 实现可重算的核心参数化操作
 
 **依赖：**1、2。**目标/行为：**用固定 JSON 操作创建孔板，修改命名直径；保留 Sketcher 和 PartDesign 历史，不输出一个不可编辑的 Part::Feature 壳。
 
@@ -89,7 +89,7 @@
 - [ ] 补空心垫套（双圆 Pad）和台阶块（第二 Pad）夹具；反向 Pocket、冲突/未完全约束草图、删除/重命名显示标签均有明确行为。第一支持集的欠约束不允许悄悄提交；对不支持的特征明确失败。
 - [ ] 执行：`npm run test:cad`。对象树、参数、单实体、包围盒和体积同时通过；`operationId/stepId` 重复不得再造对象。
 
-### 4. 建立独立验收与 revision 文件包
+### Task 4: 建立独立验收与 revision 文件包
 
 **依赖：**3。**目标/行为：**候选保存后独立进程重开、检查，输出树/FCStd/STEP/GLB/manifest；几何看似成功不能绕过验收。
 
@@ -99,7 +99,7 @@
 - [ ] FCStd 必须在新进程重开仍可改约束；STEP 新文档导入实体有效/体积与尺寸符合公差；GLB 真有三角网格、轴/比例正确。最终全包不齐或失败时标 candidate failed，不发布半套交付物。
 - [ ] 执行：`python -m unittest discover -s worker/tests -p test_artifacts.py -v`。记录每个失败的结构化诊断；浏览器渲染仍需任务 9。
 
-### 5. 实现唯一正式提交点与重启对账
+### Task 5: 实现唯一正式提交点与重启对账
 
 **依赖：**4。**目标/行为：**一个用户任务对应一个 candidate、一个可查询结果；重复请求不重复提交，旧版本永不覆盖新版本。
 
@@ -109,7 +109,7 @@
 - [ ] 在 staging 写中、包 rename 后/DB 前、DB 提交后/响应前，用独立 Gateway 子进程和 failpoints 终止再重启；注入 ENOSPC/权限错误、损坏 manifest、缺失正式文件。成功对账不能依赖人工修改 JSON。
 - [ ] 执行：`npm run test:unit -- tests/revisions.test.ts`。未提交包不可见；已提交 HEAD 可重开；丢失响应的重试仍只返回同一 revision。真实断电耐久性未测就不能声称保证断电零丢失。
 
-### 6. 将 Supervisor、候选任务与故障恢复连起来
+### Task 6: 将 Supervisor、候选任务与故障恢复连起来
 
 **依赖：**2、5。**目标/行为：**真实 Worker 死亡/超时不会改动正式模型，Gateway 活着并能运行下一任务。状态覆盖 queued/running/validating/committing/committed/failed/cancelled/interrupted。
 
@@ -119,7 +119,7 @@
 - [ ] Gateway 重启后标记 interrupted/对账，重开正式 FCStd，再成功执行新任务。限制 worker 总数=1、日志/输出上限；安全退出清理 socket，失败候选保留有限诊断，确认无引用后再清理。
 - [ ] 执行：`npm run test:unit -- tests/worker-recovery.test.ts`。本轮 probe 只测文件分离，这里才是实际 Supervisor 验收。
 
-### 7. 建立 HTTP/WS 和可恢复 snapshot
+### Task 7: 建立 HTTP/WS 和可恢复 snapshot
 
 **依赖：**5、6。**目标/行为：**不用模型和浏览器，也能经应用 API 建/改项目、查看任务结果、获取一致的正式版本并恢复事件。
 
@@ -129,7 +129,7 @@
 - [ ] 默认 loopback；局域网试用通过配置的共享访问凭据/反向代理认证并校验 WS Origin、项目路径。小规模可信用户不等于公开无鉴权接口；密钥只留服务端。
 - [ ] 执行：`npm run test:unit -- tests/gateway.test.ts`。关闭 Gateway 重开后 API 返回相同 HEAD/完成会话；所有返回的正式 artifact 属于该 revision。
 
-### 8. 接入一个 Pi Agent，约束副作用和上下文
+### Task 8: 接入一个 Pi Agent，约束副作用和上下文
 
 **依赖：**7。**目标/行为：**fake provider 和真实 provider 使用同一 CAD 工具执行路径，LLM 只能提案/操作候选，最终成功取决于任务 4—6。
 
@@ -139,7 +139,7 @@
 - [ ] 模型上下文只带 task、revision、参数/特征摘要和诊断；大型文件留 artifact。持久化完成对话和任务结果；重启若存在未完成 tool call，显示 interrupted/重建有效上下文，不自动重复写模型。
 - [ ] 执行：`npm run test:unit -- tests/agent.test.ts`。禁止支付 API；不能因环境中存在密钥就自动跑 live。请求下一轮前重新注入当前 revision。
 
-### 9. 做到浏览器能正确显示正式 CAD 状态
+### Task 9: 做到浏览器能正确显示正式 CAD 状态
 
 **依赖：**7，可在 8 前完成。**目标/行为：**加载 snapshot，显示 Three.js GLB、特征树和参数，选树中特征可查看参数/定位所属 Body，明确标识 candidate/正式版本。
 
@@ -149,7 +149,7 @@
 - [ ] 乱序/重复事件、旧 GLB 请求晚返回、断线期间提交、刷新恢复，由版本化 store 测试保证最终一致；应用事件 gap 超出保留范围则取快照。
 - [ ] 建立浏览器环境（`npm exec -- playwright install chromium`，缺系统库由部署环境解决），再执行 `npm run test:e2e -- tests/e2e/viewer.spec.ts`。记录 WebGL 可用性；软件渲染/headless 问题不能记为产品通过。
 
-### 10. 接通 Chat、属性编辑、取消与用户可理解的失败
+### Task 10: 接通 Chat、属性编辑、取消与用户可理解的失败
 
 **依赖：**8、9。**目标/行为：**输入文字创建孔板→看到过程→改直径→产生新 revision；属性修改走相同候选链路。坏修改保留正式模型，用户能看到具体原因并重试。
 
@@ -158,7 +158,7 @@
 - [ ] 用 fake provider + 真实 FreeCAD 测完整用户流程、失败回退、取消、刷新、下载并重开 FCStd/STEP；禁用 stale revision 的属性提交，处理 409 后刷新。
 - [ ] 执行：`npm run test:e2e -- tests/e2e/text-to-cad.spec.ts`。检查参数、树、mesh、任务结果及正式文件，而不只断言消息气泡。
 
-### 11. 用小型 live 验收集关闭阶段一
+### Task 11: 用小型 live 验收集关闭阶段一
 
 **依赖：**0—10；负责人确认首批零件范围、获准模型服务及数据/成本边界。**目标/行为：**在真实模型上证明这个有限产品能用，同时如实记录能力边界。
 

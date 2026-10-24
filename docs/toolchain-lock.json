@@ -1,0 +1,8 @@
+{
+  "node": "24.22.1",
+  "freecad": "1.1.3", "python": "3.11.14", "occt": "7.8.1",
+  "appimageSha256": "3a853eb69ee595f779f2255dbf80a765926981d8ff68903cefee4dfb03a8f5ef",
+  "piSourceProvenance": "b45e0ebcc5ae2fc42a6f2f23104d10e656e6bedb (investigation record; checkout metadata removed before implementation)",
+  "piSourceManifest": "pi-source-sha256.json",
+  "piChangesAllowed": false
+}

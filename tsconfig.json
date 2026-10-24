@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2023", "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext", "moduleResolution": "Bundler", "strict": true,
+    "allowImportingTsExtensions": true, "noEmit": true, "skipLibCheck": true,
+    "jsx": "react-jsx", "esModuleInterop": true, "types": ["node"],
+    "paths": {
+      "@earendil-works/pi-ai": ["./pi/packages/ai/src/index.ts"],
+      "@earendil-works/pi-agent-core": ["./pi/packages/agent/src/index.ts"],
+      "@earendil-works/pi-telemetry": ["./pi/packages/telemetry/src/index.ts"]
+    }
+  },
+  "include": ["gateway", "shared", "web", "tests", "*.config.ts"]
+}
