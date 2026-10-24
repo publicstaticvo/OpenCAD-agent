@@ -25,7 +25,7 @@ test('late GLB cannot replace a newer complete revision; before/after uses compl
  await programJob(request,id,1,'edit8',edit(8));await expect.poll(()=>requested).toBe(true);await expect(page.getByTestId('display-revision')).toHaveText('正式版本 1');
  await programJob(request,id,2,'edit10',edit(10));await expect(page.getByTestId('display-revision')).toHaveText('正式版本 3');release();
  await page.getByRole('button',{name:'hole 草图'}).click();await expect(page.getByLabel('diameter (mm)')).toHaveValue('10');
- await page.getByRole('button',{name:'查看修改前'}).click();await expect(page.getByTestId('display-revision')).toHaveText('历史版本 1');await expect(page.getByLabel('diameter (mm)')).toHaveValue('6');
+ await page.getByRole('button',{name:'查看修改前'}).click();await expect(page.getByTestId('display-revision')).toHaveText('历史版本 1');await expect(page.getByLabel('diameter (mm)')).toHaveValue('6');await expect(page.getByLabel('diameter (mm)')).toBeDisabled();
  await page.getByRole('button',{name:'查看当前版本'}).click();await expect(page.getByLabel('diameter (mm)')).toHaveValue('10');
 });
 test('actual socket disconnect, duplicate/out-of-order events and reconnect recover authoritative snapshot',async({page,request})=>{
