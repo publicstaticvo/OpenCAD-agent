@@ -11,6 +11,7 @@ class Candidates:
         self.doc=None
         self.envelope=None
         self.directory=None
+        self.prepared=None
     def dispatch(self, method, params):
         if method=='begin_candidate':
             self.keys(params,{'envelope'})
@@ -33,10 +34,22 @@ class Candidates:
         if method=='apply_operations':
             self.keys(params,{'envelope','stepId','operations'})
             self.check_envelope(params['envelope'])
+            if self.prepared:raise ValueError('Candidate sealed; no later writes')
             return apply_operations(self.doc,params['operations'],self.envelope['operationId'],params['stepId'])
+        if method=='prepare_candidate':
+            self.keys(params,{'envelope','criteria'});self.check_envelope(params['envelope'])
+            assert_contract('criteria',params['criteria'])
+            if self.prepared:
+                if params['criteria']!=self.prepared['criteria']:raise ValueError('Candidate sealed with different criteria')
+                return self.prepared['result']
+            from worker.artifacts import prepare_revision
+            result=prepare_revision(self.doc,self.directory,params['criteria'])
+            result['candidateId']=self.envelope['candidateId']
+            self.prepared=dict(criteria=params['criteria'],result=result)
+            return result
         if method=='discard_candidate':
             self.keys(params,{'envelope'});self.check_envelope(params['envelope'])
-            App.closeDocument(self.doc.Name);self.doc=None;self.envelope=None;self.directory=None
+            App.closeDocument(self.doc.Name);self.doc=None;self.envelope=None;self.directory=None;self.prepared=None
             return dict(discarded=True)
         raise LookupError('Method not found')
     def check_envelope(self,envelope):
