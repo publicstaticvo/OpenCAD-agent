@@ -1,0 +1,75 @@
+import {spawn,type ChildProcess} from 'node:child_process';
+import {createConnection,type Socket} from 'node:net';
+import {mkdtemp,readFile,rm,stat} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join,resolve,isAbsolute} from 'node:path';
+import {budgets} from '../shared/cad-contracts.ts';
+export async function resolveRuntime():Promise<string>{
+ if(process.env.FREECAD_RUNTIME_ROOT)return process.env.FREECAD_RUNTIME_ROOT;
+ try{return JSON.parse(await readFile('runtime.local.json','utf8')).freecadRuntimeRoot;}catch{throw new Error('Configure FREECAD_RUNTIME_ROOT: verified runtime required');}
+}
+export class RpcError extends Error {constructor(public code:number,message:string){super(message);}}
+export class WorkerClient {
+ private socket!:Socket;private directory='';private closed:Error|null=null;private seq=0;private buffer=Buffer.alloc(0);
+ private pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void;timer:ReturnType<typeof setTimeout>}>();
+ socketPath='';process!:ChildProcess;hello:any;logs='';
+ private constructor(){}
+ static async start(opts:{runtimeRoot?:string;workspace?:string;startupMs?:number}={}):Promise<WorkerClient>{
+  const c=new WorkerClient(),root=opts.runtimeRoot??await resolveRuntime();
+  if(!root||!isAbsolute(root))throw new Error('Invalid runtime root');
+  try{await stat(join(root,'usr/bin/python'));}catch{throw new Error('Invalid runtime: bundled Python missing');}
+  c.directory=await mkdtemp(join(tmpdir(),'cad-w-'));c.socketPath=join(c.directory,'worker.sock');
+  const env={...process.env,PYTHONDONTWRITEBYTECODE:'1'};for(const k of ['PYTHONHOME','PYTHONPATH','LD_LIBRARY_PATH','DISPLAY','WAYLAND_DISPLAY'])delete (env as Record<string,string|undefined>)[k];
+  c.process=spawn(join(root,'usr/bin/python'),[resolve('worker/main.py'),'--runtime',root,'--socket',c.socketPath,'--workspace',resolve(opts.workspace??c.directory)],{env,stdio:['ignore','pipe','pipe']});
+  for(const stream of [c.process.stdout,c.process.stderr])stream?.on('data',b=>{c.logs=(c.logs+b.toString()).slice(-65536);});
+  c.process.once('error',e=>c.fail(e));c.process.once('exit',(code,signal)=>c.fail(new Error(`Worker exit ${code??signal}`)));
+  try{
+   const until=Date.now()+(opts.startupMs??budgets.startupMs);
+   while(true){
+    if(c.closed)throw new Error(`${c.closed.message}: ${c.logs}`);
+    try{await stat(c.socketPath);break;}catch{}
+    if(Date.now()>=until)throw new Error('Worker startup timeout');
+    await new Promise(r=>setTimeout(r,10));
+   }
+   c.socket=createConnection(c.socketPath);
+   await new Promise<void>((r,j)=>{c.socket.once('connect',r);c.socket.once('error',j);});
+   c.socket.on('error',e=>c.fail(e));c.socket.on('close',()=>c.fail(new Error('Worker connection closed')));
+   c.socket.on('data',b=>c.receive(Buffer.isBuffer(b)?b:Buffer.from(b)));
+   c.hello=await c.request('hello',{},Math.max(1,until-Date.now()));
+   if(c.hello.protocolVersion!==1||JSON.stringify(c.hello.runtime)!==JSON.stringify({freecad:'1.1.3',python:'3.11.14',occt:'7.8.1',gui:0}))throw new Error('Worker runtime/protocol drift');
+   return c;
+  }catch(e){await c.close();throw e;}
+ }
+ private receive(chunk:Buffer){
+  this.buffer=Buffer.concat([this.buffer,chunk]);
+  let pos:number;
+  while((pos=this.buffer.indexOf(10))>=0){
+   if(pos>budgets.frameBytes){this.fail(new Error('Worker frame too large'));return;}
+   const line=this.buffer.subarray(0,pos);this.buffer=this.buffer.subarray(pos+1);
+   try{const msg=JSON.parse(line.toString('utf8'));if(msg.jsonrpc!=='2.0'||typeof msg.id!=='number'||!this.pending.has(msg.id))throw new Error('Unmatched Worker response');
+    const p=this.pending.get(msg.id)!;this.pending.delete(msg.id);clearTimeout(p.timer);
+    if(msg.error)p.reject(new RpcError(msg.error.code,msg.error.message));else if('result'in msg)p.resolve(msg.result);else throw new Error('Invalid Worker response');
+   }catch(e){this.fail(e as Error);return;}
+  }
+  if(this.buffer.length>budgets.frameBytes)this.fail(new Error('Worker frame too large'));
+ }
+ async request(method:string,params:unknown,timeout:number=budgets.operationMs):Promise<any>{
+  if(this.closed)throw this.closed;
+  const id=++this.seq,frame=JSON.stringify({jsonrpc:'2.0',id,method,params})+'\n';
+  if(Buffer.byteLength(frame)>budgets.frameBytes)throw new Error('Request frame too large');
+  return new Promise((resolve,reject)=>{
+   const timer=setTimeout(()=>this.fail(new Error(`Worker timeout: ${method}; outcome unknown, no automatic retry`)),timeout);
+   this.pending.set(id,{resolve,reject,timer});this.socket.write(frame,e=>{if(e)this.fail(e);});
+  });
+ }
+ private fail(error:Error){
+  if(this.closed)return;this.closed=error;
+  for(const p of this.pending.values()){clearTimeout(p.timer);p.reject(error);}this.pending.clear();
+  this.socket?.destroy();this.process?.kill('SIGKILL');
+ }
+ async close(){
+  this.fail(new Error('Worker closed'));
+  if(this.process&&this.process.exitCode===null&&this.process.signalCode===null)await new Promise(r=>this.process.once('exit',r));
+  if(this.directory)await rm(this.directory,{recursive:true,force:true});
+ }
+}
