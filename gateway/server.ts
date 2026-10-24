@@ -1,5 +1,6 @@
 import {createServer,type IncomingMessage,type ServerResponse} from 'node:http';
-import {createReadStream,statSync} from 'node:fs';
+import {createReadStream,statSync,readFileSync,existsSync} from 'node:fs';
+import {resolve,join} from 'node:path';
 import {timingSafeEqual,randomUUID} from 'node:crypto';
 import {WebSocketServer} from 'ws';
 import {RevisionStore,StoreError} from './revision-store.ts';import {Supervisor} from './supervisor.ts';import {EventHub} from './events.ts';
@@ -25,12 +26,19 @@ export async function createGateway(options:Options):Promise<Gateway>{
  const server=createServer(async(req,res)=>{
   try{
    const url=new URL(req.url??'/',baseUrl||'http://127.0.0.1');
+   if(req.method==='GET'&&(url.pathname==='/'||/^\/assets\/[A-Za-z0-9._-]+$/.test(url.pathname))){
+    const path=join(resolve('dist'),url.pathname==='/'?'index.html':url.pathname.slice(1));
+    if(!existsSync(path))throw new StoreError('not_found','Run npm run build to create Web workspace');
+    const type=path.endsWith('.js')?'text/javascript':path.endsWith('.css')?'text/css':'text/html; charset=utf-8';
+    res.writeHead(200,{'Content-Type':type,'Cache-Control':'no-cache','X-Content-Type-Options':'nosniff'});res.end(readFileSync(path));return;
+   }
    if(url.pathname==='/api/health'&&req.method==='GET'){json(res,200,{status:'ok',providerMode:options.textRunner?.mode??'none'});return;}
    if(!authenticated(req.headers.authorization?.replace(/^Bearer /,''))){json(res,401,{error:'unauthorized',message:'Access key required'});return;}
    if(req.headers.origin&&!allowed(req.headers.origin)){json(res,403,{error:'origin',message:'Origin not allowed'});return;}
    if(url.pathname==='/api/documents'&&req.method==='POST'){
     const input=await body(req);keys(input,[],['id']);json(res,201,store.createDocument(input.id??randomUUID()));return;
    }
+   if(url.pathname==='/api/session'&&req.method==='GET'){json(res,200,{providerMode:options.textRunner?.mode??'none'});return;}
    const match=url.pathname.match(/^\/api\/documents\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})(?:\/(.*))?$/);
    if(!match)throw new StoreError('not_found','Route not found');
    const [,id,suffix='']=match;
