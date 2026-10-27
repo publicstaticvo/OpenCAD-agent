@@ -9,7 +9,7 @@ test('local HTTP protocol fixture checks Pi streaming, explicit key, token cap a
  const a={provider:{baseUrl:`http://127.0.0.1:${address.port}/v1`,model:'fixture',contextWindow:10000,maxTokens:1000,ratesUsdPerMillion:{input:1,output:10}}} as Authorization;
  try{
   const provider=evaluationProvider(a,'dummy-explicit-key',budget);const context={systemPrompt:'Test only',messages:[{role:'user',content:'hello',timestamp:1}],tools:[]};
-  const first=await provider.streamFn(provider.model,context,{}).result();expect(first.stopReason).toBe('stop');expect(first.content[0].text).toBe('protocol fixture');expect(bodies[0].max_tokens??bodies[0].max_completion_tokens).toBe(1000);
+  const first=await provider.streamFn(provider.model,context,{}).result();expect(first.stopReason,first.errorMessage).toBe('stop');expect(first.content[0].text).toBe('protocol fixture');expect(bodies[0].max_tokens??bodies[0].max_completion_tokens).toBe(1000);
   const second=await provider.streamFn(provider.model,context,{}).result();expect(second.stopReason).toBe('error');expect(second.errorMessage).toMatch(/budget/);expect(requests).toBe(1);expect(budget.requests).toBe(1);
  }finally{await new Promise<void>(r=>server.close(()=>r()));}
 });

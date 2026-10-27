@@ -6,7 +6,8 @@ import {WebSocketServer} from 'ws';
 import {RevisionStore,StoreError} from './revision-store.ts';import {Supervisor} from './supervisor.ts';import {EventHub} from './events.ts';
 export interface Gateway {baseUrl:string;store:RevisionStore;supervisor:Supervisor;close():Promise<void>}
 import type {TextRunner} from './agent.ts';
-type Options={textRunner?:TextRunner;dataDir:string;accessToken:string;port?:number;host?:string;allowedOrigins?:string[]};
+import type {ModelConfig} from './model-config.ts';
+type Options={textRunner?:TextRunner;modelConfig?:ModelConfig;dataDir:string;accessToken:string;port?:number;host?:string;allowedOrigins?:string[];taskMs?:number};
 function keys(value:unknown,required:string[],optional:string[]=[]):asserts value is Record<string,any>{if(!value||typeof value!=='object'||Array.isArray(value)||required.some(k=>!Object.hasOwn(value,k))||Object.keys(value).some(k=>![...required,...optional].includes(k)))throw new StoreError('invalid','Invalid request fields');}
 async function body(req:IncomingMessage){
  if(!req.headers['content-type']?.startsWith('application/json'))throw new StoreError('invalid','JSON body required');
@@ -18,9 +19,10 @@ function json(res:ServerResponse,status:number,value:unknown){res.writeHead(stat
 export async function createGateway(options:Options):Promise<Gateway>{
  if(typeof options.accessToken!=='string'||options.accessToken.length<24)throw new Error('Configure a shared access token of at least 24 characters');
  const store=new RevisionStore(options.dataDir);let supervisor:Supervisor;
- try{supervisor=await Supervisor.start(store,{textRunner:options.textRunner});}catch(e){store.close();throw e;}
+ try{supervisor=await Supervisor.start(store,{textRunner:options.textRunner,taskMs:options.taskMs});}catch(e){store.close();throw e;}
  const events=new EventHub(store),wss=new WebSocketServer({noServer:true,maxPayload:1048576,handleProtocols:protocols=>protocols.has('cad-v1')?'cad-v1':false});
  let baseUrl='',closed=false;
+ const providerMode=()=>options.modelConfig?(options.modelConfig.status().configured?'live':'none'):options.textRunner?.mode??'none';
  const allowed=(origin:string|undefined)=>!!origin&&[baseUrl,...options.allowedOrigins??[]].includes(origin);
  const authenticated=(provided:string|undefined)=>{if(!provided)return false;const a=Buffer.from(provided),b=Buffer.from(options.accessToken);return a.length===b.length&&timingSafeEqual(a,b);};
  const server=createServer(async(req,res)=>{
@@ -32,21 +34,47 @@ export async function createGateway(options:Options):Promise<Gateway>{
     const type=path.endsWith('.js')?'text/javascript':path.endsWith('.css')?'text/css':'text/html; charset=utf-8';
     res.writeHead(200,{'Content-Type':type,'Cache-Control':'no-cache','X-Content-Type-Options':'nosniff'});res.end(readFileSync(path));return;
    }
-   if(url.pathname==='/api/health'&&req.method==='GET'){json(res,200,{status:'ok',providerMode:options.textRunner?.mode??'none'});return;}
+   if(url.pathname==='/api/health'&&req.method==='GET'){json(res,200,{status:'ok',providerMode:providerMode()});return;}
    if(!authenticated(req.headers.authorization?.replace(/^Bearer /,''))){json(res,401,{error:'unauthorized',message:'Access key required'});return;}
    if(req.headers.origin&&!allowed(req.headers.origin)){json(res,403,{error:'origin',message:'Origin not allowed'});return;}
    if(url.pathname==='/api/documents'&&req.method==='POST'){
-    const input=await body(req);keys(input,[],['id']);json(res,201,store.createDocument(input.id??randomUUID()));return;
+    const input=await body(req);keys(input,[],['id','name']);const id=input.id??randomUUID();json(res,201,store.createDocument(id,input.name??id));return;
    }
-   if(url.pathname==='/api/session'&&req.method==='GET'){json(res,200,{providerMode:options.textRunner?.mode??'none'});return;}
+   if(url.pathname==='/api/documents'&&req.method==='GET'){json(res,200,{documents:store.listDocuments()});return;}
+   if(url.pathname==='/api/session'&&req.method==='GET'){json(res,200,{providerMode:providerMode(),modelConfigurationEnabled:!!options.modelConfig});return;}
+   if(['/api/model-config','/api/model-config/discover','/api/model-config/probe'].includes(url.pathname)){
+    if(!options.modelConfig)throw new StoreError('unavailable','当前启动模式未启用模型配置');
+    if(url.pathname==='/api/model-config'&&req.method==='GET'){json(res,200,options.modelConfig.status());return;}
+    if(req.method==='POST'){
+     const input=await body(req);
+     if(url.pathname.endsWith('/discover')){keys(input,['baseUrl'],['apiKey','protocol','timeouts']);json(res,200,await options.modelConfig.discover(input as any));}
+     else{keys(input,['baseUrl','model'],['apiKey','protocol','timeouts']);json(res,200,url.pathname.endsWith('/probe')?await options.modelConfig.probe(input as any):await options.modelConfig.save(input as any));}
+     return;
+    }
+   }
    const match=url.pathname.match(/^\/api\/documents\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})(?:\/(.*))?$/);
    if(!match)throw new StoreError('not_found','Route not found');
    const [,id,suffix='']=match;
    if(!suffix&&req.method==='GET'){json(res,200,store.snapshot(id));return;}
+   if(!suffix&&req.method==='PATCH'){const input=await body(req);keys(input,['name']);json(res,200,store.renameDocument(id,input.name));return;}
+   if(suffix==='conversations'){
+    if(req.method==='GET'){json(res,200,{conversations:store.listConversations(id)});return;}
+    if(req.method==='POST'){const input=await body(req);keys(input,[],['title']);json(res,201,store.createConversation(id,input.title));return;}
+   }
+   const conversation=suffix.match(/^conversations\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})(\/messages)?$/);
+   if(conversation){
+    if(conversation[2]&&req.method==='GET'){json(res,200,store.messages(id,conversation[1],Number(url.searchParams.get('afterOrdinal')??0),Number(url.searchParams.get('limit')??100)));return;}
+    if(!conversation[2]&&req.method==='GET'){json(res,200,store.conversation(id,conversation[1]));return;}
+    if(!conversation[2]&&req.method==='PATCH'){const input=await body(req);keys(input,['title']);json(res,200,store.renameConversation(id,conversation[1],input.title));return;}
+   }
+   if(suffix==='events'&&req.method==='GET'){json(res,200,{events:store.events(id,Number(url.searchParams.get('afterSeq')??0))});return;}
+   const jobEvents=suffix.match(/^jobs\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})\/events$/);
+   if(jobEvents&&req.method==='GET'){json(res,200,store.jobEvents(id,jobEvents[1],Number(url.searchParams.get('afterSeq')??0),Number(url.searchParams.get('limit')??200)));return;}
    if(suffix==='jobs'&&req.method==='POST'){
-    const input=await body(req);keys(input,['baseRevision','operationId'],['program','text']);
+    const input=await body(req);keys(input,['baseRevision','operationId'],['program','text','conversationId']);
     if(Object.hasOwn(input,'program')===Object.hasOwn(input,'text'))throw new StoreError('invalid','Choose exactly one program or text task');
-    json(res,202,Object.hasOwn(input,'text')?supervisor.submitText(id,input.baseRevision,input.operationId,input.text):supervisor.submit(id,input.baseRevision,input.operationId,input.program));return;
+    if(Object.hasOwn(input,'text')&&providerMode()==='none')throw new StoreError('unavailable','请先配置模型服务');
+    json(res,202,Object.hasOwn(input,'text')?supervisor.submitText(id,input.baseRevision,input.operationId,input.text,input.conversationId):supervisor.submit(id,input.baseRevision,input.operationId,input.program,input.conversationId));return;
    }
    const job=suffix.match(/^jobs\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})(\/cancel)?$/);
    if(job){if(!job[2]&&req.method==='GET'){json(res,200,supervisor.job(id,job[1]));return;}if(job[2]&&req.method==='POST'){const input=await body(req);keys(input,[]);json(res,200,supervisor.cancelJob(id,job[1]));return;}}
@@ -59,7 +87,7 @@ export async function createGateway(options:Options):Promise<Gateway>{
    }
    throw new StoreError('not_found','Route not found');
   }catch(e){
-   const error=e as any,code=error.code;const status=code==='not_found'?404:['conflict','idempotency'].includes(code)||[1555,2067].includes(error.errcode)?409:code==='invalid'||error.message?.startsWith('Invalid ')?400:['corrupt','busy','closed','unavailable'].includes(code)?503:500;
+   const error=e as any,code=error.code;const status=code==='not_found'?404:['conflict','idempotency','project_busy'].includes(code)||[1555,2067].includes(error.errcode)?409:code==='invalid'||error.message?.startsWith('Invalid ')?400:['corrupt','busy','closed','unavailable'].includes(code)?503:500;
    if(!res.headersSent)json(res,status,{error:code??'request_failed',message:status===500?'Internal Gateway error':error.message});else res.destroy();
   }
  });

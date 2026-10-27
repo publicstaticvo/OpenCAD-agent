@@ -2,6 +2,7 @@ import type {AppEvent,DocumentSnapshot} from '../../shared/cad-contracts.ts';imp
 export class ApiError extends Error{constructor(readonly status:number,message:string){super(message);}}
 export class Api{
  providerMode="none";
+ modelConfigurationEnabled=false;
  constructor(readonly token:string){}
  async fetch(path:string,init:RequestInit={}){
   const url=new URL(path,window.location.origin);if(url.origin!==window.location.origin||!url.pathname.startsWith('/api/'))throw new Error('拒绝非工作区地址');
@@ -9,10 +10,11 @@ export class Api{
   if(!response.ok){const data=await response.json().catch(()=>({message:response.statusText}));throw new ApiError(response.status,data.message??'请求失败');}return response;
  }
  async json(path:string,body?:unknown){const r=await this.fetch(path,body===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return r.json();}
- async session(){const session=await this.json('/api/session');this.providerMode=session.providerMode;return session;}
+ async patch(path:string,body:unknown){return(await this.fetch(path,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})).json();}
+ async session(){const session=await this.json('/api/session');this.providerMode=session.providerMode;this.modelConfigurationEnabled=!!session.modelConfigurationEnabled;return session;}
  project(documentId:string):WorkspaceApi{
   const root=`/api/documents/${encodeURIComponent(documentId)}`;
-  return{snapshot:async()=>this.json(root) as Promise<DocumentSnapshot>,asset:async(url,revision)=>{const response=await this.fetch(url);if(response.headers.get('x-cad-revision')!==String(revision))throw new Error('预览文件版本不一致');return loadModel(await response.arrayBuffer());},watch:(after,onEvent,onConnection)=>{
+  return{snapshot:async(signal)=>(await this.fetch(root,{signal})).json() as Promise<DocumentSnapshot>,asset:async(url,revision,signal)=>{const response=await this.fetch(url,{signal});if(response.headers.get('x-cad-revision')!==String(revision))throw new Error('预览文件版本不一致');return loadModel(await response.arrayBuffer());},watch:(after,onEvent,onConnection)=>{
    let stopped=false,socket:WebSocket|undefined,timer:ReturnType<typeof setTimeout>,delay=300;
    const connect=()=>{
     if(stopped)return;const url=new URL(root+'/events',window.location.origin);url.protocol=url.protocol==='https:'?'wss:':'ws:';url.searchParams.set('afterSeq',String(after()));

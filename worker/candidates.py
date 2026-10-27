@@ -12,6 +12,7 @@ class Candidates:
         self.envelope=None
         self.directory=None
         self.prepared=None
+        self.progress=lambda stage,status: None
     def dispatch(self, method, params):
         if method=='begin_candidate':
             self.keys(params,{'envelope'})
@@ -43,7 +44,7 @@ class Candidates:
                 if params['criteria']!=self.prepared['criteria']:raise ValueError('Candidate sealed with different criteria')
                 return self.prepared['result']
             from worker.artifacts import prepare_revision
-            result=prepare_revision(self.doc,self.directory,params['criteria'])
+            result=prepare_revision(self.doc,self.directory,params['criteria'],self.progress)
             result['candidateId']=self.envelope['candidateId']
             self.prepared=dict(criteria=params['criteria'],result=result)
             return result

@@ -1,2 +1,2 @@
 import type {Authorization,Budget} from './evaluation.ts';import type {PiProvider} from './pi-adapter.mjs';
-export function evaluationProvider(authorization:Authorization,apiKey:string,budget:Budget,options?:{transport?:typeof fetch}):PiProvider;
+export function evaluationProvider(authorization:{provider:Omit<Authorization['provider'],'ratesUsdPerMillion'>&{ratesUsdPerMillion?:{input:number;output:number}}},apiKey:string,budget?:Budget,options?:{transport?:typeof fetch;timeouts?:Pick<import('./timeouts.ts').TimeoutSettings,'requestSeconds'>}):PiProvider;

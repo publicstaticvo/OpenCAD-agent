@@ -37,14 +37,24 @@ def main():
     from worker.candidates import Candidates
     candidates = Candidates(args.workspace)
     instance = uuid.uuid4().hex
+    progress_sequence = 0
+    current_request = None
+    connection = None
+    def progress(stage, status):
+        nonlocal progress_sequence
+        progress_sequence += 1
+        message = dict(jsonrpc='2.0', method='cad_progress', params=dict(requestId=current_request, candidateId=candidates.envelope['candidateId'], stage=stage, status=status, sequence=progress_sequence))
+        connection.sendall((json.dumps(message, allow_nan=False)+'\n').encode())
+    candidates.progress = progress
     def dispatch(method, params):
         if method == 'hello':
             if params: raise ValueError('hello takes no arguments')
-            return dict(protocolVersion=1, workerInstanceId=instance, runtime=runtime, capabilities=['inspect_document','begin_candidate','apply_operations','prepare_candidate','discard_candidate'])
+            return dict(protocolVersion=1, workerInstanceId=instance, runtime=runtime, capabilities=['inspect_document','begin_candidate','apply_operations','prepare_candidate','discard_candidate','cad_progress'])
         return candidates.dispatch(method, params)
     def error(code, message, request_id=None):
         return dict(jsonrpc='2.0', id=request_id, error=dict(code=code, message=message))
     def handle(line):
+        nonlocal current_request
         request = None
         try:
             request = json.loads(line.decode('utf8'), parse_constant=lambda _: (_ for _ in ()).throw(ValueError('Non-finite JSON')))
@@ -56,6 +66,7 @@ def main():
         except (ValueError, TypeError, OverflowError):
             return error(-32600, 'Invalid request', request_id)
         try:
+            current_request = request_id
             return dict(jsonrpc='2.0', id=request_id, result=dispatch(request['method'], request['params']))
         except LookupError:
             return error(-32601, 'Method not found', request_id)
@@ -71,8 +82,11 @@ def main():
         try:
             while True:
                 conn, _ = server.accept()
+                connection = conn
                 with conn:
-                    conn.settimeout(30)
+                    # Gateway owns the task deadline. Model responses may take longer
+                    # than an individual CAD operation; idle transport is not a fault.
+                    conn.settimeout(None)
                     data = b''
                     try:
                         while True:

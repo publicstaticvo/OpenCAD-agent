@@ -14,7 +14,8 @@
     "web": "vite --host 127.0.0.1",
     "build": "vite build",
     "test:eval": "tsx scripts/eval-text-to-cad.ts --offline",
-    "test:live": "tsx scripts/eval-text-to-cad.ts"
+    "test:live": "tsx scripts/eval-text-to-cad.ts",
+    "test:e2e:live": "playwright test --config playwright.live.config.ts"
   },
   "dependencies": {
     "openai": "7.19.0",
@@ -23,7 +24,9 @@
     "react-dom": "19.3.1",
     "three": "0.186.1",
     "typebox": "1.3.27",
-    "ws": "8.22.0"
+    "undici": "8.12.3",
+    "ws": "8.22.0",
+    "yaml": "2.9.1"
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",

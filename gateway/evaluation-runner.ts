@@ -30,7 +30,7 @@ export async function runEvaluation(dataset:Dataset,runner:TextRunner,directory:
     if(pass||repairs>=1||attempt===1)break;
     repairs++;
    }
-   rows.push({id:c.id,expected:c.expected,pass:pass&&repairs<=dataset.maxRepairCount,firstSuccess:pass&&repairs===0,repairs,toolCalls,providerRequests,reportedCostUsd:mode==='offline'?0:usageKnown?reportedCost:null,durationMs:Date.now()-started,userInterventions:0,status,error});
+   rows.push({id:c.id,expected:c.expected,pass:pass&&repairs<=dataset.maxRepairCount,firstSuccess:pass&&repairs===0,repairs,toolCalls,providerRequests,reportedCostUsd:null,durationMs:Date.now()-started,userInterventions:0,status,error});
   }
  }finally{await supervisor.close();store.close();}
  const positives=rows.filter(x=>x.expected==='commit');

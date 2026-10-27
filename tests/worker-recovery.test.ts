@@ -1,6 +1,6 @@
 import {test,expect} from 'vitest';
 import {RevisionStore} from '../gateway/revision-store.ts';import {Supervisor,type Job} from '../gateway/supervisor.ts';
-import plate from './fixtures/models/plate.json';import {mkdtempSync,readFileSync,rmSync} from 'node:fs';import {join} from 'node:path';import {tmpdir} from 'node:os';import {once} from 'node:events';import {spawnSync} from 'node:child_process';import {createHash} from 'node:crypto';
+import plate from './fixtures/models/plate.json';import {mkdtempSync,readFileSync,rmSync,existsSync} from 'node:fs';import {join} from 'node:path';import {tmpdir} from 'node:os';import {once} from 'node:events';import {spawnSync} from 'node:child_process';import {createHash} from 'node:crypto';
 const edit={operations:[{op:'set_parameter',feature:'hole',parameter:'diameter',value:8}],criteria:{bbox:[80,60,10],volume:47497.34517542564,parameters:[{feature:'hole',parameter:'diameter',value:8}]}};
 const digest=(p:string)=>createHash('sha256').update(readFileSync(p)).digest('hex');
 async function setup(options:any={}){const dir=mkdtempSync(join(tmpdir(),'cad-supervisor-')),store=new RevisionStore(dir);store.createDocument('plate');const s=await Supervisor.start(store,options);return{dir,store,s,async close(){await s.close();store.close();rmSync(dir,{recursive:true,force:true});}};}
@@ -24,6 +24,12 @@ test.each(['opened','modified','prepared'])('actual Worker SIGKILL at %s protect
   expect((await run(s,1,'retry',edit)).status).toBe('committed');
  }finally{await x.close();}
 });
+test.each(['opened','modified','prepared'])('cancellation at actual CAD phase %s keeps the existing formal package',async phase=>{
+ let cancel=false,s:Supervisor;const x=await setup({observe(p:string,job:Job){if(cancel&&p===phase)s.cancelJob(job.documentId,job.operationId);}});s=x.s;
+ try{await run(s,0,'create',plate);const path=x.store.artifactPath('plate',1,'model.FCStd'),before=digest(path);cancel=true;
+  expect((await run(s,1,'cancel-phase',edit)).status).toBe('cancelled');expect(x.store.snapshot('plate').revision).toBe(1);expect(digest(path)).toBe(before);
+ }finally{await x.close();}
+});
 test('native hang deadline and cancellation before commit never change HEAD',async()=>{
  let mode='none',s:Supervisor;const x=await setup({operationMs:80,async observe(phase:string,job:Job){if(mode==='hang'&&phase==='opened')s.activeWorker!.process.kill('SIGSTOP');if(mode==='cancel'&&phase==='prepared')s.cancelJob(job.documentId,job.operationId);}});s=x.s;
  try{
@@ -33,24 +39,27 @@ test('native hang deadline and cancellation before commit never change HEAD',asy
  const y=await setup({async observe(phase:string,job:Job){if(phase==='prepared')y.s.cancelJob(job.documentId,job.operationId);}});
  try{expect((await run(y.s,0,'cancel',plate)).status).toBe('cancelled');expect(y.store.snapshot('plate').revision).toBe(0);}finally{await y.close();}
 });
-test('Gateway SIGKILL persists interrupted state, reaps its Worker and reopens original model',async()=>{
+test.each(['immediate','after-worker-exit'])('Gateway SIGKILL recovery %s preserves interrupted state and reopens original model',async timing=>{
  const x=await setup();try{
   await run(x.s,0,'create',plate);const before=digest(x.store.artifactPath('plate',1,'model.FCStd'));await x.s.close();x.store.close();
   const child=spawnSync(process.execPath,['--import','tsx','tests/helpers/gateway-crash.ts',x.dir,JSON.stringify(edit)],{encoding:'utf8',timeout:15000});expect(child.signal,child.stderr).toBe('SIGKILL');
+  if(timing==='after-worker-exit'){
+   const {pid}=JSON.parse(readFileSync(join(x.dir,'worker-lease.json'),'utf8'));
+   await expect.poll(()=>{const path=`/proc/${pid}/stat`;if(!existsSync(path))return true;const stat=readFileSync(path,'utf8');return ['Z','X'].includes(stat.slice(stat.lastIndexOf(')')+2).split(' ')[0]);},{timeout:5000}).toBe(true);
+  }
   const store=new RevisionStore(x.dir),s=await Supervisor.start(store);try{
    expect(s.job('plate','crash').status).toBe('interrupted');expect(store.snapshot('plate').revision).toBe(1);expect(digest(store.artifactPath('plate',1,'model.FCStd'))).toBe(before);
    expect((await run(s,1,'fresh',edit)).status).toBe('committed');expect(store.snapshot('plate').revision).toBe(2);
   }finally{await s.close();store.close();}
  }finally{await x.close();}
 });
-test('only one Supervisor owns a data directory; queued stale and cancelled jobs never execute',async()=>{
+test('only one Supervisor owns a data directory and a project rejects concurrent writes',async()=>{
  const x=await setup();try{
   await expect(Supervisor.start(x.store)).rejects.toThrow(/already owns/i);
-  x.s.submit('plate',0,'one',plate);x.s.submit('plate',0,'stale',plate);x.s.submit('plate',0,'cancel_queued',plate);
-  expect(x.s.cancelJob('plate','cancel_queued').status).toBe('cancelled');
+  x.s.submit('plate',0,'one',plate);
+  expect(()=>x.s.submit('plate',0,'second',plate)).toThrow('项目正在修改');
   expect((await x.s.waitForJob('plate','one')).status).toBe('committed');
-  expect((await x.s.waitForJob('plate','stale')).error).toMatch(/conflict/i);
-  expect((await x.s.waitForJob('plate','cancel_queued')).status).toBe('cancelled');
+  expect(()=>x.s.submit('plate',0,'stale',plate)).toThrow(/conflict/i);
   expect(x.store.snapshot('plate').revision).toBe(1);
  }finally{await x.close();}
 });

@@ -1,30 +1,38 @@
-# CAD Agent — 阶段一受限纵切
+# OpenCAD Agent
 
-本地单用户 Text-to-CAD 工作区：React/Three.js → HTTP/WS Gateway/Pi → 独立原生 FreeCAD Worker。正式模型必须经过候选隔离、独立文件/几何验收和 SQLite Revision CAS 提交。支持单 Body/单实体、平面 line/circle 草图、命名约束、Pad/Pocket 与白名单参数修改。**目前应用只显式启用离线固定样例 fake；真实模型能力尚待授权评测。** 不支持任意机械件、STEP 编辑、图像、装配、工程图或 Python 执行入口。
+本地单用户 Text-to-CAD 工作区：React/Three.js → HTTP/WS Gateway/Pi → 独立原生 FreeCAD Worker。正式模型必须经过候选隔离、独立文件/几何验收和 SQLite Revision CAS 提交。支持单 Body/单实体、平面 line/circle 草图、命名约束、Pad/Pocket 与白名单参数修改。在线模式通过网页配置兼容 OpenAI 的模型服务，另提供离线固定样例模式。支持范围不包含 STEP 编辑、图像、装配、工程图或 Python 执行入口。
 
 ## 本机启动
 
-要求 Linux（UDS、进程组、/proc、util-linux 的 `/usr/bin/flock`）、锁定 Node24.22.1、实际 FreeCAD1.1.3/Python3.11.14/OCCT7.8.1 运行时和 Chrome/Chromium。`npm ci` 使用根锁文件安装应用依赖；不安装/改动 Pi 上游工作区。Pi 源码通过本地 source alias 复用，必须另行准备与 `docs/pi-source-sha256.json` 一致的 `pi/`；它未复制进应用 Git 历史。当前来源/调查及缺失时的处理见[准备审查](docs/implementation-readiness.md)。不要将个人 Pi 安装目录/登录信息作为应用运行依赖。
+要求 Linux（UDS、进程组、/proc、util-linux 的 `/usr/bin/flock`）、锁定 Node24.22.1、实际 FreeCAD1.1.3/Python3.11.14/OCCT7.8.1 运行时和 Chrome/Chromium。`npm ci` 使用根锁文件安装应用依赖；不安装 Pi 上游工作区依赖。Pi 源码通过本地 source alias 复用，必须另行准备与 `docs/pi-source-sha256.json` 一致的 `pi/`。应用维护的 `openai-client.ts`、`openai-completions.ts` 和 `openai-responses.ts` 三个文件包含关闭 SDK 默认超时的适配，由应用 Git 管理；准备其余 Pi 源码时保留这些文件，再运行指纹检查。其余 Pi 源码未复制进应用 Git 历史。当前来源/调查及缺失时的处理见[准备审查](docs/implementation-readiness.md)。不要将个人 Pi 安装目录/登录信息作为应用运行依赖。
 
 ```bash
 npm ci
+mkdir -p .work/tmp
+export TMPDIR="$PWD/.work/tmp"
 npm run verify:pi
 # 指向完整解包的匹配 FreeCAD AppImage；不要用默认/conda Python 代替
 export FREECAD_RUNTIME_ROOT=/absolute/path/to/FreeCAD/squashfs-root
 npm run doctor
 npm run build
-CAD_PROVIDER=fake npm run dev
+npm run dev
 ```
 
 `doctor` 会实际 import native modules、检查精确版本、绑定 UDS 并检查 fd 内核锁的持有/竞争/释放，失败必须解决。当前机器忽略的 `runtime.local.json` 仅为本机配置，不能依赖 `/tmp` 在部署后永久存在。AppImage SHA256及解包探针见准备审查。实际 Worker 不加载 GUI，子进程剔除外层 PYTHONPATH/PYTHONHOME/LD_LIBRARY_PATH/DISPLAY。
 
-打开 `http://127.0.0.1:3000`，读取启动日志指定的本地 `data/access-token` 作为访问密钥（不要发给他人或提交仓库），创建空项目，复制 UI 中的离线样例。环境可显式提供 `CAD_ACCESS_TOKEN`（至少24字符）。浏览器只在当前标签页保存访问密钥，模型服务密钥不会进入浏览器。不要把本服务直接暴露到公网。`CAD_DATA_DIR` 默认 `data/`；`CAD_HOST` 默认 loopback；非同源前端需配置 `CAD_ALLOWED_ORIGINS`。开发前端可另开 `npm run web`，允许对应5173 origin；正式入口使用 `dist/` 静态资源。
+打开 `http://127.0.0.1:3000`，读取启动日志指定的本地 `data/access-token` 作为访问密钥。连接后填写模型服务的 baseUrl 和 API key，点击“获取模型列表”，选择模型并保存，然后创建项目。程序自动确定模型限制并生成服务端配置。环境可显式提供 `CAD_ACCESS_TOKEN`（至少24字符）。浏览器只在当前标签页保存工作区访问密钥；模型 API key 仅用于配置请求，保存于服务端私有文件。`CAD_DATA_DIR` 默认 `data/`；`CAD_HOST` 默认 loopback；非同源前端需配置 `CAD_ALLOWED_ORIGINS`。开发前端可另开 `npm run web`，允许对应5173 origin；正式入口使用 `dist/` 静态资源。服务和数据目录应处于可信本机或受保护环境。
 
-样例：`创建80×60×10 mm孔板，孔径6 mm，孔中心20,15 mm`，再用属性或文字 `修改 hole.diameter 为 8 mm`。fake 用精确样例和显式命名修改执行真实 Pi/FreeCAD 链路，**不是**通用自然语言模型。未配置 `CAD_PROVIDER=fake` 时建模入口禁用，系统不会读取恰好存在的通用 API Key 或个人 Pi auth。
+样例：`创建40×30×10 mm长方体`，再通过属性面板修改命名尺寸。在线设置可选择 OpenAI Chat Completions 或 OpenAI Responses；保存前实际验证文本流和只读 CAD 工具往返。离线模式使用 `CAD_PROVIDER=fake npm run dev`，支持明确尺寸的孔板、垫套、台阶块和指定命名参数修改；它使用固定规则选择 CAD 操作。`CAD_PROVIDER=none npm run dev` 禁用模型建模。程序仅使用网页保存或 `CAD_MODEL_CONFIG` 显式指定的凭据。
+
+网页配置、YAML 启动、模型限制来源、文件权限以及真实模型测试说明见[在线模型配置与验证](docs/online-mode.md)。模型设置提供整个任务、单次模型请求、单次 CAD 操作三项超时，单位秒，默认均为 0（不设超时）。公司本地模型费用显示“未配置”。
+
+工作区支持项目新建、列表、切换及改名，每个项目拥有独立正式模型和修订；项目内支持多个独立历史与上下文的对话。所有对话共享该项目当前模型，同项目同时只接受一个未结束任务。执行过程中持续显示实际文字、CAD 工具及保存/重开/导出事件，可选择关键或完整执行记录。接口、迁移与恢复约定见[工作区功能说明](docs/workspace-contracts.md)，实际测试范围见[在线验证记录](docs/online-validation.md)。[下一阶段实施方案](docs/next-stage-plan.md)保留需求及验收依据。
 
 ## 测试与交付状态
 
 ```bash
+mkdir -p .work/tmp
+export TMPDIR="$PWD/.work/tmp"
 npm run typecheck
 npm run test:unit
 npm run test:cad

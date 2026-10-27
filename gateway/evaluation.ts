@@ -19,7 +19,7 @@ export function readDataset(path:string):Dataset{
  if(data.cases.filter((c:EvaluationCase)=>c.expected==='commit').length!==6)throw new Error('Expected six goldens');
  return data;
 }
-export interface Authorization{approved:true;approvalId:string;expiresAt:string;datasetSha256:string;dataScope:string;maxUsd:number;providerBillingCapConfirmed:true;provider:{protocol:'openai-completions';baseUrl:string;model:string;contextWindow:number;maxTokens:number;ratesUsdPerMillion:{input:number;output:number}}}
+export interface Authorization{approved:true;approvalId:string;expiresAt:string;datasetSha256:string;dataScope:string;maxUsd:number;providerBillingCapConfirmed:true;provider:{protocol:'openai-completions'|'openai-responses';baseUrl:string;model:string;contextWindow:number;maxTokens:number;ratesUsdPerMillion:{input:number;output:number}}}
 const finitePositive=(v:unknown):v is number=>typeof v==='number'&&Number.isFinite(v)&&v>0;
 export function authorizeLive(input:unknown,env:Record<string,string|undefined>,dataset:string):Authorization{
  if(env.RUN_LIVE_CAD!=='1')throw new Error('Live blocked: RUN_LIVE_CAD=1 required before reading credentials');
@@ -27,7 +27,7 @@ export function authorizeLive(input:unknown,env:Record<string,string|undefined>,
  if(!a||a.approved!==true||!a.approvalId||!Number.isFinite(Date.parse(a.expiresAt))||Date.parse(a.expiresAt)<=Date.now())throw new Error('Live blocked: explicit unexpired approval required');
  if(a.datasetSha256!==sha256(readFileSync(dataset)))throw new Error('Live blocked: approved dataset hash mismatch');
  if(a.dataScope!=='text-and-structured-cad-summary-only'||a.providerBillingCapConfirmed!==true||!finitePositive(a.maxUsd))throw new Error('Live blocked: data boundary and provider billing cap approval required');
- const p=a.provider;if(!p||p.protocol!=='openai-completions'||!p.model||!Number.isSafeInteger(p.contextWindow)||p.contextWindow<1024||!Number.isSafeInteger(p.maxTokens)||p.maxTokens<1||p.maxTokens>=p.contextWindow)throw new Error('Live blocked: explicit provider/model/token limits required');
+ const p=a.provider;if(!p||!['openai-completions','openai-responses'].includes(p.protocol)||!p.model||!Number.isSafeInteger(p.contextWindow)||p.contextWindow<1024||!Number.isSafeInteger(p.maxTokens)||p.maxTokens<1||p.maxTokens>=p.contextWindow)throw new Error('Live blocked: explicit provider/model/token limits required');
  const url=new URL(p.baseUrl);if(url.username||url.password||url.search||url.hash||!(url.protocol==='https:'||url.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(url.hostname)))throw new Error('Live blocked: invalid approved endpoint');
  if(!p.ratesUsdPerMillion||!finitePositive(p.ratesUsdPerMillion.input)||!finitePositive(p.ratesUsdPerMillion.output))throw new Error('Live blocked: verified upper pricing rates required');
  return a;

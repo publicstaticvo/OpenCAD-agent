@@ -36,7 +36,7 @@ export function assertContract(kind: string, value: unknown): void {
   const schema = registry[kind];
   if (!schema || !isJson(value) || !check(schema,value)) throw new Error(`Invalid ${kind}: strict CAD schema`);
 }
-export const budgets = {maxToolCalls:20, taskMs:180000, operationMs:30000, startupMs:15000, frameBytes:1048576} as const;
+export const budgets = {maxToolCalls:20, taskMs:0, operationMs:0, startupMs:15000, frameBytes:1048576} as const;
 export interface CadOperation { op:string; [key:string]:unknown }
 export interface Criteria { bbox:[number,number,number]; volume:number; parameters?:{feature:string;parameter:string;value:number}[] }
 export interface ModelProgram {operations:CadOperation[];criteria:Criteria}
@@ -45,5 +45,5 @@ export interface RpcRequest {jsonrpc:'2.0';id:string|number;method:string;params
 export type RpcResponse = {jsonrpc:'2.0';id:string|number;result:unknown} | {jsonrpc:'2.0';id:string|number;error:{code:number;message:string;data?:unknown}};
 export interface Feature {id:string;label:string;type:string;parent:string|null;parameters:Record<string,number>;constraints?:Record<string,number>}
 export interface CandidateResult {candidateId:string;manifest:Record<string,{sha256:string;bytes:number}>;tree:Feature[];validation:{volume:number;bbox:number[];solids:number}}
-export interface AppEvent {seq:number;documentId:string;jobId:string|null;type:string;revision:number;candidateId:string|null;data:unknown}
-export interface DocumentSnapshot {documentId:string;revision:number;lastSeq:number;tree:Feature[];artifacts:Record<string,string>;jobs:unknown[]}
+export interface AppEvent {seq:number;documentId:string;jobId:string|null;type:string;revision:number;candidateId:string|null;conversationId?:string|null;data:unknown}
+export interface DocumentSnapshot {documentId:string;name?:string;conversations?:any[];progress?:AppEvent[];revision:number;lastSeq:number;tree:Feature[];artifacts:Record<string,string>;jobs:unknown[]}

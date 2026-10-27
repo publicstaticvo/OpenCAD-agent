@@ -11,11 +11,15 @@ export async function resolveRuntime():Promise<string>{
 export class RpcError extends Error {constructor(public code:number,message:string){super(message);}}
 export class WorkerClient {
  private socket!:Socket;private directory='';private closed:Error|null=null;private seq=0;private buffer=Buffer.alloc(0);
- private pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void;timer:ReturnType<typeof setTimeout>}>();
+ private pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void;timer:ReturnType<typeof setTimeout>|undefined;method:string;candidateId?:string;progressSequence:number;progressIndex:number}>();
+ private operationMs:number=budgets.operationMs;
+ private onProgress?:(value:any)=>void;
  socketPath='';process!:ChildProcess;hello:any;logs='';
  private constructor(){}
- static async start(opts:{runtimeRoot?:string;workspace?:string;startupMs?:number}={}):Promise<WorkerClient>{
+ static async start(opts:{runtimeRoot?:string;workspace?:string;startupMs?:number;operationMs?:number;onProgress?:(value:any)=>void}={}):Promise<WorkerClient>{
   const c=new WorkerClient(),root=opts.runtimeRoot??await resolveRuntime();
+  c.onProgress=opts.onProgress;
+  c.operationMs=opts.operationMs??budgets.operationMs;
   if(!root||!isAbsolute(root))throw new Error('Invalid runtime root');
   try{await stat(join(root,'usr/bin/python'));}catch{throw new Error('Invalid runtime: bundled Python missing');}
   c.directory=await mkdtemp(join(tmpdir(),'cad-w-'));c.socketPath=join(c.directory,'worker.sock');
@@ -36,7 +40,7 @@ export class WorkerClient {
    c.socket.on('error',e=>c.fail(e));c.socket.on('close',()=>c.fail(new Error('Worker connection closed')));
    c.socket.on('data',b=>c.receive(Buffer.isBuffer(b)?b:Buffer.from(b)));
    c.hello=await c.request('hello',{},Math.max(1,until-Date.now()));
-   if(c.hello.protocolVersion!==1||JSON.stringify(c.hello.runtime)!==JSON.stringify({freecad:'1.1.3',python:'3.11.14',occt:'7.8.1',gui:0}))throw new Error('Worker runtime/protocol drift');
+   if(c.hello.protocolVersion!==1||!c.hello.capabilities?.includes('cad_progress')||JSON.stringify(c.hello.runtime)!==JSON.stringify({freecad:'1.1.3',python:'3.11.14',occt:'7.8.1',gui:0}))throw new Error('Worker runtime/protocol drift');
    return c;
   }catch(e){await c.close();throw e;}
  }
@@ -46,22 +50,33 @@ export class WorkerClient {
   while((pos=this.buffer.indexOf(10))>=0){
    if(pos>budgets.frameBytes){this.fail(new Error('Worker frame too large'));return;}
    const line=this.buffer.subarray(0,pos);this.buffer=this.buffer.subarray(pos+1);
-   try{const msg=JSON.parse(line.toString('utf8'));if(msg.jsonrpc!=='2.0'||typeof msg.id!=='number'||!this.pending.has(msg.id))throw new Error('Unmatched Worker response');
+   try{const msg=JSON.parse(line.toString('utf8'));
+    if(msg.jsonrpc==='2.0'&&msg.method==='cad_progress'&&!Object.hasOwn(msg,'id')){
+     const p=msg.params,request=this.pending.get(p?.requestId);
+     if(!request||request.method!=='prepare_candidate'||p.candidateId!==request.candidateId||!['geometry','save','reopen','export_step','export_glb'].includes(p.stage)||!['start','complete'].includes(p.status)||!Number.isSafeInteger(p.sequence)||p.sequence<=request.progressSequence||Object.keys(p).sort().join(',')!=='candidateId,requestId,sequence,stage,status')throw new Error('Invalid Worker progress notification');
+     const expected=['geometry:start','geometry:complete','save:start','save:complete','reopen:start','reopen:complete','export_step:start','export_step:complete','export_glb:start','export_glb:complete'];
+     if(`${p.stage}:${p.status}`!==expected[request.progressIndex++])throw new Error('Worker progress stage out of order');
+     request.progressSequence=p.sequence;this.onProgress?.(p);continue;
+    }
+    if(msg.jsonrpc!=='2.0'||typeof msg.id!=='number'||!this.pending.has(msg.id))throw new Error('Unmatched Worker response');
     const hasResult=Object.hasOwn(msg,'result'),hasError=Object.hasOwn(msg,'error');
     if(hasResult===hasError||hasError&&(!msg.error||typeof msg.error!=='object'||Array.isArray(msg.error)||!Number.isSafeInteger(msg.error.code)||typeof msg.error.message!=='string'))throw new Error('Invalid Worker response');
-    const p=this.pending.get(msg.id)!;this.pending.delete(msg.id);clearTimeout(p.timer);
+    const p=this.pending.get(msg.id)!;
+    if(!hasError&&p.method==='prepare_candidate'&&p.progressIndex!==10)throw new Error('Worker preparation completed without all progress stages');
+    this.pending.delete(msg.id);clearTimeout(p.timer);
     if(hasError)p.reject(new RpcError(msg.error.code,msg.error.message));else p.resolve(msg.result);
    }catch(e){this.fail(e as Error);return;}
   }
   if(this.buffer.length>budgets.frameBytes)this.fail(new Error('Worker frame too large'));
  }
- async request(method:string,params:unknown,timeout:number=budgets.operationMs):Promise<any>{
+ async request(method:string,params:unknown,timeout:number=this.operationMs):Promise<any>{
+  if(!Number.isSafeInteger(timeout)||timeout<0||timeout>2147483647)throw new Error('Invalid Worker operation timeout');
   if(this.closed)throw this.closed;
   const id=++this.seq,frame=JSON.stringify({jsonrpc:'2.0',id,method,params})+'\n';
   if(Buffer.byteLength(frame)>budgets.frameBytes)throw new Error('Request frame too large');
   return new Promise((resolve,reject)=>{
-   const timer=setTimeout(()=>this.fail(new Error(`Worker timeout: ${method}; outcome unknown, no automatic retry`)),timeout);
-   this.pending.set(id,{resolve,reject,timer});this.socket.write(frame,e=>{if(e)this.fail(e);});
+   const timer=timeout>0?setTimeout(()=>this.fail(new Error(`Worker timeout: ${method}; outcome unknown, no automatic retry`)),timeout):undefined;
+   this.pending.set(id,{resolve,reject,timer,method,candidateId:(params as any)?.envelope?.candidateId,progressSequence:0,progressIndex:0});this.socket.write(frame,e=>{if(e)this.fail(e);});
   });
  }
  private fail(error:Error){

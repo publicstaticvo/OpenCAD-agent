@@ -1,1 +1,8 @@
-pi/
+pi/.github
+pi/.husky
+/model.yaml
+/advanced-model.yaml
+/.work/
+/data/
+/evals/results/
+AGENTS.md

@@ -9,6 +9,11 @@ const clients:WorkerClient[]=[];
 afterEach(async()=>{await Promise.all(clients.splice(0).map(c=>c.close()));});
 async function worker(){const c=await WorkerClient.start();clients.push(c);return c;}
 describe('real native Worker boundary',()=>{
+ test('model thinking idle time does not disconnect the native worker',async()=>{
+  const c=await worker();
+  await new Promise(resolve=>setTimeout(resolve,31000));
+  expect(await c.request('inspect_document',{})).toEqual({tree:[],loaded:false});
+ },40000);
  test('handshake verifies native versions and concurrent responses correlate',async()=>{
   const c=await worker();expect(c.hello.runtime).toEqual({freecad:'1.1.3',python:'3.11.14',occt:'7.8.1',gui:0});
   expect(c.hello.protocolVersion).toBe(1);expect(c.hello.workerInstanceId).toBeTruthy();

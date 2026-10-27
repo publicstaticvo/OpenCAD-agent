@@ -7,6 +7,7 @@ from pathlib import Path
 import struct
 import subprocess
 import sys
+import threading
 import FreeCAD as App
 from worker.validation import validate_document,shape_metrics,compare
 from worker.model_ops import bodies,inspect_document
@@ -70,46 +71,77 @@ def glb_metrics(path,shape):
     if any(abs(a-b)>0.0001+1e-7 for a,b in zip(low+high,want_low+want_high)):raise ValueError('GLB axis/scale mismatch')
     return dict(triangles=triangles,bounds=[low,high],mapping='(x,z,-y)/1000',meshes=len(data['meshes']))
 
-def verify_saved(directory):
+def verify_saved(directory,progress=lambda stage,status: None):
     directory=Path(directory)
     criteria=json.loads((directory/'criteria.json').read_text())
+    progress('reopen','start')
     doc=App.openDocument(str(directory/'model.FCStd'))
     if doc is None:raise ValueError('Invalid FCStd')
     imported=None
     try:
         validation=validate_document(doc,criteria)
+        progress('reopen','complete')
         tree=inspect_document(doc)
         body=bodies(doc)[0]
         import Import
+        progress('export_step','start')
         Import.export([body],str(directory/'model.step'))
         imported=App.newDocument('StepCheck')
         Import.insert(str(directory/'model.step'),imported.Name);imported.recompute()
         shapes=[o.Shape for o in imported.Objects if hasattr(o,'Shape') and not o.Shape.isNull() and len(o.Shape.Solids)]
         if len(shapes)!=1:raise ValueError('STEP solid count mismatch')
         step=shape_metrics(shapes[0]);compare(step,criteria)
+        progress('export_step','complete')
+        progress('export_glb','start')
         body.Shape.tessellate(0.1)
         Import.export([body],str(directory/'preview.glb'))
         validation.update(step=step,glb=glb_metrics(directory/'preview.glb',body.Tip.Shape),verifierPid=os.getpid(),meshFeatureId=body.CadFeatureId)
+        progress('export_glb','complete')
         write_json(directory/'tree.json',tree);write_json(directory/'validation.json',validation)
         return validation
     finally:
         if imported:App.closeDocument(imported.Name)
         App.closeDocument(doc.Name)
 
-def prepare_revision(doc,directory,criteria):
+def prepare_revision(doc,directory,criteria,progress=lambda stage,status: None):
     directory=Path(directory)
     (directory/'manifest.json').unlink(missing_ok=True)
+    progress('geometry','start')
     validate_document(doc,criteria)
+    progress('geometry','complete')
     write_json(directory/'criteria.json',criteria)
+    progress('save','start')
     doc.saveAs(str(directory/'model.FCStd'))
+    progress('save','complete')
     # Use the same pinned interpreter, but a fresh native process and document.
     lib=str(Path(App.__file__).resolve().parent)
     root=str(Path(__file__).resolve().parents[1])
-    code='import sys;sys.path[:0]='+repr([lib,root])+';from worker.artifacts import verify_saved;verify_saved(sys.argv[1])'
+    read_fd,write_fd=os.pipe()
+    code='import sys,os,json;sys.path[:0]='+repr([lib,root])+';from worker.artifacts import verify_saved;channel=os.fdopen(int(sys.argv[2]),"w");verify_saved(sys.argv[1],lambda stage,status: (channel.write(json.dumps([stage,status])+"\\n"),channel.flush()))'
+    progress_errors=[]
+    def relay():
+        try:
+            with os.fdopen(read_fd) as channel:
+                for line in channel:
+                    stage,status=json.loads(line)
+                    progress(stage,status)
+        except Exception as exc:
+            progress_errors.append(exc)
+    reader=threading.Thread(target=relay,daemon=True)
+    reader.start()
+    process=None
     try:
-        process=subprocess.run([sys.executable,'-c',code,str(directory)],capture_output=True,timeout=30)
+        process=subprocess.Popen([sys.executable,'-c',code,str(directory),str(write_fd)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,pass_fds=(write_fd,))
+        os.close(write_fd);write_fd=None
+        stdout,stderr=process.communicate(timeout=30)
     except subprocess.TimeoutExpired as exc:raise ValueError('Independent verifier timeout') from exc
-    if process.returncode!=0:raise ValueError('Independent verifier failed: '+process.stderr.decode(errors='replace')[-2000:])
+    finally:
+        if write_fd is not None:os.close(write_fd)
+        if process is not None and process.poll() is None:process.kill();process.communicate()
+        reader.join(timeout=5)
+    if reader.is_alive():raise ValueError('Verifier progress channel did not close')
+    if progress_errors:raise progress_errors[0]
+    if process.returncode!=0:raise ValueError('Independent verifier failed: '+stderr.decode(errors='replace')[-2000:])
     validation=json.loads((directory/'validation.json').read_text())
     if json.loads((directory/'tree.json').read_text())!=inspect_document(doc):raise ValueError('Saved feature history drift')
     manifest={}
