@@ -1,4 +1,4 @@
-import {useEffect,useMemo,useState,useSyncExternalStore} from 'react';
+import {useEffect,useMemo,useRef,useState,useSyncExternalStore} from 'react';
 import {Api,ApiError} from './api.ts';
 import {WorkspaceStore} from './store.ts';
 import {Viewer} from './viewer.tsx';
@@ -40,8 +40,9 @@ function ExecutionRecord({api,events,job,full,saved}:{api:Api;events:AppEvent[];
  for(const event of own){const data=event.data as any;if(data.message)messages.set(data.messageIndex,data.message);}
  const visible=terminal.has(job.status)&&job.agent?job.agent.messages:Array.from(messages).sort(([a],[b])=>a-b).map(([,message])=>message);
  const thinking=visible.flatMap((m:any)=>m.content??[]).filter((c:any)=>c.type==='thinking').map((c:any)=>c.thinking).join('\n');
- return <>{own.filter(event=>event.type==='cad_progress'||event.type.startsWith('cad_operation_')||event.type==='candidate_snapshot'||['tool_execution_start','tool_execution_end'].includes((event.data as any).type)).map(event=>{const data=event.data as any;const label=event.type==='candidate_snapshot'?`候选快照 ${data.sequence}${data.geometry?` · 体积 ${Number(data.geometry.volume).toFixed(3)} mm³`:''}`:event.type.startsWith('cad_operation_')?`${data.stage??data.stepId} ${({cad_operation_start:'开始真实 CAD 操作',cad_operation_complete:'CAD 批次完成',cad_operation_failed:'CAD 操作失败',cad_operation_rejected:'写入被批准范围拒绝'} as Record<string,string>)[event.type]}`:`${data.name} ${data.type==='tool_execution_start'?'开始':data.isError?'失败':'完成'}`;return <div className="progress-entry" key={event.seq}>{event.type==='cad_progress'?<CadProgress data={data}/>:label}{event.type==='candidate_snapshot'&&data.sketch&&<Checkpoint api={api} snapshot={data} committed={job.status==='committed'}/>} {full&&<pre>{JSON.stringify(data.operations??data.operation??data.args??data.result??data.error??'',null,2)}</pre>}</div>;})}
- {visible.filter((m:any)=>m.role==='assistant').map((m:any,index:number)=><p className="assistant-message" key={index}>{m.content?.filter((c:any)=>c.type==='text').map((c:any)=>c.text).join(' ')}</p>)}
+ return <>
+ {visible.filter((m:any)=>m.role==='assistant').map((m:any)=>m.content?.filter((c:any)=>c.type==='text').map((c:any)=>c.text).join(' ')).filter((text:string)=>text?.trim()).map((text:string,index:number)=><p className="assistant-message" key={index}>{text}</p>)}
+ <details className="execution-activity" open={!terminal.has(job.status)}><summary>CAD 执行记录 · {statuses[job.status]??job.status}</summary>{own.filter(event=>event.type==='cad_progress'||event.type.startsWith('cad_operation_')||event.type==='candidate_snapshot'||['tool_execution_start','tool_execution_end'].includes((event.data as any).type)).map(event=>{const data=event.data as any;const label=event.type==='candidate_snapshot'?`候选快照 ${data.sequence}${data.geometry?` · 体积 ${Number(data.geometry.volume).toFixed(3)} mm³`:''}`:event.type.startsWith('cad_operation_')?`${data.stage??data.stepId} ${({cad_operation_start:'开始真实 CAD 操作',cad_operation_complete:'CAD 批次完成',cad_operation_failed:'CAD 操作失败',cad_operation_rejected:'写入被批准范围拒绝'} as Record<string,string>)[event.type]}`:`${data.name} ${data.type==='tool_execution_start'?'开始':data.isError?'失败':'完成'}`;return <div className="progress-entry" key={event.seq}>{event.type==='cad_progress'?<CadProgress data={data}/>:label}{event.type==='candidate_snapshot'&&data.sketch&&<Checkpoint api={api} snapshot={data} committed={job.status==='committed'}/>} {full&&<pre>{JSON.stringify(data.operations??data.operation??data.args??data.result??data.error??'',null,2)}</pre>}</div>;})}</details>
  {full&&<details><summary>模型内部推理</summary><pre>{thinking||'模型未提供'}</pre></details>}</>;
 }
 function failure(reason:string,report?:any){
@@ -70,6 +71,15 @@ function Workspace({api,id,onLogout,onSettings,onProject}:{api:Api;id:string;onL
  const [savedMessages,setSavedMessages]=useState<any[]>([]),[savedEvents,setSavedEvents]=useState<AppEvent[]>([]);
  const [candidateAsset,setCandidateAsset]=useState<any>(null);
  const [showCandidate,setShowCandidate]=useState(true),[historicNumber,setHistoricNumber]=useState(''),[historical,setHistorical]=useState<LoadedRevision|null>(null);
+ const historyRef=useRef<HTMLDivElement>(null),followHistory=useRef(true);
+ const [following,setFollowing]=useState(true);
+ useEffect(()=>{followHistory.current=true;setFollowing(true);},[conversation]);
+ useEffect(()=>{
+  const history=historyRef.current;if(!history)return;
+  const follow=()=>{if(followHistory.current)history.scrollTop=history.scrollHeight;};
+  const observer=new ResizeObserver(follow);observer.observe(history.firstElementChild!);follow();
+  return()=>observer.disconnect();
+ },[conversation]);
  useEffect(()=>{void store.start();return()=>store.close();},[store]);
  useEffect(()=>{let active=true;api.json('/api/documents').then(data=>{if(active)setProjects(data.documents);}).catch(e=>{if(active)setError(e.message);});return()=>{active=false;};},[api,id]);
  const conversations=state.current?.snapshot.conversations??[];
@@ -100,7 +110,7 @@ function Workspace({api,id,onLogout,onSettings,onProject}:{api:Api;id:string;onL
  useEffect(()=>{let active=true;let asset:any=null;const controller=new AbortController();setHistorical(null);if(!historicNumber)return()=>controller.abort();void(async()=>{const snapshot=await(await api.fetch(`${root}/revisions/${historicNumber}`,{signal:controller.signal})).json();asset=await api.project(id).asset(snapshot.artifacts['preview.glb'],snapshot.revision,controller.signal);if(active)setHistorical({snapshot,asset});else asset.dispose();})().catch(e=>{if(active&&!controller.signal.aborted)setError((e as Error).message);});return()=>{active=false;controller.abort();asset?.dispose();};},[api,root,id,historicNumber]);
  async function submit(intent:string){
   if(disabled||!state.current||!intent.trim())return;
-  setSending(true);setError('');
+  setSending(true);setError('');followHistory.current=true;setFollowing(true);
   try{await api.json(root+'/jobs',{baseRevision:state.current.snapshot.revision,operationId:crypto.randomUUID(),conversationId:conversation,text:intent});setText('');await store.refresh();}
   catch(e){if(e instanceof ApiError&&e.status===409){setError(/revision conflict/i.test(e.message)?'版本已更新，请确认最新模型后重新提交。':e.message);await store.refresh();}else setError((e as Error).message);}
   finally{setSending(false);}
@@ -118,7 +128,9 @@ function Workspace({api,id,onLogout,onSettings,onProject}:{api:Api;id:string;onL
  return <div className="app">
   <header className="topbar"><div className="brand-mark">◈</div><h1>CAD 工作区</h1><label>项目<select aria-label="切换项目" value={id} onChange={e=>onProject(e.target.value)}>{projects.some(p=>p.id===id)?null:<option value={id}>{state.current?.snapshot.name??id}</option>}{projects.map(p=><option key={p.id} value={p.id}>{p.name}{p.activeTasks?' · 任务进行中':''}</option>)}</select></label><button onClick={()=>void createProject()}>新建项目</button><button onClick={()=>void renameProject()}>项目重命名</button><span className={state.connected?'connection connected':'connection'}>{state.connected?'已连接':'连接恢复中'}</span>{api.modelConfigurationEnabled&&<button onClick={onSettings}>模型设置</button>}<button onClick={()=>void store.refresh()}>刷新状态</button><button onClick={onLogout}>退出</button></header>
   <div className="workspace">
-   <aside className="feature-panel"><h2>模型历史</h2><p className="section-note">可编辑的参数化特征</p><nav aria-label="特征树">{tree.map(f=><button key={f.id} className={selected===f.id?'feature selected':'feature'} aria-pressed={selected===f.id} aria-label={`${f.label} ${names[f.type]??f.type}`} onClick={()=>setSelected(f.id)} style={{paddingLeft:f.parent?28:14}}><span className="feature-icon">{f.type==='Sketcher::SketchObject'?'▱':f.type==='PartDesign::Pocket'?'⊖':'◇'}</span><span>{f.label}</span><small>{names[f.type]}</small></button>)}</nav><div className="history-note">单主体 · 单实体<br/>长度单位：mm<br/>特征 ID 跨版本保持</div><div className="downloads">{[['FCStd','model.FCStd'],['STEP','model.step'],['GLB','preview.glb']].map(([label,name])=><button key={name} disabled={!revision||state.pendingRevision!==null||!!state.error} onClick={()=>void download(name)}>下载 {label}</button>)}<small>下载所显示的完整版本 {revision}</small></div></aside>
+   <aside className="feature-panel"><h2>模型历史</h2><p className="section-note">正式修订 {revision} · mm</p><nav aria-label="特征树">{tree.map(f=><button key={f.id} className={selected===f.id?'feature selected':'feature'} aria-pressed={selected===f.id} aria-label={`${f.label} ${names[f.type]??f.type}`} onClick={()=>setSelected(f.id)} style={{paddingLeft:f.parent?28:14}}><span className="feature-icon">{f.type==='Sketcher::SketchObject'?'▱':f.type==='PartDesign::Pocket'?'⊖':'◇'}</span><span>{f.label}</span><small>{names[f.type]}</small></button>)}</nav>
+    <section className="properties"><h2>特征属性</h2>{feature?<><div className="feature-title">{feature.label}<span>{names[feature.type]}</span></div><dl className="identity"><dt>稳定 ID</dt><dd>{feature.id}</dd><dt>所属主体</dt><dd>{feature.parent??feature.id}</dd></dl>{Object.entries(feature.parameters).map(([key,value])=><Parameter key={`${revision}/${feature.id}/${key}`} name={key} value={value} disabled={disabled} submit={v=>void submit(`修改 ${feature.id}.${key} 为 ${v} mm`)}/>)}{!Object.keys(feature.parameters).length&&<p className="section-note">选择草图或拉伸/切除特征查看命名参数。</p>}</>:<p className="section-note">从左侧选择一个特征。</p>}<p className="section-note">属性修改作为建模任务提交，经候选验收后生效。历史版本、断线及加载期间禁止修改。</p></section>
+    <div className="history-note">单主体 · 单实体<br/>特征 ID 跨版本保持</div><div className="downloads">{[['FCStd','model.FCStd'],['STEP','model.step'],['GLB','preview.glb']].map(([label,name])=><button key={name} disabled={!revision||state.pendingRevision!==null||!!state.error} onClick={()=>void download(name)}>下载 {label}</button>)}<small>下载所显示的完整版本 {revision}</small></div></aside>
    <section className="model-panel" aria-label="模型视口">
     <div className="model-toolbar"><strong data-testid="display-revision">{before||historical?`历史版本 ${revision}`:`正式版本 ${revision}`}</strong>
      <label>修订<select aria-label="查看修订" value={historicNumber} onChange={e=>{setBefore(false);setHistoricNumber(e.target.value);}}><option value="">当前正式版本</option>{Array.from({length:state.current?.snapshot.revision??0},(_,i)=>i+1).map(r=><option key={r} value={r}>修订 {r}</option>)}</select></label>
@@ -130,23 +142,23 @@ function Workspace({api,id,onLogout,onSettings,onProject}:{api:Api;id:string;onL
     {state.error&&<div role="alert" className="error-banner">{state.error}。当前完整版本保留，可刷新重试。</div>}
     {candidateVisible?<section className="candidate-panel" data-testid="candidate-panel" data-candidate={latestCandidate.candidateId} data-sequence={latestCandidate.sequence}>
      <h3>候选模型 · 基于正式版本 {latestCandidate.baseRevision} · 尚未提交</h3>
+     {candidateAsset&&<div className="candidate-viewer"><Viewer asset={candidateAsset} selected={false} onSelect={()=>{}}/></div>}
+     {latestCandidate.geometry&&!candidateAsset&&<p>正在读取实际候选模型…</p>}
+     <details className="candidate-data" open={!latestCandidate.geometry}><summary>实际草图、约束与候选特征</summary>
      <SketchPreview snapshot={latestCandidate}/>
      <details open><summary>候选特征与参数</summary><ul>{latestCandidate.tree.map((f:any)=><li key={f.id}>{f.id} · {names[f.type]} · {Object.entries(f.parameters).map(([name,value])=>`${name}=${value} mm`).join('，')}</li>)}</ul></details>
-     {latestCandidate.geometry&&<p>候选几何：[{latestCandidate.geometry.bbox.join(', ')}] mm · {Number(latestCandidate.geometry.volume.toFixed(6))} mm³</p>}
-     {candidateAsset&&<div className="candidate-viewer"><Viewer asset={candidateAsset} selected={false} onSelect={()=>{}}/></div>}
+     </details>{latestCandidate.geometry&&<p>候选几何：[{latestCandidate.geometry.bbox.join(', ')}] mm · {Number(latestCandidate.geometry.volume.toFixed(6))} mm³</p>}
     </section>:loaded?.asset?<Viewer asset={loaded.asset} selected={!!feature} onSelect={()=>setSelected('Body')}/>:<div className="empty-model"><div className="empty-cube">◇</div><h2>{state.pendingRevision!==null?'正在载入模型':'尚无正式模型'}</h2><p>候选只有通过几何与文件验收后才会成为正式版本。</p></div>}
     <footer className="model-footer">{candidateVisible?'左侧特征树及下载仍对应正式版本':feature?`所选：${feature.label} · ${names[feature.type]}`:'选择特征查看参数'}<span>正式模型与候选预览分别标识</span></footer>
    </section>
    <aside className="detail-panel">
-    <section className="properties"><h2>特征属性</h2>{feature?<><div className="feature-title">{feature.label}<span>{names[feature.type]}</span></div><dl className="identity"><dt>稳定 ID</dt><dd>{feature.id}</dd><dt>所属主体</dt><dd>{feature.parent??feature.id}</dd></dl>{Object.entries(feature.parameters).map(([key,value])=><Parameter key={`${revision}/${feature.id}/${key}`} name={key} value={value} disabled={disabled} submit={v=>void submit(`修改 ${feature.id}.${key} 为 ${v} mm`)}/>)}{!Object.keys(feature.parameters).length&&<p className="section-note">选择草图或拉伸/切除特征查看命名参数。</p>}</>:<p className="section-note">从左侧选择一个特征。</p>}<p className="section-note">属性修改作为建模任务提交，经候选验收后生效。历史版本、断线及加载期间禁止修改。</p></section>
-    <section className="task-panel"><h2>建模对话</h2><div className="provider-note">{api.providerMode==='fake'?'离线 fake：批准预定义程序后执行真实 CAD，未调用模型。支持明确尺寸的孔板、垫套和台阶块样例。':api.providerMode==='live'?'已连接模型服务 · 支持参数化长方体、中心贯穿孔及孔径修改，每次任务需要批准。':'尚未配置模型服务，建模入口已禁用。'}</div>
+    <section className="task-panel"><div className="conversation-header"><h2>建模对话</h2><div className="provider-note">{api.providerMode==='fake'?'离线样例 · 真实 FreeCAD · 未调用模型':api.providerMode==='live'?'模型服务已连接 · 每次任务需要批准':'尚未配置模型服务，建模入口已禁用。'}</div>
      <label>当前对话<select aria-label="切换对话" value={conversation} onChange={e=>switchConversation(e.target.value)}><option value="" disabled>选择对话</option>{conversations.map(c=><option key={c.id} value={c.id}>{c.title}{c.activeTasks?' · 任务进行中':''}</option>)}</select></label><div className="conversation-actions"><button onClick={()=>void createConversation()}>新建对话</button><button disabled={!conversation} onClick={()=>void renameConversation()}>对话重命名</button></div><p className="section-note">本项目的所有对话共享当前模型和修订记录。</p>
-     <label>执行记录<select aria-label="执行记录" value={full?'full':'key'} onChange={e=>{const next=e.target.value==='full';setFull(next);localStorage.setItem('cad-progress-display',next?'full':'key');}}><option value="key">关键执行记录</option><option value="full">完整执行记录</option></select></label>
+     <details className="conversation-options"><summary>显示设置与建模示例</summary><label>执行记录<select aria-label="执行记录" value={full?'full':'key'} onChange={e=>{const next=e.target.value==='full';setFull(next);localStorage.setItem('cad-progress-display',next?'full':'key');}}><option value="key">关键执行记录</option><option value="full">完整执行记录</option></select></label>
      {jobs.filter(job=>!terminal.has(job.status)&&job.conversationId!==conversation).map(job=><p className="section-note" key={job.operationId}>后台任务：{conversations.find(c=>c.id===job.conversationId)?.title} · {statuses[job.status]}。{['approved','queued','running','validating','committing'].includes(job.status)?'该任务已获批，占用项目写入资格。':'该任务尚未获批，不会修改模型。'}</p>)}
      <details className="examples"><summary>建模示例</summary>{api.providerMode==='fake'?<><p>创建 80×60×10 mm 孔板，孔径6 mm，孔中心20,15 mm</p><p>创建外径20、内径10、高20 mm 垫套</p><p>创建40×30×10 mm底座，上层20×30×10 mm台阶块</p></>:<><p>创建一个长 40 mm、宽 30 mm、高 10 mm 的长方体。</p><p>在已有长方体上增加一个直径 6 mm 的中心贯穿孔。</p><p>把已有孔径从 6 mm 修改为 8 mm。</p></>}</details>
-     <form className="chat-form" onSubmit={e=>{e.preventDefault();void submit(text);}}><textarea aria-label="建模指令" placeholder="描述尺寸、孔位与建模要求…" value={text} maxLength={8000} disabled={disabled} onChange={e=>setText(e.target.value)}/><button className="primary" disabled={disabled||!text.trim()}>发送任务</button></form>
-     {error&&<p role="alert" data-testid="submission-error" className="submission-error">{error}</p>}
-     <div className="job-list">{[...jobs].filter(job=>job.conversationId===conversation).reverse().map(job=><article className="job" key={job.operationId} data-job-id={job.operationId} data-status={job.status}>
+     </details></div>
+     <div className="job-list" aria-label="对话历史" ref={historyRef} onClickCapture={e=>{if((e.target as Element).closest('summary')){followHistory.current=false;setFollowing(false);}}} onScroll={e=>{const node=e.currentTarget;const next=node.scrollHeight-node.scrollTop-node.clientHeight<48;followHistory.current=next;setFollowing(next);}}><div className="history-content">{!jobs.some(job=>job.conversationId===conversation)&&<p className="conversation-empty">描述零件的形状与尺寸。建模计划经过批准后，执行过程会显示在这里。</p>}{jobs.filter(job=>job.conversationId===conversation).map(job=><article className="job" key={job.operationId} data-job-id={job.operationId} data-status={job.status}>
       <strong>{job.request.text??'结构化建模任务'}</strong><span>{statuses[job.status]??job.status}</span><small>基于版本 {job.baseRevision} · {job.operationId.slice(0,8)}</small>
       {!terminal.has(job.status)&&<button onClick={()=>void cancel(job)}>取消任务</button>}
       {job.status==='awaiting_approval'&&job.plan&&<PlanCard job={job} decide={decision=>void decide(job,decision)}/>}
@@ -157,8 +169,10 @@ function Workspace({api,id,onLogout,onSettings,onProject}:{api:Api;id:string;onL
       {job.status==='committed'&&job.result&&<p className="assistant-message">FreeCAD 验收通过，正式版本 {job.result.revision} 已保存。</p>}
       {job.status==='answered'&&<p className="assistant-message">这条回复没有修改模型，正式版本保持不变。</p>}
       {terminal.has(job.status)&&job.status!=='committed'&&job.status!=='answered'&&job.request.text&&<button disabled={disabled} onClick={()=>void submit(job.request.text)}>重试任务</button>}
-     </article>)}</div>
-     <p className="section-note">正式状态以持久化任务结果为准。取消后重新提交会创建新任务。</p>
+     </article>)}</div></div>
+     {!following&&<button className="latest-message" onClick={()=>{followHistory.current=true;setFollowing(true);const history=historyRef.current;if(history)history.scrollTop=history.scrollHeight;}}>查看最新消息</button>}
+     {error&&<p role="alert" data-testid="submission-error" className="submission-error">{error}</p>}
+     <form className="chat-form" onSubmit={e=>{e.preventDefault();void submit(text);}}><textarea aria-label="建模指令" placeholder="描述尺寸、孔位与建模要求…" value={text} maxLength={8000} disabled={disabled} onChange={e=>setText(e.target.value)}/><div className="composer-footer"><small>候选通过验收后提交正式模型</small><button className="primary" disabled={disabled||!text.trim()}>发送任务</button></div></form>
     </section>
    </aside>
   </div>

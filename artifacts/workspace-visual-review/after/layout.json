@@ -1,0 +1,38 @@
+{
+  ".workspace": {
+    "x": 0,
+    "y": 65,
+    "width": 1440,
+    "height": 895
+  },
+  ".model-panel": {
+    "x": 210,
+    "y": 65,
+    "width": 880,
+    "height": 895
+  },
+  ".detail-panel": {
+    "x": 1090,
+    "y": 65,
+    "width": 350,
+    "height": 895
+  },
+  ".properties": {
+    "x": 0,
+    "y": 388,
+    "width": 209,
+    "height": 445
+  },
+  ".chat-form": {
+    "x": 1091,
+    "y": 808,
+    "width": 349,
+    "height": 152
+  },
+  ".job-list": {
+    "x": 1091,
+    "y": 300.9375,
+    "width": 349,
+    "height": 507.0625
+  }
+}
