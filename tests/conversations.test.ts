@@ -23,12 +23,17 @@ test('project write ownership covers queued jobs, conversations and restore, pre
  const supervisor=await Supervisor.start(store);
  try{
   expect(()=>supervisor.submit('alpha',0,'foreign',plate,foreign.id)).toThrow('对话');
-  const job=supervisor.submit('alpha',0,'first',plate,first.id);
+  const pending=supervisor.submit('alpha',0,'first',plate,first.id);
+  const job=supervisor.approveJob('alpha','first',pending.plan!.planHash);
   expect(supervisor.submit('alpha',0,'first',plate,first.id)).toEqual(job);
-  expect(()=>supervisor.submit('alpha',0,'second',plate,second.id)).toThrow('项目正在修改');
+  expect((store.listDocuments().find((p:any)=>p.id==='alpha') as any).activeTasks).toBe(1);
+  expect(store.listConversations('alpha').find(c=>c.id===first.id).activeTasks).toBe(1);
+  const next=supervisor.submit('alpha',0,'second',plate,second.id);
+  expect(()=>supervisor.approveJob('alpha','second',next.plan!.planHash)).toThrow('项目正在修改');
   expect(()=>store.restoreRevision('alpha',1,0,'restore')).toThrow('项目正在修改');
   supervisor.cancelJob('alpha','first');await supervisor.waitForJob('alpha','first');
   expect(supervisor.submit('alpha',0,'second',plate,second.id).conversationId).toBe(second.id);
+  supervisor.approveJob('alpha','second',next.plan!.planHash);
   supervisor.cancelJob('alpha','second');await supervisor.waitForJob('alpha','second');
   expect(store.snapshot('alpha').revision).toBe(0);
  }finally{await supervisor.close();store.close();}

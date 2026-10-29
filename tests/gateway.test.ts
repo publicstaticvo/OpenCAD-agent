@@ -14,6 +14,8 @@ test('actual HTTP+WS create, commit, replay after snapshot race, controlled arti
   const created=await request(x.app.baseUrl,'/api/documents',{id:'plate'});expect(created.status).toBe(201);
   const initial=await (await request(x.app.baseUrl,'/api/documents/plate')).json();expect(initial.revision).toBe(0);
   const submitted=await request(x.app.baseUrl,'/api/documents/plate/jobs',{baseRevision:0,operationId:'create',program:plate});expect(submitted.status).toBe(202);
+  const pending=await submitted.json();expect(pending.status).toBe('awaiting_approval');expect(x.app.supervisor.activeWorker).toBeNull();
+  expect((await request(x.app.baseUrl,'/api/documents/plate/jobs/create/approve',{planHash:pending.plan.planHash})).status).toBe(200);
   const job=await x.app.supervisor.waitForJob('plate','create');expect(job.status).toBe('committed');
   const resumed=await stream(x.app,'plate',initial.lastSeq);try{
    await until(()=>resumed.messages.some(x=>x.type==='event'&&x.event.type==='committed'));
@@ -46,5 +48,5 @@ test('HTTP text request uses explicitly configured Pi runner and persists comple
  const root=mkdtempSync(join(tmpdir(),'cad-http-agent-'));
  const runner=scriptedTextRunner([{calls:[{name:'cad_apply',args:{operations:plate.operations}}]},{calls:[{name:'cad_finish',args:{criteria:plate.criteria}}]},{text:'validated candidate'}]);
  const app=await createGateway({dataDir:root,accessToken:token,port:0,textRunner:runner});
- try{await request(app.baseUrl,'/api/documents',{id:'plate'});const res=await request(app.baseUrl,'/api/documents/plate/jobs',{baseRevision:0,operationId:'text',text:'create plate'});expect(res.status).toBe(202);expect((await app.supervisor.waitForJob('plate','text')).status).toBe('committed');const snap=await (await request(app.baseUrl,'/api/documents/plate')).json();expect(snap.jobs[0].agent.messages.some((m:any)=>m.role==='assistant')).toBe(true);}finally{await app.close();rmSync(root,{recursive:true,force:true});}
+ try{await request(app.baseUrl,'/api/documents',{id:'plate'});const res=await request(app.baseUrl,'/api/documents/plate/jobs',{baseRevision:0,operationId:'text',text:'create plate'});expect(res.status).toBe(202);const planned=await app.supervisor.waitForJob('plate','text');expect(planned.status).toBe('awaiting_approval');expect((await request(app.baseUrl,'/api/documents/plate/jobs/text/approve',{planHash:planned.plan!.planHash})).status).toBe(200);expect((await app.supervisor.waitForJob('plate','text')).status).toBe('committed');const snap=await (await request(app.baseUrl,'/api/documents/plate')).json();expect(snap.jobs[0].agent.messages.some((m:any)=>m.role==='assistant')).toBe(true);}finally{await app.close();rmSync(root,{recursive:true,force:true});}
 });

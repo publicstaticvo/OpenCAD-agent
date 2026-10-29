@@ -1,10 +1,11 @@
 import {test,expect} from 'vitest';import {mkdtempSync,existsSync,readFileSync,writeFileSync,readdirSync} from 'node:fs';import {tmpdir} from 'node:os';import {join} from 'node:path';import {spawnSync,spawn} from 'node:child_process';import {once} from 'node:events';
 import {RevisionStore} from '../gateway/revision-store.ts';import {Supervisor} from '../gateway/supervisor.ts';import plate from './fixtures/models/plate.json';
+import {approvedProgram} from './helpers/approved-program.ts';
 test.each(['supervisor.lock:partial','supervisor.lock:published','worker-lease.json:partial','worker-lease.json:published'])('real SIGKILL at metadata %s leaves only complete public JSON and restart can commit',async phase=>{
  const root=mkdtempSync(join(tmpdir(),'cad-lease-crash-')),initial=new RevisionStore(root);initial.createDocument('plate');initial.close();
  const child=spawnSync(process.execPath,['--import','tsx','tests/helpers/lease-crash.ts',root,phase],{encoding:'utf8',timeout:4000});expect(child.signal,child.stderr).toBe('SIGKILL');
  for(const name of ['supervisor.lock','worker-lease.json'])if(existsSync(join(root,name)))expect(()=>JSON.parse(readFileSync(join(root,name),'utf8'))).not.toThrow();
- const store=new RevisionStore(root),s=await Supervisor.start(store);try{s.submit('plate',0,'fresh',plate);expect((await s.waitForJob('plate','fresh')).status).toBe('committed');expect(store.snapshot('plate').revision).toBe(1);}finally{await s.close();store.close();}
+ const store=new RevisionStore(root),s=await Supervisor.start(store);try{approvedProgram(s,'plate',0,'fresh',plate);expect((await s.waitForJob('plate','fresh')).status).toBe('committed');expect(store.snapshot('plate').revision).toBe(1);}finally{await s.close();store.close();}
 },15000);
 test('metadata write failure does not publish partial lease and kernel ownership is released',async()=>{
  const root=mkdtempSync(join(tmpdir(),'cad-lease-full-')),store=new RevisionStore(root);let s:Supervisor|undefined,error:any;

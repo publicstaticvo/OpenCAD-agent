@@ -60,7 +60,7 @@ def add_named_constraint(sketch, op):
     sketch.CadConstraintKinds=json.dumps(kinds,sort_keys=True)
     if sketch.solve()!=0:raise ValueError('Conflicting sketch constraints')
 
-def apply_operations(doc, operations, operation_id, step_id):
+def apply_operations(doc, operations, operation_id, step_id, observe=lambda status,index,operation: None):
     if type(operations) is not list or not 1<=len(operations)<=256:raise ValueError('Invalid operations count')
     for op in operations:assert_contract('operation',op)
     if not isinstance(operation_id,str) or not isinstance(step_id,str) or not operation_id or not step_id:raise ValueError('Step identity required')
@@ -73,7 +73,8 @@ def apply_operations(doc, operations, operation_id, step_id):
         return inspect_document(doc)
     doc.openTransaction('CAD candidate step')
     try:
-        for op in operations:
+        for index,op in enumerate(operations):
+            observe('start',index,op)
             kind=op['op']
             if 'id' in op:
                 if any('CadFeatureId' in o.PropertiesList and o.CadFeatureId==op['id'] for o in doc.Objects):raise ValueError('Duplicate feature ID')
@@ -117,10 +118,13 @@ def apply_operations(doc, operations, operation_id, step_id):
                 else:raise ValueError('Parameter not editable')
             doc.recompute()
             if any('Invalid' in o.State or 'Error' in o.State for o in doc.Objects):raise ValueError('Model recompute failed')
+            observe('returned',index,op)
         body=bodies(doc)[0];steps[key]=digest;body.CadAppliedSteps=json.dumps(steps,sort_keys=True)
         doc.commitTransaction()
+        observe('batch_complete',len(operations),None)
     except Exception:
         doc.abortTransaction()
+        observe('batch_aborted',index,op)
         raise
     return inspect_document(doc)
 
@@ -147,3 +151,18 @@ def inspect_document(doc):
         result.append(dict(id=obj.CadFeatureId,label=obj.Label,type=obj.TypeId,parent=parent.CadFeatureId if parent and 'CadFeatureId' in parent.PropertiesList else None,parameters=params,constraints=constraints))
     if len({o['id'] for o in result})!=len(result):raise ValueError('Duplicate feature ID')
     return result
+
+def sketch_snapshot(doc, stable_id):
+    sketch=feature(doc,stable_id,'Sketcher::SketchObject')
+    geometry=[]
+    for index,item in enumerate(sketch.Geometry):
+        if isinstance(item,Part.LineSegment):
+            geometry.append(dict(index=index,kind='line',start=[item.StartPoint.x,item.StartPoint.y],end=[item.EndPoint.x,item.EndPoint.y]))
+        elif isinstance(item,Part.Circle):
+            geometry.append(dict(index=index,kind='circle',center=[item.Center.x,item.Center.y],radius=item.Radius))
+        else:
+            raise ValueError(f'Unsupported sketch geometry in preview: {item.TypeId}')
+    constraints=[]
+    for item in sketch.Constraints:
+        constraints.append(dict(name=item.Name,kind=item.Type,firstGeometry=item.First,firstPos=item.FirstPos,secondGeometry=item.Second,secondPos=item.SecondPos,value=item.Value if item.Type in ('Distance','DistanceX','DistanceY','Diameter','Radius') else None))
+    return dict(featureId=stable_id,placement=dict(base=[sketch.Placement.Base.x,sketch.Placement.Base.y,sketch.Placement.Base.z],rotation=list(sketch.Placement.Rotation.Q)),geometry=geometry,constraints=constraints,fullyConstrained=bool(sketch.FullyConstrained),tree=inspect_document(doc))

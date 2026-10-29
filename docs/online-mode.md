@@ -19,7 +19,7 @@ npm run dev
 2. 填写 baseUrl 与 API key。仅有域名时自动增加 `/v1`，已有自定义路径保持原样。远程使用 HTTPS，本机允许 loopback HTTP。
 3. 点击“获取模型列表”，选择模型。发现失败时可填写模型 ID；模型列表出现某个名称并不保证协议兼容。
 4. 保存时实际发送文本流测试、隔离空文档的 `cad_inspect` 工具调用和工具结果回传，共三次模型请求。界面说明会发生这些请求。验证通过才保存；失败显示所选协议和失败阶段，保留当前配置。
-5. 创建项目，描述具体尺寸。顶部“模型设置”可修改配置。相同服务地址可留空复用密钥；更换地址需要提供密钥。运行中任务固定配置，修改影响之后开始的任务。
+5. 创建项目，描述具体尺寸；审阅计划卡并点击“批准并开始建模”。批准前不进行 CAD 写入；完成后查看正式修订与下载。顶部“模型设置”可修改配置。相同服务地址可留空复用密钥；更换地址需要提供密钥。运行中任务固定配置，修改影响之后开始的任务。
 
 项目和对话的使用、共享模型关系及异常恢复见 [工作区功能说明](workspace-contracts.md)。设置与工作区均可选择关键/完整执行记录；完整模式显示服务实际返回的 thinking、工具参数和结果，缺少 thinking 时显示“模型未提供”。
 
@@ -43,13 +43,13 @@ npm run dev
 
 | 设置 | 范围 |
 | --- | --- |
-| 整个任务 | 从任务开始执行至正式提交，排队时间不计入 |
+| 获批执行 | 从获批任务实际开始执行至正式提交，包含模型执行、CAD 验收与文件准备；规划、排队及等待批准不计入 |
 | 单次模型请求 | 每次请求开始至流式响应结束，同时适用于模型发现和配置探测 |
 | 单次 CAD 操作 | 每个 Worker 操作，包括检查、修改、几何验证及保存导出 |
 
 保存并重启均可恢复；修改用于后续开始的任务。0 会关闭应用、模型 SDK 和 HTTP 客户端的对应期限；服务端、代理和网络仍可终止连接。任务可随时手动取消，正式版本继续受候选隔离保护。Worker 启动握手另有 15 秒基础设施检查；测试运行器有独立的测试期限。
 
-兼容环境变量 `CAD_TASK_TIMEOUT_MS` 接受 0–2147483647 毫秒，显式设置时优先于网页的整个任务设置。日常使用应移除此变量，通过网页管理。
+兼容环境变量 `CAD_TASK_TIMEOUT_MS` 接受 0–2147483647 毫秒，显式设置时优先于网页的获批执行设置。日常使用应移除此变量，通过网页管理。
 
 开发前端另开 `npm run web`，Gateway 配置允许其 5173 origin；正式启动使用上面的构建后单服务入口。
 
@@ -90,15 +90,15 @@ CAD_MODEL_CONFIG=model.yaml npm run dev
 ```bash
 mkdir -p .work/tmp
 export TMPDIR="$PWD/.work/tmp"
-# 分别验收两种协议；协议由测试设置页显式选择
-RUN_LIVE_CAD=1 CAD_MODEL_CONFIG=advanced-model.yaml CAD_MODEL_PROTOCOL=openai-completions npm run test:e2e:live
-RUN_LIVE_CAD=1 CAD_MODEL_CONFIG=advanced-model.yaml CAD_MODEL_PROTOCOL=openai-responses npm run test:e2e:live
-# 两种原生协议的只读探测和脱敏请求/事件记录
-npx tsx scripts/probe-model-protocols.ts advanced-model.yaml
-# 固定复杂样例评测，范围与简单浏览器闭环不同
-RUN_LIVE_CAD=1 CAD_MODEL_CONFIG=model.yaml npm run test:live
+# 三次建模任务：长方体、中心贯穿孔、孔径修改；每次在浏览器批准
+RUN_LIVE_CAD=1 CAD_MODEL_CONFIG="$PWD/advanced-model.yaml" \
+  CAD_MODEL_PROTOCOL=openai-completions \
+  CAD_LIVE_OUTPUT_DIR="$PWD/.work/demo-acceptance-$(date +%s)" \
+  npm run test:e2e:live -- approved-demo.spec.ts
 ```
 
-浏览器使用独立 `.work/live-data-*`，配置阶段关闭截图、录屏、trace，完成后只保存工作区截图；测试包含真实 Gateway 进程终止重启。`CAD_LIVE_PORT` 默认 4175，`CAD_LIVE_OUTPUT_DIR` 默认 `.work/live-browser`。应用超时使用网页配置。实际通过范围和仍有局限的服务能力见 [在线验证记录](online-validation.md)。
+这条命令会调用 YAML 中的真实服务，首次配置还会进行三次工具/文本探测；需使用已授权的模型配置。它仅运行本次 M1/M2 浏览器场景，保存规划、批准、真实工具事件、候选、三个正式修订及独立下载检查证据。两种协议的既有兼容性记录见 [在线验证记录](online-validation.md)；当前 M1/M2 真实资格以 [演示产品验收](v1-demo-validation.md) 的模型与协议为准。其他 live 用例、协议探测和复杂样例评测有独立调用范围，按需取得授权后分别运行。
+
+浏览器使用独立 `.work/live-data-*`，配置阶段关闭截图、录屏、trace，完成后只保存工作区截图。`CAD_LIVE_PORT` 默认 4175，`CAD_LIVE_OUTPUT_DIR` 默认 `.work/live-browser`；使用新的输出目录保留每次记录。应用超时使用网页配置。完整 live 集合另含真实进程恢复等测试，本次限定命令不会自动执行该集合。
 
 离线启动：`CAD_PROVIDER=fake npm run dev`。禁用模型：`CAD_PROVIDER=none npm run dev`。既有离线回归：`npm run test:e2e`、`npm run test:eval`；离线结果仅证明应用与 CAD 编排。

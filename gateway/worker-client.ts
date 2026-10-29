@@ -53,6 +53,10 @@ export class WorkerClient {
    try{const msg=JSON.parse(line.toString('utf8'));
     if(msg.jsonrpc==='2.0'&&msg.method==='cad_progress'&&!Object.hasOwn(msg,'id')){
      const p=msg.params,request=this.pending.get(p?.requestId);
+     if(p?.stage==='operation'){
+      if(!request||request.method!=='apply_operations'||p.candidateId!==request.candidateId||!['start','returned','batch_complete','batch_aborted'].includes(p.status)||!Number.isSafeInteger(p.sequence)||p.sequence<=request.progressSequence||!Number.isSafeInteger(p.index)||p.index<0||typeof p.stepId!=='string')throw new Error('Invalid Worker operation notification');
+      request.progressSequence=p.sequence;this.onProgress?.(p);continue;
+     }
      if(!request||request.method!=='prepare_candidate'||p.candidateId!==request.candidateId||!['geometry','save','reopen','export_step','export_glb'].includes(p.stage)||!['start','complete'].includes(p.status)||!Number.isSafeInteger(p.sequence)||p.sequence<=request.progressSequence||Object.keys(p).sort().join(',')!=='candidateId,requestId,sequence,stage,status')throw new Error('Invalid Worker progress notification');
      const expected=['geometry:start','geometry:complete','save:start','save:complete','reopen:start','reopen:complete','export_step:start','export_step:complete','export_glb:start','export_glb:complete'];
      if(`${p.stage}:${p.status}`!==expected[request.progressIndex++])throw new Error('Worker progress stage out of order');

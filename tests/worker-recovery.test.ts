@@ -1,10 +1,11 @@
 import {test,expect} from 'vitest';
+import {approvedProgram} from './helpers/approved-program.ts';
 import {RevisionStore} from '../gateway/revision-store.ts';import {Supervisor,type Job} from '../gateway/supervisor.ts';
 import plate from './fixtures/models/plate.json';import {mkdtempSync,readFileSync,rmSync,existsSync} from 'node:fs';import {join} from 'node:path';import {tmpdir} from 'node:os';import {once} from 'node:events';import {spawnSync} from 'node:child_process';import {createHash} from 'node:crypto';
 const edit={operations:[{op:'set_parameter',feature:'hole',parameter:'diameter',value:8}],criteria:{bbox:[80,60,10],volume:47497.34517542564,parameters:[{feature:'hole',parameter:'diameter',value:8}]}};
 const digest=(p:string)=>createHash('sha256').update(readFileSync(p)).digest('hex');
 async function setup(options:any={}){const dir=mkdtempSync(join(tmpdir(),'cad-supervisor-')),store=new RevisionStore(dir);store.createDocument('plate');const s=await Supervisor.start(store,options);return{dir,store,s,async close(){await s.close();store.close();rmSync(dir,{recursive:true,force:true});}};}
-async function run(s:Supervisor,base:number,id:string,program:any){s.submit('plate',base,id,program);return s.waitForJob('plate',id);}
+async function run(s:Supervisor,base:number,id:string,program:any){approvedProgram(s,'plate',base,id,program);return s.waitForJob('plate',id);}
 test('persisted candidate lifecycle, idempotency and next job open formal FCStd',async()=>{
  const x=await setup();try{
   expect((await run(x.s,0,'create',plate)).status).toBe('committed');
@@ -56,8 +57,8 @@ test.each(['immediate','after-worker-exit'])('Gateway SIGKILL recovery %s preser
 test('only one Supervisor owns a data directory and a project rejects concurrent writes',async()=>{
  const x=await setup();try{
   await expect(Supervisor.start(x.store)).rejects.toThrow(/already owns/i);
-  x.s.submit('plate',0,'one',plate);
-  expect(()=>x.s.submit('plate',0,'second',plate)).toThrow('项目正在修改');
+  approvedProgram(x.s,'plate',0,'one',plate);
+  expect(()=>approvedProgram(x.s,'plate',0,'second',plate)).toThrow('项目正在修改');
   expect((await x.s.waitForJob('plate','one')).status).toBe('committed');
   expect(()=>x.s.submit('plate',0,'stale',plate)).toThrow(/conflict/i);
   expect(x.store.snapshot('plate').revision).toBe(1);

@@ -25,6 +25,26 @@ except ValueError:pass
 else:raise AssertionError('reused step with different payload accepted')
 '''
 class ModelTests(unittest.TestCase):
+ def test_approved_box_rejects_reversed_pad_with_same_lengths_and_volume(self):
+  native('''
+import json,FreeCAD as App
+from worker.model_ops import apply_operations,feature
+from worker.validation import validate_design
+fixture=json.load(open('tests/fixtures/models/plate.json'))
+ops=[]
+for op in fixture['operations']:
+ if op.get('id')=='hole':break
+ ops.append(op)
+doc=App.newDocument('Box')
+apply_operations(doc,ops,'create','base')
+design=dict(kind='create_box',dimensions=dict(length=80,width=60,height=10))
+validate_design(doc,design)
+pad=feature(doc,'pad');pad.Reversed=True;doc.recompute()
+assert pad.Shape.isValid() and abs(pad.Shape.Volume-48000)<1e-6
+try:validate_design(doc,design)
+except ValueError:pass
+else:raise AssertionError('reversed Pad accepted')
+''')
  def test_three_editable_parametric_models(self):
   for name in ['plate','ring','step']:
    with self.subTest(name=name):native(SCRIPT,name)

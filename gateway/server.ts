@@ -1,7 +1,7 @@
 import {createServer,type IncomingMessage,type ServerResponse} from 'node:http';
-import {createReadStream,statSync,readFileSync,existsSync} from 'node:fs';
-import {resolve,join} from 'node:path';
-import {timingSafeEqual,randomUUID} from 'node:crypto';
+import {createReadStream,statSync,lstatSync,readFileSync,existsSync} from 'node:fs';
+import {resolve,join,dirname} from 'node:path';
+import {timingSafeEqual,randomUUID,createHash} from 'node:crypto';
 import {WebSocketServer} from 'ws';
 import {RevisionStore,StoreError} from './revision-store.ts';import {Supervisor} from './supervisor.ts';import {EventHub} from './events.ts';
 export interface Gateway {baseUrl:string;store:RevisionStore;supervisor:Supervisor;close():Promise<void>}
@@ -70,14 +70,32 @@ export async function createGateway(options:Options):Promise<Gateway>{
    if(suffix==='events'&&req.method==='GET'){json(res,200,{events:store.events(id,Number(url.searchParams.get('afterSeq')??0))});return;}
    const jobEvents=suffix.match(/^jobs\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})\/events$/);
    if(jobEvents&&req.method==='GET'){json(res,200,store.jobEvents(id,jobEvents[1],Number(url.searchParams.get('afterSeq')??0),Number(url.searchParams.get('limit')??200)));return;}
+   const candidate=suffix.match(/^jobs\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})\/candidate\/(snapshot|preview)$/);
+   if(candidate&&req.method==='GET'){
+    const job=supervisor.job(id,candidate[1]);if(!job.candidateId||!['running','validating','committing','committed'].includes(job.status))throw new StoreError('not_found','Candidate preview unavailable');
+    if(candidate[2]==='snapshot'){json(res,200,{status:job.status,snapshot:job.candidateSnapshot??null});return;}
+    const sequence=Number(url.searchParams.get('sequence'));if(!Number.isSafeInteger(sequence)||sequence<1||sequence!==job.candidateSnapshot?.sequence||!job.candidateSnapshot?.preview)throw new StoreError('not_found','Candidate sequence unavailable');
+    if(job.status==='committed'&&(job.result?.candidateId!==job.candidateId||job.result?.operationId!==job.operationId))throw new StoreError('corrupt','Recorded candidate identity mismatch');
+    const directory=job.status==='committed'?dirname(store.artifactPath(id,job.result.revision,'model.FCStd')):store.candidatePath(job.candidateId);
+    const path=join(directory,`candidate-${sequence}.glb`);
+    if(!existsSync(path))throw new StoreError('not_found','Candidate preview is not ready');
+    const stat=lstatSync(path);if(!stat.isFile()||stat.isSymbolicLink()||stat.size<1||stat.size>64*1024*1024)throw new StoreError('corrupt','Invalid candidate preview file');
+    const bytes=readFileSync(path);if(bytes.length!==job.candidateSnapshot.preview.bytes||createHash('sha256').update(bytes).digest('hex')!==job.candidateSnapshot.preview.sha256)throw new StoreError('corrupt','Candidate preview content changed');
+    res.writeHead(200,{'Content-Type':'model/gltf-binary','Content-Length':bytes.length,'Cache-Control':'no-store','X-CAD-Candidate':job.candidateId,'X-CAD-Base-Revision':String(job.baseRevision),'X-CAD-Sequence':String(sequence),'X-CAD-Content-Hash':job.candidateSnapshot.preview.sha256,'X-Content-Type-Options':'nosniff'});res.end(bytes);return;
+   }
    if(suffix==='jobs'&&req.method==='POST'){
     const input=await body(req);keys(input,['baseRevision','operationId'],['program','text','conversationId']);
     if(Object.hasOwn(input,'program')===Object.hasOwn(input,'text'))throw new StoreError('invalid','Choose exactly one program or text task');
     if(Object.hasOwn(input,'text')&&providerMode()==='none')throw new StoreError('unavailable','请先配置模型服务');
     json(res,202,Object.hasOwn(input,'text')?supervisor.submitText(id,input.baseRevision,input.operationId,input.text,input.conversationId):supervisor.submit(id,input.baseRevision,input.operationId,input.program,input.conversationId));return;
    }
+   const approval=suffix.match(/^jobs\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})\/(approve|reject)$/);
+   if(approval&&req.method==='POST'){const input=await body(req);keys(input,['planHash']);json(res,200,approval[2]==='approve'?supervisor.approveJob(id,approval[1],input.planHash):supervisor.rejectJob(id,approval[1],input.planHash));return;}
    const job=suffix.match(/^jobs\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})(\/cancel)?$/);
    if(job){if(!job[2]&&req.method==='GET'){json(res,200,supervisor.job(id,job[1]));return;}if(job[2]&&req.method==='POST'){const input=await body(req);keys(input,[]);json(res,200,supervisor.cancelJob(id,job[1]));return;}}
+   if(suffix==='revisions'&&req.method==='GET'){json(res,200,{revisions:store.listRevisions(id)});return;}
+   const revisionSnapshot=suffix.match(/^revisions\/([1-9][0-9]*)$/);
+   if(revisionSnapshot&&req.method==='GET'){json(res,200,store.revisionSnapshot(id,Number(revisionSnapshot[1])));return;}
    const artifact=suffix.match(/^revisions\/([1-9][0-9]*)\/artifacts\/([A-Za-z0-9.]+)$/);
    if(artifact&&req.method==='GET'){
     const revision=Number(artifact[1]),name=artifact[2],path=store.artifactPath(id,revision,name);

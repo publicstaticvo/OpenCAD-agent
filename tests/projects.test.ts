@@ -5,6 +5,7 @@ import {DatabaseSync} from 'node:sqlite';
 import {RevisionStore} from '../gateway/revision-store.ts';
 import {Supervisor} from '../gateway/supervisor.ts';
 import plate from './fixtures/models/plate.json';
+import {approvedProgram} from './helpers/approved-program.ts';
 
 test('projects and conversations persist independently and reject foreign conversation ownership',()=>{
  const root=mkdtempSync(resolve('.work/projects-'));let store=new RevisionStore(root);
@@ -34,7 +35,7 @@ test('legacy SQLite upgrade preserves jobs and backfills messages exactly once',
 test('legacy upgrade backs up actual formal CAD packages and preserves the revision head',async()=>{
  const root=mkdtempSync(resolve('.work/migrate-cad-'));let store=new RevisionStore(root);store.createDocument('part');
  const supervisor=await Supervisor.start(store);
- try{supervisor.submit('part',0,'create',plate);expect((await supervisor.waitForJob('part','create')).status).toBe('committed');}finally{await supervisor.close();store.close();}
+ try{approvedProgram(supervisor,'part',0,'create',plate);expect((await supervisor.waitForJob('part','create')).status).toBe('committed');}finally{await supervisor.close();store.close();}
  // Remove only the added workspace schema to reproduce the original SQLite layout.
  const legacy=new DatabaseSync(resolve(root,'store.sqlite'));
  legacy.exec('DROP TABLE messages; DROP TABLE conversations; ALTER TABLE jobs DROP COLUMN conversation_id; ALTER TABLE documents DROP COLUMN name; ALTER TABLE documents DROP COLUMN created_at; ALTER TABLE documents DROP COLUMN updated_at; PRAGMA user_version=0;');legacy.close();

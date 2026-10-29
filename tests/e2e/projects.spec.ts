@@ -24,3 +24,20 @@ test('project switch discards an actual delayed GLB and restores independent mod
  await page.reload();await expect(page.getByLabel('切换项目')).toHaveValue(b);await expect(page.getByTestId('display-revision')).toHaveText('正式版本 1');
  await page.getByLabel('切换项目').selectOption(a);await expect(page.getByTestId('display-revision')).toHaveText('正式版本 2');await page.getByRole('button',{name:'hole 草图',exact:true}).click();await expect(page.getByLabel('diameter (mm)')).toHaveValue('8');
 });
+
+test('separate conversations can hold read-only pending plans and stale approval cannot modify the shared model',async({page,request})=>{
+ const id=`pending-${Date.now()}`;await createDocument(request,id);await login(page,id);
+ const first=new URL(page.url()).searchParams.get('conversation')!;
+ const pending=await request.post(`/api/documents/${id}/jobs`,{headers,data:{operationId:'first-plan',baseRevision:0,conversationId:first,program:plate}});expect(pending.status()).toBe(202);
+ await page.getByRole('button',{name:'刷新状态',exact:true}).click();await expect(page.getByTestId('approval-plan')).toBeVisible();
+ await page.getByRole('button',{name:'新建对话',exact:true}).click();
+ await expect(page.getByLabel('建模指令')).toBeEnabled();
+ await expect(page.getByText('当前模型正在由该对话修改。',{exact:false})).toHaveCount(0);
+ await page.getByLabel('建模指令').fill('创建80×60×10 mm孔板，孔径6 mm，孔中心20,15 mm');await page.getByRole('button',{name:'发送任务',exact:true}).click();
+ await expect(page.getByTestId('approval-plan')).toBeVisible();
+ const second=new URL(page.url()).searchParams.get('conversation')!;
+ const before=await(await request.get(`/api/documents/${id}`,{headers})).json();expect(before.revision).toBe(0);expect(before.jobs.filter((job:any)=>job.status==='awaiting_approval')).toHaveLength(2);
+ await page.getByLabel('切换对话').selectOption(first);await page.getByRole('button',{name:'批准并开始建模'}).click();await expect(page.getByTestId('display-revision')).toHaveText('正式版本 1');
+ await page.getByLabel('切换对话').selectOption(second);await page.getByRole('button',{name:'批准并开始建模'}).click();await expect(page.getByTestId('submission-error')).toContainText('stale');
+ expect((await(await request.get(`/api/documents/${id}`,{headers})).json()).revision).toBe(1);
+});

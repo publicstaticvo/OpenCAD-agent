@@ -14,7 +14,7 @@ for(const protocol of ['openai-completions','openai-responses'] as const){
   const configured=await(await request.get('/api/model-config',{headers})).json();
   if(configured.configured){await page.getByRole('button',{name:'创建空白项目'}).click();await page.getByRole('button',{name:'模型设置',exact:true}).click();}
   await expect(page.getByRole('heading',{name:'配置模型服务'})).toBeVisible();
-  const fields=['整个任务超时（秒）','单次模型请求超时（秒）','单次 CAD 操作超时（秒）'];
+  const fields=['获批执行超时（秒）','单次模型请求超时（秒）','单次 CAD 操作超时（秒）'];
   if(!configured.configured)for(const label of fields)await expect(page.getByLabel(label,{exact:true})).toHaveValue('0');
   await page.getByLabel('API 协议',{exact:true}).selectOption(protocol);
   await page.getByLabel('服务地址').fill(input.baseUrl);await page.getByLabel('API key',{exact:true}).fill(input.apiKey);await page.getByLabel('模型 ID',{exact:true}).fill(input.model);

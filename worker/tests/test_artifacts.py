@@ -11,7 +11,55 @@ fixture=json.load(open('tests/fixtures/models/plate.json'))
 doc=App.newDocument('Plate')
 apply_operations(doc,fixture['operations'],'create','1')
 '''
+APPROVED_BOX='''
+import json,os,tempfile
+from pathlib import Path
+import FreeCAD as App
+from worker.model_ops import apply_operations,feature
+from worker.validation import validate_document,validate_design
+from worker.artifacts import prepare_revision
+fixture=json.load(open('tests/fixtures/models/plate.json'))
+operations=[]
+for operation in fixture['operations']:
+ operations.append(operation)
+ if operation['op']=='pad':break
+criteria=dict(bbox=[80,60,10],volume=48000,parameters=[dict(feature='base',parameter='width',value=80),dict(feature='base',parameter='height',value=60)])
+design=dict(version=1,kind='create_box',dimensions=dict(length=80,width=60,height=10))
+doc=App.newDocument('ApprovedBox')
+'''
 class ArtifactTests(unittest.TestCase):
+ def test_approved_rectangle_constraints_survive_independent_reopen(self):
+  native(APPROVED_BOX+'''
+# Constraint order and nondimensional names are deliberately different.
+constraints=[op for op in operations if op['op']=='add_constraint']
+for index,op in enumerate(constraints):
+ if op['kind'] not in ('Distance','DistanceX','DistanceY'):op['name']='actual_'+str(index)
+operations=[op for op in operations if op['op'] not in ('add_constraint','pad')]+list(reversed(constraints))+[operations[-1]]
+apply_operations(doc,operations,'box','one')
+validate_document(doc,criteria);validate_design(doc,design)
+with tempfile.TemporaryDirectory(prefix='approved-reopen-') as tmp:
+ directory=Path(tmp);(directory/'design.json').write_text(json.dumps(design))
+ result=prepare_revision(doc,directory,criteria)
+ assert result['verifierPid']!=os.getpid()
+ assert result['validation']['volume']==48000
+ assert (directory/'manifest.json').exists()
+''')
+ def test_independent_reopen_rejects_unapproved_constraint_references_with_identical_geometry(self):
+  native(APPROVED_BOX+'''
+corner=next(op for op in operations if op.get('name')=='corner0')
+corner['args']=[1,1,0,2]
+apply_operations(doc,operations,'box','one')
+# This real alternative constraint preserves the shape and solver state.
+assert feature(doc,'base').FullyConstrained
+assert feature(doc,'base').ConstraintCount==11
+assert validate_document(doc,criteria)['volume']==48000
+with tempfile.TemporaryDirectory(prefix='approved-reopen-') as tmp:
+ directory=Path(tmp);(directory/'design.json').write_text(json.dumps(design))
+ try:prepare_revision(doc,directory,criteria)
+ except ValueError as error:assert 'constraint' in str(error).lower(),str(error)
+ else:raise AssertionError('independent verifier accepted unapproved constraint references')
+ assert not (directory/'manifest.json').exists()
+''')
  def test_independent_reopen_exports_and_editability(self):
   native(BUILD+'''
 with tempfile.TemporaryDirectory(prefix='cad-package-') as tmp:

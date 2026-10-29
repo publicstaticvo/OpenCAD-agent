@@ -80,6 +80,9 @@ def verify_saved(directory,progress=lambda stage,status: None):
     imported=None
     try:
         validation=validate_document(doc,criteria)
+        if (directory/'design.json').exists():
+            from worker.validation import validate_design
+            validation.update(validate_design(doc,json.loads((directory/'design.json').read_text())))
         progress('reopen','complete')
         tree=inspect_document(doc)
         body=bodies(doc)[0]
@@ -133,7 +136,7 @@ def prepare_revision(doc,directory,criteria,progress=lambda stage,status: None):
     try:
         process=subprocess.Popen([sys.executable,'-c',code,str(directory),str(write_fd)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,pass_fds=(write_fd,))
         os.close(write_fd);write_fd=None
-        stdout,stderr=process.communicate(timeout=30)
+        stdout,stderr=process.communicate()
     except subprocess.TimeoutExpired as exc:raise ValueError('Independent verifier timeout') from exc
     finally:
         if write_fd is not None:os.close(write_fd)

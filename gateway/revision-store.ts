@@ -52,9 +52,9 @@ export class RevisionStore {
    this.db.exec('PRAGMA user_version=1; COMMIT');
   }catch(e){this.db.exec('ROLLBACK');throw e;}
  }
- listDocuments(){return this.db.prepare("SELECT id,name,created_at AS createdAt,updated_at AS updatedAt,head AS revision,(SELECT COUNT(*) FROM jobs WHERE document_id=documents.id AND status IN ('queued','running','validating','committing')) AS activeTasks FROM documents ORDER BY updated_at DESC,id").all();}
+ listDocuments(){return this.db.prepare("SELECT id,name,created_at AS createdAt,updated_at AS updatedAt,head AS revision,(SELECT COUNT(*) FROM jobs WHERE document_id=documents.id AND status IN ('approved','queued','running','validating','committing')) AS activeTasks FROM documents ORDER BY updated_at DESC,id").all();}
  renameDocument(id:string,name:unknown){this.document(id);this.db.prepare('UPDATE documents SET name=?,updated_at=? WHERE id=?').run(this.title(name),Date.now(),id);return this.snapshot(id);}
- listConversations(id:string){this.document(id);return this.db.prepare("SELECT c.*, (SELECT COUNT(*) FROM jobs WHERE conversation_id=c.id AND status IN ('queued','running','validating','committing')) AS activeTasks FROM conversations c WHERE document_id=? ORDER BY created_at,id").all(id) as any[];}
+ listConversations(id:string){this.document(id);return this.db.prepare("SELECT c.*, (SELECT COUNT(*) FROM jobs WHERE conversation_id=c.id AND status IN ('approved','queued','running','validating','committing')) AS activeTasks FROM conversations c WHERE document_id=? ORDER BY created_at,id").all(id) as any[];}
  createConversation(id:string,title:unknown='新对话'){this.document(id);const value={id:randomUUID(),document_id:id,title:this.title(title),created_at:Date.now(),updated_at:Date.now()};this.db.prepare('INSERT INTO conversations VALUES(?,?,?,?,?)').run(value.id,id,value.title,value.created_at,value.updated_at);return value;}
  conversation(id:string,conversationId:string){this.document(id);this.id(conversationId);const row=this.db.prepare('SELECT * FROM conversations WHERE id=? AND document_id=?').get(conversationId,id) as any;if(!row)throw new StoreError('not_found','该项目中不存在此对话');return row;}
  renameConversation(id:string,conversationId:string,title:unknown){this.conversation(id,conversationId);this.db.prepare('UPDATE conversations SET title=?,updated_at=? WHERE id=?').run(this.title(title),Date.now(),conversationId);return this.conversation(id,conversationId);}
@@ -96,7 +96,7 @@ export class RevisionStore {
  }
  restoreRevision(documentId:string,oldRevision:number,baseRevision:number,operationId:string){
   const request={restoreRevision:oldRevision},previous=this.operationResult(documentId,operationId,request,baseRevision);if(previous)return previous;
-  if(this.db.prepare("SELECT 1 FROM jobs WHERE document_id=? AND status IN ('queued','running','validating','committing')").get(documentId))throw new StoreError('project_busy','项目正在修改，请等待当前任务结束');
+  if(this.db.prepare("SELECT 1 FROM jobs WHERE document_id=? AND status IN ('approved','queued','running','validating','committing')").get(documentId))throw new StoreError('project_busy','项目正在修改，请等待当前任务结束');
   if(this.document(documentId).head!==baseRevision)throw new StoreError('conflict','Revision conflict');
   const candidateId=randomUUID(),directory=this.candidatePath(candidateId);
   const source=this.artifactPath(documentId,oldRevision,'model.FCStd');
@@ -155,7 +155,7 @@ export class RevisionStore {
   if(doc.head){const row:any=this.db.prepare('SELECT * FROM revisions WHERE document_id=? AND revision=?').get(id,doc.head);this.verify(this.packagePath(row.candidate_id),row.manifest_hash);tree=JSON.parse(row.tree);artifacts=Object.fromEntries(FILES.map(name=>[name,`/api/documents/${id}/revisions/${doc.head}/artifacts/${name}`]));}
   const seq:any=this.db.prepare('SELECT COALESCE(MAX(seq),0) AS seq FROM events WHERE document_id=?').get(id);
   const jobs=this.db.prepare('SELECT job FROM jobs WHERE document_id=? ORDER BY rowid').all(id).map((r:any)=>JSON.parse(r.job));
-  const progress=(this.db.prepare("SELECT event FROM events WHERE document_id=? AND json_extract(event,'$.type') IN ('agent_progress','cad_progress') ORDER BY seq DESC LIMIT 500").all(id) as any[]).reverse().map(row=>JSON.parse(row.event));
+  const progress=(this.db.prepare("SELECT event FROM events WHERE document_id=? AND json_extract(event,'$.type') IN ('agent_progress','cad_progress','cad_operation_start','cad_operation_complete','cad_operation_failed','cad_operation_rejected','candidate_snapshot','plan_ready','plan_approved','plan_rejected','clarification_required') ORDER BY seq DESC LIMIT 500").all(id) as any[]).reverse().map(row=>JSON.parse(row.event));
   return{documentId:id,name:doc.name,conversations:this.listConversations(id),progress,revision:doc.head,lastSeq:seq.seq,tree,artifacts,jobs};
  }
  artifactPath(id:string,revision:number,name:string){
@@ -163,6 +163,12 @@ export class RevisionStore {
   const row:any=this.db.prepare('SELECT * FROM revisions WHERE document_id=? AND revision=?').get(id,revision);if(!row)throw new StoreError('not_found','Revision not found');
   const directory=this.packagePath(row.candidate_id);this.verify(directory,row.manifest_hash);return join(directory,name);
  }
+ revisionSnapshot(id:string,revision:number){
+  this.artifactPath(id,revision,'model.FCStd');
+  const row:any=this.db.prepare('SELECT tree,validation FROM revisions WHERE document_id=? AND revision=?').get(id,revision);
+  return{documentId:id,revision,tree:JSON.parse(row.tree),validation:JSON.parse(row.validation),artifacts:Object.fromEntries(FILES.map(name=>[name,`/api/documents/${id}/revisions/${revision}/artifacts/${name}`]))};
+ }
+ listRevisions(id:string){this.document(id);return this.db.prepare('SELECT revision FROM revisions WHERE document_id=? ORDER BY revision DESC').all(id);}
  private sync(path:string){const fd=openSync(path,'r');try{fsyncSync(fd);}finally{closeSync(fd);}}
  private reconcile(){
   const revisions=this.db.prepare('SELECT * FROM revisions').all() as any[],refs=new Set(revisions.map(r=>r.candidate_id));

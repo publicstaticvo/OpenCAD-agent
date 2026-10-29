@@ -25,4 +25,8 @@ export class Api{
    };connect();return()=>{stopped=true;clearTimeout(timer);socket?.close();};
   }};
  }
+ async candidateAsset(path:string,candidateId:string,baseRevision:number,sequence:number,sha256:string,signal?:AbortSignal){
+  const response=await this.fetch(path,{signal});if(response.headers.get('x-cad-candidate')!==candidateId||response.headers.get('x-cad-base-revision')!==String(baseRevision)||response.headers.get('x-cad-sequence')!==String(sequence)||response.headers.get('x-cad-content-hash')!==sha256)throw new Error('候选预览身份不一致');
+  const bytes=await response.arrayBuffer();const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),n=>n.toString(16).padStart(2,'0')).join('');if(digest!==sha256)throw new Error('候选预览内容校验失败');return loadModel(bytes);
+ }
 }

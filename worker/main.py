@@ -40,12 +40,13 @@ def main():
     progress_sequence = 0
     current_request = None
     connection = None
-    def progress(stage, status):
+    def progress(stage, status, **details):
         nonlocal progress_sequence
         progress_sequence += 1
-        message = dict(jsonrpc='2.0', method='cad_progress', params=dict(requestId=current_request, candidateId=candidates.envelope['candidateId'], stage=stage, status=status, sequence=progress_sequence))
+        message = dict(jsonrpc='2.0', method='cad_progress', params=dict(requestId=current_request, candidateId=candidates.envelope['candidateId'], stage=stage, status=status, sequence=progress_sequence,**details))
         connection.sendall((json.dumps(message, allow_nan=False)+'\n').encode())
     candidates.progress = progress
+    candidates.operation = lambda status,index,operation,step_id:progress('operation',status,index=index,operation=operation,stepId=step_id)
     def dispatch(method, params):
         if method == 'hello':
             if params: raise ValueError('hello takes no arguments')

@@ -11,6 +11,10 @@
   ]},
   "parameter":{"type":"object","required":["feature","parameter","value"],"additionalProperties":false,"properties":{"feature":{"$ref":"id"},"parameter":{"$ref":"id"},"value":{"$ref":"number"}}}
  },
+ "plan":{"oneOf":[
+  {"type":"object","required":["kind","length","width","height"],"additionalProperties":false,"properties":{"kind":{"const":"create_box"},"length":{"$ref":"positive"},"width":{"$ref":"positive"},"height":{"$ref":"positive"}}},
+  {"type":"object","required":["kind","diameter"],"additionalProperties":false,"properties":{"kind":{"enum":["add_hole","edit_hole"]},"diameter":{"$ref":"positive"}}}
+ ]},
  "operation":{"oneOf":[
   {"type":"object","required":["op","id"],"additionalProperties":false,"properties":{"op":{"const":"create_body"},"id":{"$ref":"id"}}},
   {"type":"object","required":["op","id","body","plane","origin"],"additionalProperties":false,"properties":{"op":{"const":"create_sketch"},"id":{"$ref":"id"},"body":{"$ref":"id"},"plane":{"enum":["XY","XZ","YZ"]},"origin":{"$ref":"point3"}}},

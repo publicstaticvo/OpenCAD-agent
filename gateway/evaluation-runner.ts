@@ -9,10 +9,12 @@ export async function runEvaluation(dataset:Dataset,runner:TextRunner,directory:
    const started=Date.now();let pass=false,error:string|null=null,status='not_run',toolCalls=0,repairs=0,providerRequests=0,reportedCost=0,usageKnown=true;
    for(let attempt=0;attempt<=(c.expected==='commit'?1:0);attempt++){
     const id=`${c.id}-${attempt}`;store.createDocument(id);let base=0;
-    if(c.seed){const seed=supervisor.submit(id,0,'seed',fixture(c.seed));const result=await supervisor.waitForJob(id,seed.operationId);if(result.status!=='committed')throw new Error('Native seed failed: '+result.error);base=1;}
+    if(c.seed){const seed=supervisor.submit(id,0,'seed',fixture(c.seed));supervisor.approveJob(id,seed.operationId,seed.plan!.planHash);const result=await supervisor.waitForJob(id,seed.operationId);if(result.status!=='committed')throw new Error('Native seed failed: '+result.error);base=1;}
     const before=base?sha256(readFileSync(store.artifactPath(id,base,'model.FCStd'))):null;
     const prompt=benchmarkPrompt(c)+(attempt?`\n上次验收失败：${error}。请修正，仍须满足原请求，禁止改写验收要求。`:'');
-    const job=supervisor.submitText(id,base,'eval',prompt),done=await supervisor.waitForJob(id,job.operationId);status=done.status;error=done.error;
+    const job=supervisor.submitText(id,base,'eval',prompt);let done=await supervisor.waitForJob(id,job.operationId);
+    if(done.status==='awaiting_approval'){supervisor.approveJob(id,job.operationId,done.plan!.planHash);done=await supervisor.waitForJob(id,job.operationId);}
+    status=done.status;error=done.error;
     toolCalls+=done.agent?.toolCalls??0;repairs+=done.agent?.blockedCalls??0;providerRequests+=done.agent?.usage?.length??0;
     for(const u of done.agent?.usage??[]){if(typeof u?.cost?.total==='number'&&Number.isFinite(u.cost.total))reportedCost+=u.cost.total;else usageKnown=false;}
     const snapshot=store.snapshot(id);

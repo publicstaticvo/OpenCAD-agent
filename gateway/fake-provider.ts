@@ -1,6 +1,6 @@
 /** Explicit offline orchestration fixture. This is NOT a natural-language CAD model. */
 import type {Job} from './supervisor.ts';
-import {runTextJob,type TextRunner,type Turn,type CadSession} from './agent.ts';import {makeFauxProvider} from './pi-adapter.mjs';
+import {scriptedTextRunner,type TextRunner,type Turn,type CadSession} from './agent.ts';
 import plate from '../tests/fixtures/models/plate.json';import ring from '../tests/fixtures/models/ring.json';import step from '../tests/fixtures/models/step.json';
 export function fixtureTextRunner():TextRunner{
  const runner=async(job:Job,session:CadSession,signal:AbortSignal)=>{
@@ -33,7 +33,7 @@ export function fixtureTextRunner():TextRunner{
    }
   }
   const turns:Turn[]=operations?[{calls:[{name:'cad_inspect',args:{}}]},{calls:[{name:'cad_apply',args:{operations}}]},{calls:[{name:'cad_inspect',args:{}}]},{calls:[{name:'cad_finish',args:{criteria}}]},{text:'离线样例工具流程结束。正式版本以 Gateway 持久化结果为准；这不是实际模型能力评测。'}]:[{text:'unsupported：离线 fake 仅支持明确尺寸的孔板、垫套、台阶块样例及其命名参数修改。请求缺少尺寸、超出支持范围或产生不可能的几何；正式模型未改变。未调用真实模型。'}];
-  return runTextJob(job,session,signal,makeFauxProvider(turns));
+  return scriptedTextRunner(turns)(job,session,signal);
  };
  return Object.assign(runner,{mode:'fake' as const});
 }

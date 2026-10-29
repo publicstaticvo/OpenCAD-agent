@@ -19,7 +19,7 @@ export function evaluationProvider(authorization,apiKey,budget,{transport=modelF
   if(!Number.isSafeInteger(limit)||limit<1||limit>p.maxTokens)throw new Error('Missing bounded output tokens');
   if(budget)budget.sentRequests++;
   const response=await transport(request,{redirect:'error'});
-  if(!response.ok){await response.body?.cancel();throw new Error(`${protocol} model_request HTTP ${response.status}`);}
+  if(!response.ok){await response.body?.cancel();return new Response(null,{status:response.status});}
   return response;
  };
  const streamSimple=protocol==='openai-responses'?responsesStream:chatStream;
