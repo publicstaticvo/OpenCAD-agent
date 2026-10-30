@@ -2,7 +2,8 @@ import {stableHash} from './revision-store.ts';
 import {assertContract,type Criteria,type CadOperation} from '../shared/cad-contracts.ts';
 
 export interface CadPlan {
- version:1;kind:'create_box'|'add_hole'|'edit_hole'|'program';documentId:string;operationId:string;requestHash:string;
+ version:1;kind:'create_box'|'add_hole'|'edit_hole'|'program'|'pin_plate_assembly'|'edit_pin_plate_assembly';documentId:string;operationId:string;requestHash:string;
+ assembly?:{length:number;width:number;thickness:number;holeDiameter:number;pinDiameter:number;pinLength:number};
  baseRevision:number;dimensions:{length:number;width:number;height:number;unit:'mm'};
  diameter?:number;previousDiameter?:number;center?:[number,number];criteria:Criteria;program?:import('../shared/cad-contracts.ts').ModelProgram;planHash:string;
 }
@@ -13,6 +14,20 @@ export function createProgramPlan(program:unknown,identity:{documentId:string;op
 }
 export function createPlan(proposal:unknown,identity:{documentId:string;operationId:string;requestHash:string},snapshot:{revision:number;tree:any[]}):CadPlan{
  assertContract('plan',proposal);const p=proposal as any,rows=snapshot.tree;
+ if(p.kind==='pin_plate_assembly'||p.kind==='edit_pin_plate_assembly'){
+  const a=p.assembly,editing=p.kind==='edit_pin_plate_assembly';
+  if(!editing&&(snapshot.revision!==0||rows.length))throw new Error('Assembly creation requires an empty project');
+  if(editing){
+   const value=(id:string,key:string)=>rows.find(row=>row.id===id)?.parameters?.[key];
+   if(snapshot.revision<1||rows.filter(row=>row.type==='PartDesign::Body').length!==2||!rows.some(row=>row.id==='Assembly'&&row.type==='Assembly::AssemblyObject'))throw new Error('Assembly edit requires an existing formal assembly');
+   if(value('PlateOutline','length')!==a.length||value('PlateOutline','width')!==a.width||value('PlatePad','Length')!==a.thickness||value('PlateHole','diameter')!==a.holeDiameter||value('PinPad','Length')!==a.pinLength)throw new Error('Assembly edit cannot change the plate or pin length');
+   const currentPin=value('PinOutline','diameter');if(typeof currentPin!=='number'||currentPin===a.pinDiameter)throw new Error('Assembly edit must change the pin diameter');
+  }
+  if(a.holeDiameter>=Math.min(a.length,a.width)||a.pinDiameter>=Math.min(a.length,a.width))throw new Error('Assembly diameters must fit inside plate');
+  const criteria:Criteria={bbox:[a.length,a.width,Math.max(a.thickness,a.pinLength)],volume:a.length*a.width*a.thickness-Math.PI*(a.holeDiameter/2)**2*a.thickness+Math.PI*(a.pinDiameter/2)**2*a.pinLength};assertContract('criteria',criteria);
+  const content={version:1 as const,...identity,kind:p.kind as 'pin_plate_assembly'|'edit_pin_plate_assembly',baseRevision:snapshot.revision,assembly:structuredClone(a),dimensions:{length:a.length,width:a.width,height:Math.max(a.thickness,a.pinLength),unit:'mm' as const},criteria};
+  return{...content,planHash:stableHash(content)};
+ }
  let length=p.length,width=p.width,height=p.height,previousDiameter:number|undefined;
  if(p.kind==='create_box'){
   if(snapshot.revision!==0||rows.length)throw new Error('Create box requires an empty project');
@@ -38,6 +53,8 @@ export function createPlan(proposal:unknown,identity:{documentId:string;operatio
 
 /** Finite authorization contracts. This module never executes CAD operations. */
 export function approvedStages(plan:CadPlan):{name:string;sketchId:string;operations:CadOperation[]}[]{
+ if(plan.kind==='pin_plate_assembly')return [...['plate','pin','assemble'].map((stage,index)=>({name:['底板：矩形、约束、Pad、中心孔 Pocket','圆柱销：圆草图、约束、Pad','原生固定关节装配'][index],sketchId:'',operations:[{op:'assembly_stage',stage,design:plan.assembly!}]})),{name:'实际几何干涉检查',sketchId:'',operations:[{op:'assembly_check',design:plan.assembly!}]}];
+ if(plan.kind==='edit_pin_plate_assembly')return [{name:'修改圆柱销直径',sketchId:'',operations:[{op:'assembly_stage',stage:'pin_edit',design:plan.assembly!}]},{name:'实际几何干涉检查',sketchId:'',operations:[{op:'assembly_check',design:plan.assembly!}]}];
  if(plan.kind==='program')return[{name:'批准的 CAD 操作程序',sketchId:'',operations:plan.program!.operations}];
  const {length:l,width:w,height:h}=plan.dimensions;
  const constraint=(sketch:string,name:string,kind:string,args:number[]):CadOperation=>({op:'add_constraint',sketch,name,kind,args});

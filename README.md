@@ -1,6 +1,6 @@
 # OpenCAD Agent
 
-本地单用户 Text-to-CAD 工作区：React/Three.js → HTTP/WS Gateway/Pi → 独立原生 FreeCAD Worker。正式模型必须经过候选隔离、独立文件/几何验收和 SQLite Revision CAS 提交。支持单 Body/单实体、平面 line/circle 草图、命名约束、Pad/Pocket 与白名单参数修改。在线模式通过网页配置兼容 OpenAI 的模型服务，另提供离线固定样例模式。支持范围不包含 STEP 编辑、图像、装配、工程图或 Python 执行入口。
+本地单用户 Text-to-CAD 工作区：React/Three.js → HTTP/WS Gateway/Pi → 独立原生 FreeCAD Worker。正式模型必须经过候选隔离、独立文件/几何验收和 SQLite Revision CAS 提交。单零件功能支持单 Body/单实体、平面 line/circle 草图、命名约束、Pad/Pocket 与白名单参数修改。受限双零件能力支持带中心贯穿孔的矩形底板、圆柱销、FreeCAD 原生固定关节、BOM、实际干涉检查及装配导出，也支持在现有装配中修改销直径。`advanced-model.yaml` 已通过 60×40×8 mm 底板、Ø8 mm 孔、Ø7×20 mm 销的在线装配验收，以及将销修改至 Ø10 mm 后检测碰撞并保护正式版本的验收。其余范围不包含通用多零件设计、STEP 编辑、图像、工程图或 Python 执行入口。
 
 ## 本机启动
 
@@ -36,6 +36,14 @@ npm run dev
 长方体尺寸从模型计划取得；当前自然语言审批支持长方体、该长方体的单个中心贯穿孔及孔径修改。每个修改任务都需要新批准，服务端检查对象、尺寸、约束和阶段；没有自动 CAD 写入修复。失败或取消保留对话和原正式模型。已有属性修改入口同样生成待批准任务，不直接改写正式文件。
 
 离线启动使用 `CAD_PROVIDER=fake npm run dev`，支持明确尺寸的孔板、垫套、台阶块和指定命名参数修改；它使用固定规则选择 CAD 操作，仍需批准并执行真实 FreeCAD。`CAD_PROVIDER=none npm run dev` 禁用模型建模。离线结果不能证明真实模型能力。
+
+### 双零件装配演示
+
+设置 `CAD_PROVIDER=fake` 后创建空白项目，输入：`装配：80×60×10 mm 底板，中心孔8 mm，圆柱销直径7 mm，长20 mm`。检查结构化计划并批准；Worker 会在隔离候选中建立两个独立参数化 Body、约束草图、Pad/Pocket、原生 Assembly 固定关节和真实几何干涉报告。验证成功后才提交正式修订。正式修订页面显示同一版本的组件位置、BOM 与干涉报告，可下载 FCStd、STEP 和 GLB。该离线入口仅匹配此演示尺寸及销直径 7/9 mm；9 mm 用于现场展示真实碰撞与正式版本保护，不属于有效装配结果。此演示不会调用模型服务。
+
+对应离线验证命令为 `npm run test:unit -- tests/assembly-plan.test.ts tests/assembly-workflow.test.ts`、`npm run test:cad` 和 `npm run test:e2e -- tests/e2e/assembly.spec.ts`。浏览器完整回归使用 `npm run test:e2e`。这些离线测试驱动已批准的固定操作流程并运行真实 FreeCAD。
+
+在线固定样例使用 `TMPDIR="$PWD/.work/tmp" RUN_LIVE_CAD=1 CAD_MODEL_CONFIG=advanced-model.yaml npm run test:e2e:live -- tests/live/advanced-assembly.spec.ts`。配置文件需包含 `base_url`、`api_key`、`model` 和可选 `protocol`，测试会调用该服务并自动批准样例计划。运行前创建被 Git 忽略的 `.work/tmp` 目录；已有服务不得占用测试端口 4175。测试证据与复核方法见 [多零件在线验收记录](artifacts/live-assembly-advanced/README.md)。手动使用时，按照下方在线模式启动，在模型设置中配置服务，在空白项目输入装配需求，确认计划后批准；修改销直径也需要批准新的计划。
 
 网页配置、YAML 启动、模型限制来源、文件权限以及真实模型测试说明见[在线模型配置与验证](docs/online-mode.md)。模型设置提供获批执行、单次模型请求、单次 CAD 操作三项超时，单位秒，默认均为 0（不设超时）。公司本地模型费用显示“未配置”。
 

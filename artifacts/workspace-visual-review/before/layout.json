@@ -1,38 +1,38 @@
 {
   ".workspace": {
     "x": 0,
-    "y": 64,
+    "y": 65,
     "width": 1440,
-    "height": 896
+    "height": 895
   },
   ".model-panel": {
-    "x": 220,
-    "y": 64,
-    "width": 900,
-    "height": 896
+    "x": 210,
+    "y": 65,
+    "width": 880,
+    "height": 895
   },
   ".detail-panel": {
-    "x": 1120,
-    "y": 64,
-    "width": 320,
-    "height": 896
+    "x": 1090,
+    "y": 65,
+    "width": 350,
+    "height": 895
   },
   ".properties": {
-    "x": 1121,
-    "y": -740,
-    "width": 319,
-    "height": 572
+    "x": 0,
+    "y": 388,
+    "width": 209,
+    "height": 445
   },
   ".chat-form": {
-    "x": 1141,
-    "y": 214.171875,
-    "width": 279,
-    "height": 129
+    "x": 1091,
+    "y": 808,
+    "width": 349,
+    "height": 152
   },
   ".job-list": {
-    "x": 1141,
-    "y": 357.171875,
-    "width": 279,
-    "height": 3507.921875
+    "x": 1091,
+    "y": 300.9375,
+    "width": 349,
+    "height": 507.0625
   }
 }

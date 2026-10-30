@@ -1,0 +1,16 @@
+{
+  "documentId": "advanced-assembly-1793292585606",
+  "revisionBefore": 1,
+  "revisionAfter": 1,
+  "beforeHashes": {
+    "model.FCStd": "898dfc5dfcbe4d9547012cbce3d7d8062b24f3800dce89c26b876e0c9f5c2d6f",
+    "model.step": "3c5deabbd53afa45ec84e7066596d08c92cad06c38a7f7bf4a11f61eec9aa941",
+    "preview.glb": "65acaf809a5a422f63c3d6185389e4286cd631617b5ffa24b85afbaf22fa3efe"
+  },
+  "afterHashes": {
+    "model.FCStd": "898dfc5dfcbe4d9547012cbce3d7d8062b24f3800dce89c26b876e0c9f5c2d6f",
+    "model.step": "3c5deabbd53afa45ec84e7066596d08c92cad06c38a7f7bf4a11f61eec9aa941",
+    "preview.glb": "65acaf809a5a422f63c3d6185389e4286cd631617b5ffa24b85afbaf22fa3efe"
+  },
+  "unchanged": true
+}

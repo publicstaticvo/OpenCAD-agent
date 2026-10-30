@@ -1,0 +1,243 @@
+{
+  "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+  "tree": [
+    {
+      "id": "plate",
+      "label": "底板",
+      "type": "PartDesign::Body",
+      "parent": null,
+      "parameters": {},
+      "constraints": {}
+    },
+    {
+      "id": "PlateOutline",
+      "label": "PlateOutline",
+      "type": "Sketcher::SketchObject",
+      "parent": "plate",
+      "parameters": {
+        "length": 60,
+        "width": 40
+      },
+      "constraints": {
+        "axis0": 1,
+        "axis1": 3,
+        "axis2": 5,
+        "axis3": 7,
+        "corner0": 0,
+        "corner1": 2,
+        "corner2": 4,
+        "corner3": 6,
+        "length": 9,
+        "origin": 8,
+        "width": 10
+      }
+    },
+    {
+      "id": "PlatePad",
+      "label": "PlatePad",
+      "type": "PartDesign::Pad",
+      "parent": "plate",
+      "parameters": {
+        "Length": 8
+      },
+      "constraints": {}
+    },
+    {
+      "id": "PlateHole",
+      "label": "PlateHole",
+      "type": "Sketcher::SketchObject",
+      "parent": "plate",
+      "parameters": {
+        "center_x": 30,
+        "center_y": 20,
+        "diameter": 8
+      },
+      "constraints": {
+        "center_x": 0,
+        "center_y": 1,
+        "diameter": 2
+      }
+    },
+    {
+      "id": "PlatePocket",
+      "label": "PlatePocket",
+      "type": "PartDesign::Pocket",
+      "parent": "plate",
+      "parameters": {
+        "Length": 8
+      },
+      "constraints": {}
+    },
+    {
+      "id": "pin",
+      "label": "圆柱销",
+      "type": "PartDesign::Body",
+      "parent": null,
+      "parameters": {},
+      "constraints": {}
+    },
+    {
+      "id": "PinOutline",
+      "label": "PinOutline",
+      "type": "Sketcher::SketchObject",
+      "parent": "pin",
+      "parameters": {
+        "diameter": 10
+      },
+      "constraints": {
+        "diameter": 1,
+        "origin": 0
+      }
+    },
+    {
+      "id": "PinPad",
+      "label": "PinPad",
+      "type": "PartDesign::Pad",
+      "parent": "pin",
+      "parameters": {
+        "Length": 20
+      },
+      "constraints": {}
+    },
+    {
+      "id": "Assembly",
+      "label": "固定关节装配",
+      "type": "Assembly::AssemblyObject",
+      "parent": null,
+      "parameters": {}
+    },
+    {
+      "id": "PlateComponent",
+      "label": "底板组件",
+      "type": "App::Link",
+      "parent": "Assembly",
+      "parameters": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "PinComponent",
+      "label": "圆柱销组件",
+      "type": "App::Link",
+      "parent": "Assembly",
+      "parameters": {
+        "x": 30,
+        "y": 20,
+        "z": 0
+      }
+    }
+  ],
+  "geometry": {
+    "volume": 20368.672467135402,
+    "solids": 2,
+    "bbox": [
+      60,
+      40,
+      20
+    ]
+  },
+  "preview": {
+    "file": "candidate-1.glb",
+    "bytes": 44176,
+    "sha256": "34339efd7ee97e6d41a1eaf4d29ff9c13df124758258295808e19c5b6399337d",
+    "url": "/api/documents/advanced-assembly-1793292585606/jobs/121405d4-edcf-409a-8ee8-d30f2e624cac/candidate/preview?sequence=1"
+  },
+  "assembly": {
+    "bom": [
+      {
+        "partId": "plate",
+        "number": "Plate",
+        "name": "底板",
+        "quantity": 1,
+        "parameters": {
+          "PlateOutline": {
+            "length": 60,
+            "width": 40
+          },
+          "PlatePad": {
+            "length": 8
+          },
+          "PlateHole": {
+            "center_x": 30,
+            "center_y": 20,
+            "diameter": 8
+          },
+          "PlatePocket": {
+            "length": 8
+          }
+        }
+      },
+      {
+        "partId": "pin",
+        "number": "Pin",
+        "name": "圆柱销",
+        "quantity": 1,
+        "parameters": {
+          "PinOutline": {
+            "diameter": 10
+          },
+          "PinPad": {
+            "length": 20
+          }
+        }
+      }
+    ],
+    "components": [
+      {
+        "id": "PlateComponent",
+        "partId": "plate",
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "volume": 18797.876140340504
+      },
+      {
+        "id": "PinComponent",
+        "partId": "pin",
+        "position": [
+          30,
+          20,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "volume": 1570.7963267948965
+      }
+    ],
+    "relation": {
+      "type": "Fixed",
+      "first": "PlateComponent",
+      "second": "PinComponent"
+    },
+    "interference": {
+      "status": "collision",
+      "reason": "实体发生材料重叠",
+      "pairs": [
+        {
+          "components": [
+            "PlateComponent",
+            "PinComponent"
+          ],
+          "volume": 226.19467105846513
+        }
+      ]
+    }
+  },
+  "baseRevision": 1,
+  "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110",
+  "sequence": 1
+}

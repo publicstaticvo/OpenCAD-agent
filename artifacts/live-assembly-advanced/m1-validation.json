@@ -1,0 +1,256 @@
+{
+  "revision": 1,
+  "validation": {
+    "assembly": {
+      "bom": [
+        {
+          "name": "底板",
+          "number": "Plate",
+          "parameters": {
+            "PlateHole": {
+              "center_x": 30,
+              "center_y": 20,
+              "diameter": 8
+            },
+            "PlateOutline": {
+              "length": 60,
+              "width": 40
+            },
+            "PlatePad": {
+              "length": 8
+            },
+            "PlatePocket": {
+              "length": 8
+            }
+          },
+          "partId": "plate",
+          "quantity": 1
+        },
+        {
+          "name": "圆柱销",
+          "number": "Pin",
+          "parameters": {
+            "PinOutline": {
+              "diameter": 7
+            },
+            "PinPad": {
+              "length": 20
+            }
+          },
+          "partId": "pin",
+          "quantity": 1
+        }
+      ],
+      "components": [
+        {
+          "id": "PlateComponent",
+          "partId": "plate",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "volume": 18797.876140340504
+        },
+        {
+          "id": "PinComponent",
+          "partId": "pin",
+          "position": [
+            30,
+            20,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "volume": 769.6902001294993
+        }
+      ],
+      "interference": {
+        "pairs": [
+          {
+            "components": [
+              "PlateComponent",
+              "PinComponent"
+            ],
+            "volume": 0
+          }
+        ],
+        "reason": null,
+        "status": "clear"
+      },
+      "relation": {
+        "first": "PlateComponent",
+        "second": "PinComponent",
+        "type": "Fixed"
+      }
+    },
+    "bbox": [
+      60,
+      40,
+      20
+    ],
+    "glb": {
+      "bounds": [
+        [
+          0,
+          0,
+          -0.04
+        ],
+        [
+          0.06,
+          0.020000000000000004,
+          0
+        ]
+      ],
+      "mapping": "(x,z,-y)/1000",
+      "meshes": 2,
+      "triangles": 1252
+    },
+    "meshFeatureId": "Assembly",
+    "solids": 2,
+    "step": {
+      "solids": 2
+    },
+    "verifierPid": 567879,
+    "volume": 19567.566340470003
+  },
+  "tree": [
+    {
+      "constraints": {},
+      "id": "plate",
+      "label": "底板",
+      "parameters": {},
+      "parent": null,
+      "type": "PartDesign::Body"
+    },
+    {
+      "constraints": {
+        "axis0": 1,
+        "axis1": 3,
+        "axis2": 5,
+        "axis3": 7,
+        "corner0": 0,
+        "corner1": 2,
+        "corner2": 4,
+        "corner3": 6,
+        "length": 9,
+        "origin": 8,
+        "width": 10
+      },
+      "id": "PlateOutline",
+      "label": "PlateOutline",
+      "parameters": {
+        "length": 60,
+        "width": 40
+      },
+      "parent": "plate",
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "constraints": {},
+      "id": "PlatePad",
+      "label": "PlatePad",
+      "parameters": {
+        "Length": 8
+      },
+      "parent": "plate",
+      "type": "PartDesign::Pad"
+    },
+    {
+      "constraints": {
+        "center_x": 0,
+        "center_y": 1,
+        "diameter": 2
+      },
+      "id": "PlateHole",
+      "label": "PlateHole",
+      "parameters": {
+        "center_x": 30,
+        "center_y": 20,
+        "diameter": 8
+      },
+      "parent": "plate",
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "constraints": {},
+      "id": "PlatePocket",
+      "label": "PlatePocket",
+      "parameters": {
+        "Length": 8
+      },
+      "parent": "plate",
+      "type": "PartDesign::Pocket"
+    },
+    {
+      "constraints": {},
+      "id": "pin",
+      "label": "圆柱销",
+      "parameters": {},
+      "parent": null,
+      "type": "PartDesign::Body"
+    },
+    {
+      "constraints": {
+        "diameter": 1,
+        "origin": 0
+      },
+      "id": "PinOutline",
+      "label": "PinOutline",
+      "parameters": {
+        "diameter": 7
+      },
+      "parent": "pin",
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "constraints": {},
+      "id": "PinPad",
+      "label": "PinPad",
+      "parameters": {
+        "Length": 20
+      },
+      "parent": "pin",
+      "type": "PartDesign::Pad"
+    },
+    {
+      "id": "Assembly",
+      "label": "固定关节装配",
+      "parameters": {},
+      "parent": null,
+      "type": "Assembly::AssemblyObject"
+    },
+    {
+      "id": "PlateComponent",
+      "label": "底板组件",
+      "parameters": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "parent": "Assembly",
+      "type": "App::Link"
+    },
+    {
+      "id": "PinComponent",
+      "label": "圆柱销组件",
+      "parameters": {
+        "x": 30,
+        "y": 20,
+        "z": 0
+      },
+      "parent": "Assembly",
+      "type": "App::Link"
+    }
+  ]
+}

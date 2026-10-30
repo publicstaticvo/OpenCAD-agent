@@ -1,0 +1,6 @@
+advanced-assembly-downloads: passed
+{"bom": 2, "components": 2, "stepSolids": 2, "glbMeshes": 2, "interference": {"status": "clear", "reason": null, "pairs": [{"components": ["PlateComponent", "PinComponent"], "volume": 0.0}]}}
+
+native-m2-collision-reopen: passed
+{"status": "collision", "reason": "实体发生材料重叠", "pairs": [{"components": ["PlateComponent", "PinComponent"], "volume": 226.19467105846513}]}
+

@@ -47,6 +47,7 @@ def main():
         connection.sendall((json.dumps(message, allow_nan=False)+'\n').encode())
     candidates.progress = progress
     candidates.operation = lambda status,index,operation,step_id:progress('operation',status,index=index,operation=operation,stepId=step_id)
+    candidates.assembly_check = lambda report:progress('interference','complete',report=report)
     def dispatch(method, params):
         if method == 'hello':
             if params: raise ValueError('hello takes no arguments')

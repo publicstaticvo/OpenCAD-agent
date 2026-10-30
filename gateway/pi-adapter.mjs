@@ -35,7 +35,7 @@ function strictTool(name,args){
  const keys=Object.keys(definition.properties);
  if(Object.keys(args).length!==keys.length||keys.some(k=>!Object.hasOwn(args,k)))throw new Error('Raw tool fields rejected');
  if(name==='cad_apply'){
-  if(!Array.isArray(args.operations)||args.operations.length<1||args.operations.length>256)throw new Error('Invalid operations count');
+  if(!Array.isArray(args.operations)||!args.operations.length||args.operations.length>256)throw new Error('Invalid operations count');
   for(const op of args.operations)assertContract('operation',op);
  }
  if(name==='cad_finish')assertContract('criteria',args.criteria);
@@ -51,11 +51,12 @@ export function makeFauxProvider(turns,options={}){
 export async function runPiLoop({task,session,signal,provider,maxToolCalls=budgets.maxToolCalls,onProgress=()=>{},onTranscript=()=>{}}){
  let finished=null,proposed=false,fatal=null,writeApplied=false,calls=0,turns=0,blocked=0,coercions=0;
  const planning=session.mode==='planning';
- const instructions=planning?`You are the read-only CAD planning Agent. No CAD writing or candidate exists yet. Read the formal model and the user's request. Supported plans: create_box (positive length X, width Y, height Z in mm), add_hole (one centered through hole diameter in mm on the existing supported box), edit_hole (change existing centered hole diameter). Use cad_plan exactly once to propose the requested supported design. For missing essential dimensions ask a concise clarification in the user's language, without cad_plan. For greetings or unsupported operations answer honestly without a plan. Do not invent missing sizes. The user will approve the resulting plan before any CAD writing. Do not claim execution.`:cadInstructions+(session.plan?`\nThis task has an immutable approved plan and a finite operation contract below. Inspect first. Use exactly one cad_apply per contract stage in the stated order. Produce the actual tool arguments yourself, using the geometry and dimension references in the contract. Names of nondimensional constraints can differ. Never combine stages or repeat a successful stage. No other operations or automatic repair are permitted. cad_finish must use the approved criteria exactly. Approval: ${JSON.stringify(session.plan)}\nStage contracts: ${JSON.stringify(session.stages)}`:'');
+ const instructions=cadInstructions+(session.plan?`\nThis task has an immutable approved plan and a finite operation contract below. Inspect first. Use exactly one cad_apply per contract stage in the stated order. Produce the actual tool arguments yourself, using the geometry and dimension references in the contract. Names of nondimensional constraints can differ. Never combine stages or repeat a successful stage. No other operations or automatic repair are permitted. cad_finish must use the approved criteria exactly. Approval: ${JSON.stringify(session.plan)}\nStage contracts: ${JSON.stringify(session.stages)}`:'');
  const initial=await session.snapshot();
+ const runtimeInstructions=planning?`You are a read-only CAD planning Agent. No CAD writes before approval. Use cad_inspect to inspect current model. Use cad_plan once for a supported fully specified design. Supported: create_box(length,width,height), add_hole(diameter), edit_hole(diameter), pin_plate_assembly(assembly:{length,width,thickness,holeDiameter,pinDiameter,pinLength}), edit_pin_plate_assembly(assembly:{length,width,thickness,holeDiameter,pinDiameter,pinLength}). The assembly is exactly one rectangular plate with a centered through hole and one cylindrical pin, quantity one each; plate grounded, pin fixed coaxially at [length/2,width/2,0], no rotation. When cad_inspect shows an existing Assembly::AssemblyObject, never use create_box, add_hole or edit_hole. A request to change the pin diameter must use edit_pin_plate_assembly and repeat every unchanged assembly dimension, changing only pinDiameter. A new pin_plate_assembly requires an empty project. All dimensions in mm. Ask for missing essential dimensions; never invent dimensions or infer permission for different parts/relations. Unsupported design or greetings require an honest text reply without cad_plan. Do not claim execution.`:session.plan?.kind==='pin_plate_assembly'?`Create the approved real two-part assembly using only supplied tools. Units mm. Inspect first. Use one cad_apply for each approved write stage in order: plate, pin, assemble. Each operation has {op:"assembly_stage",stage,design} with exactly approvedPlan.assembly. Then use the final approved stage operation {op:"assembly_check",design} for read-only geometric verification. No other operations, changed dimensions, parts, repairs, or joint changes. cad_finish must use approved criteria exactly and cannot publish. Tools operate on a private candidate. Report errors honestly. Approved plan: ${JSON.stringify(session.plan)}. Approved stages: ${JSON.stringify(session.stages)}`:session.plan?.kind==='edit_pin_plate_assembly'?`Modify only the approved pin diameter in the existing real two-part assembly. Use exactly one cad_apply operation {op:"assembly_stage",stage:"pin_edit",design} with the complete approved assembly dimensions, then one read-only {op:"assembly_check",design}. Preserve the plate, hole, pin length, position, axis and fixed relation. Do not rebuild or add components. cad_finish must use the approved criteria exactly and cannot publish. Approved plan: ${JSON.stringify(session.plan)}. Approved stages: ${JSON.stringify(session.stages)}`:instructions;
  const currentInput={task,phase:session.mode,approvedPlan:session.plan,documentId:initial.documentId,revision:initial.revision,features:initial.tree};
  const inputBudget=(provider.model.contextWindow??262144)-(provider.model.maxTokens??16384)-8192;
- const budget=inputBudget-Buffer.byteLength(instructions+JSON.stringify(toolsSchema)+JSON.stringify(currentInput).repeat(2));
+ const budget=inputBudget-Buffer.byteLength(runtimeInstructions+JSON.stringify(toolsSchema)+JSON.stringify(currentInput).repeat(2));
  if(budget<0)throw new Error('Current CAD input exceeds configured context budget');
  const selection=selectHistory(session.history??[],budget),history=selection.messages;
  let messageIndex=0,messageId='',deltaIndex=0;
@@ -70,17 +71,17 @@ export async function runPiLoop({task,session,signal,provider,maxToolCalls=budge
   if(signal.aborted)throw signal.reason;
   if(name==='cad_inspect')return result(await session.inspect());
   if(name==='cad_plan'){const plan=await session.propose(args.plan);proposed=true;return result({awaitingUserApproval:true,plan});}
-  if(name==='cad_apply'){const value=await session.apply(args.operations,createHash('sha256').update(id).digest('hex'));writeApplied=true;return result(value);}
+  if(name==='cad_apply'){const value=await session.apply(args.operations,createHash('sha256').update(id).digest('hex'));writeApplied=writeApplied||args.operations.length>0;return result(value);}
   const validation=await session.prepare(args.criteria);finished=args.criteria;return result({validated:true,validation,publication:'Gateway pending'});
  }}));
- const agent=new Agent({initialState:{model:provider.model,tools,systemPrompt:instructions,messages:history},streamFn:provider.streamFn,toolExecution:'sequential',
+ const agent=new Agent({initialState:{model:provider.model,tools,systemPrompt:runtimeInstructions,messages:history},streamFn:provider.streamFn,toolExecution:'sequential',
   prepareRequest:async({context})=>{
    const latest=await session.snapshot();contextRevisions.push(latest.revision);
    if(latest.revision!==session.baseRevision){fatal='Revision conflict before next provider request';agent.abort();return;}
    const marker='[Gateway current formal snapshot]';
    const messages=context.messages.filter(m=>!(m.role==='user'&&typeof m.content==='string'&&m.content.startsWith(marker)));
    const next={...context,messages:[...messages,{role:'user',content:marker+JSON.stringify({documentId:latest.documentId,revision:latest.revision,features:latest.tree}),timestamp:Date.now()}]};
-   if(Buffer.byteLength(instructions+JSON.stringify(definitions)+JSON.stringify(next.messages))>inputBudget){fatal='CAD conversation exceeds configured context budget';agent.abort();return;}
+   if(Buffer.byteLength(runtimeInstructions+JSON.stringify(definitions)+JSON.stringify(next.messages))>inputBudget){fatal='CAD conversation exceeds configured context budget';agent.abort();return;}
    return{context:next};
   },
   beforeToolCall:async({toolCall,args})=>{
@@ -92,7 +93,8 @@ export async function runPiLoop({task,session,signal,provider,maxToolCalls=budge
     // Some OpenAI-compatible local servers wrap function parameters in `arguments`.
     if(raw&&typeof raw==='object'&&!Array.isArray(raw)&&Object.keys(raw).length===1&&raw.arguments&&typeof raw.arguments==='object'&&!Array.isArray(raw.arguments))raw=raw.arguments;
     if(JSON.stringify(raw)!==JSON.stringify(args))coercions++;
-    strictTool(toolCall.name,raw);approved.set(toolCall.id,structuredClone(raw));
+    strictTool(toolCall.name,raw);
+    approved.set(toolCall.id,structuredClone(raw));
    }catch(e){if(session.mode){fatal=e.message;return{block:true,reason:e.message,terminate:true};}return{block:true,reason:e.message};}
   },
   finishTurn:async()=>{if(finished||proposed)return{action:'end'};if(++turns>maxToolCalls+1){fatal='Agent turn budget exceeded';agent.abort();}if(fatal)return{action:'end'};},

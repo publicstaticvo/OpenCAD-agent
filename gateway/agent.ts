@@ -1,7 +1,7 @@
 import {makeFauxProvider,runPiLoop,type PiProvider} from './pi-adapter.mjs';
 import type {Job} from './supervisor.ts';import type {Criteria} from '../shared/cad-contracts.ts';
 export interface Turn{calls?:{name:string;args:any;id?:string}[];text?:string}
-export interface CadSession{baseRevision:number;mode?:'planning'|'execution';plan?:import('./plan.ts').CadPlan;stages?:unknown;propose?(proposal:unknown):Promise<any>;history?:any[];inspect():Promise<any>;apply(operations:unknown,stepId:string):Promise<any>;prepare(criteria:Criteria):Promise<any>;snapshot():Promise<any>;progress(event:any):void;transcript(report:any):void}
+export interface CadSession{baseRevision:number;mode?:'planning'|'execution';plan?:import('./plan.ts').CadPlan;stages?:unknown;stage?:number;propose?(proposal:unknown):Promise<any>;history?:any[];inspect():Promise<any>;apply(operations:unknown,stepId:string):Promise<any>;prepare(criteria:Criteria):Promise<any>;snapshot():Promise<any>;progress(event:any):void;transcript(report:any):void}
 export type TextRunner=((job:Job,session:CadSession,signal:AbortSignal)=>Promise<Criteria|undefined>)&{mode:'fake'|'live';timeouts?:()=>import('./timeouts.ts').TimeoutSettings};
 export async function runTextJob(job:Job,session:CadSession,signal:AbortSignal,provider:PiProvider,options:{maxToolCalls?:number}={}){
  return runPiLoop({task:job.request.text,session,signal,provider,...options,onProgress:session.progress,onTranscript:session.transcript});

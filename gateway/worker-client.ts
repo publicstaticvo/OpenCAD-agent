@@ -53,6 +53,10 @@ export class WorkerClient {
    try{const msg=JSON.parse(line.toString('utf8'));
     if(msg.jsonrpc==='2.0'&&msg.method==='cad_progress'&&!Object.hasOwn(msg,'id')){
      const p=msg.params,request=this.pending.get(p?.requestId);
+     if(['assembly','interference'].includes(p?.stage)){
+      if(!request||request.method!=='assembly_check'&&request.method!=='assembly_stage'||p.candidateId!==request.candidateId||!Number.isSafeInteger(p.sequence)||p.sequence<=request.progressSequence)throw new Error('Invalid assembly notification');
+      request.progressSequence=p.sequence;this.onProgress?.(p);continue;
+     }
      if(p?.stage==='operation'){
       if(!request||request.method!=='apply_operations'||p.candidateId!==request.candidateId||!['start','returned','batch_complete','batch_aborted'].includes(p.status)||!Number.isSafeInteger(p.sequence)||p.sequence<=request.progressSequence||!Number.isSafeInteger(p.index)||p.index<0||typeof p.stepId!=='string')throw new Error('Invalid Worker operation notification');
       request.progressSequence=p.sequence;this.onProgress?.(p);continue;

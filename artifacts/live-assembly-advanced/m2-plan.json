@@ -1,0 +1,34 @@
+{
+  "request": "请将当前装配中的圆柱销直径从7 mm修改为10 mm。保持底板60×40×8 mm、中心孔直径8 mm、底板位置、圆柱销长度20 mm、Z轴方向和位置(30,20,0)不变。请先生成新的结构化计划并等待批准。批准后执行真实CAD修改和装配检查；发现干涉时不得提交新的正式装配。",
+  "plan": {
+    "version": 1,
+    "documentId": "advanced-assembly-1793292585606",
+    "operationId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+    "requestHash": "68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86",
+    "kind": "edit_pin_plate_assembly",
+    "baseRevision": 1,
+    "assembly": {
+      "length": 60,
+      "width": 40,
+      "thickness": 8,
+      "holeDiameter": 8,
+      "pinDiameter": 10,
+      "pinLength": 20
+    },
+    "dimensions": {
+      "length": 60,
+      "width": 40,
+      "height": 20,
+      "unit": "mm"
+    },
+    "criteria": {
+      "bbox": [
+        60,
+        40,
+        20
+      ],
+      "volume": 20368.672467135406
+    },
+    "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110"
+  }
+}

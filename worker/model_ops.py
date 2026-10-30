@@ -150,6 +150,13 @@ def inspect_document(doc):
         parent=obj.getParentGeoFeatureGroup()
         result.append(dict(id=obj.CadFeatureId,label=obj.Label,type=obj.TypeId,parent=parent.CadFeatureId if parent and 'CadFeatureId' in parent.PropertiesList else None,parameters=params,constraints=constraints))
     if len({o['id'] for o in result})!=len(result):raise ValueError('Duplicate feature ID')
+    assembly=doc.getObject('Assembly')
+    if assembly and assembly.TypeId=='Assembly::AssemblyObject':
+        result.append(dict(id='Assembly',label='固定关节装配',type=assembly.TypeId,parent=None,parameters={}))
+        for component in assembly.Group:
+            if component.TypeId=='App::Link':
+                base=component.Placement.Base
+                result.append(dict(id=component.Name,label=component.LinkedObject.Label+'组件',type='App::Link',parent='Assembly',parameters=dict(x=base.x,y=base.y,z=base.z)))
     return result
 
 def sketch_snapshot(doc, stable_id):

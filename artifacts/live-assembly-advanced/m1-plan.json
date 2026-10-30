@@ -1,0 +1,34 @@
+{
+  "request": "请创建一个由矩形底板和圆柱销组成的简单装配。底板长度60 mm、宽度40 mm、厚度8 mm，底面位于XY平面，在正中心开直径8 mm贯穿孔，孔中心(30,20)，孔轴沿Z方向。圆柱销直径7 mm、长度20 mm，轴线沿Z方向，装配位置x=30、y=20、z=0，从底部穿过中心孔，顶部延伸至z=20 mm。请先生成BOM和建模计划，等待批准后再开始CAD写入。",
+  "plan": {
+    "version": 1,
+    "documentId": "advanced-assembly-1793292585606",
+    "operationId": "8d857783-bd9f-4f3c-a992-e5af27fc9505",
+    "requestHash": "ad912d31554ed9992c4576ea327619236f27270065d0d2921df17656836972e3",
+    "kind": "pin_plate_assembly",
+    "baseRevision": 0,
+    "assembly": {
+      "length": 60,
+      "width": 40,
+      "thickness": 8,
+      "holeDiameter": 8,
+      "pinDiameter": 7,
+      "pinLength": 20
+    },
+    "dimensions": {
+      "length": 60,
+      "width": 40,
+      "height": 20,
+      "unit": "mm"
+    },
+    "criteria": {
+      "bbox": [
+        60,
+        40,
+        20
+      ],
+      "volume": 19567.566340470006
+    },
+    "planHash": "7da93044fc443063c263094a38aefa26da650d2148eddc476b0f5b2c6925dd53"
+  }
+}

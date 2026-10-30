@@ -1,6 +1,7 @@
 {
  "definitions": {
   "id":{"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"},
+  "assembly":{"type":"object","required":["length","width","thickness","holeDiameter","pinDiameter","pinLength"],"additionalProperties":false,"properties":{"length":{"$ref":"positive"},"width":{"$ref":"positive"},"thickness":{"$ref":"positive"},"holeDiameter":{"$ref":"positive"},"pinDiameter":{"$ref":"positive"},"pinLength":{"$ref":"positive"}}},
   "number":{"type":"number","minimum":-1000000,"maximum":1000000},
   "positive":{"type":"number","exclusiveMinimum":0,"maximum":1000000},
   "point2":{"type":"array","minItems":2,"maxItems":2,"items":{"$ref":"number"}},
@@ -12,10 +13,13 @@
   "parameter":{"type":"object","required":["feature","parameter","value"],"additionalProperties":false,"properties":{"feature":{"$ref":"id"},"parameter":{"$ref":"id"},"value":{"$ref":"number"}}}
  },
  "plan":{"oneOf":[
+  {"type":"object","required":["kind","assembly"],"additionalProperties":false,"properties":{"kind":{"enum":["pin_plate_assembly","edit_pin_plate_assembly"]},"assembly":{"$ref":"assembly"}}},
   {"type":"object","required":["kind","length","width","height"],"additionalProperties":false,"properties":{"kind":{"const":"create_box"},"length":{"$ref":"positive"},"width":{"$ref":"positive"},"height":{"$ref":"positive"}}},
   {"type":"object","required":["kind","diameter"],"additionalProperties":false,"properties":{"kind":{"enum":["add_hole","edit_hole"]},"diameter":{"$ref":"positive"}}}
  ]},
  "operation":{"oneOf":[
+  {"type":"object","required":["op","stage","design"],"additionalProperties":false,"properties":{"op":{"const":"assembly_stage"},"stage":{"enum":["plate","pin","assemble","pin_edit"]},"design":{"$ref":"assembly"}}},
+  {"type":"object","required":["op","design"],"additionalProperties":false,"properties":{"op":{"const":"assembly_check"},"design":{"$ref":"assembly"}}},
   {"type":"object","required":["op","id"],"additionalProperties":false,"properties":{"op":{"const":"create_body"},"id":{"$ref":"id"}}},
   {"type":"object","required":["op","id","body","plane","origin"],"additionalProperties":false,"properties":{"op":{"const":"create_sketch"},"id":{"$ref":"id"},"body":{"$ref":"id"},"plane":{"enum":["XY","XZ","YZ"]},"origin":{"$ref":"point3"}}},
   {"type":"object","required":["op","sketch","geometryId","geometry"],"additionalProperties":false,"properties":{"op":{"const":"add_geometry"},"sketch":{"$ref":"id"},"geometryId":{"type":"integer","minimum":0,"maximum":255},"geometry":{"$ref":"geometry"}}},

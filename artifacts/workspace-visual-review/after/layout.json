@@ -6,33 +6,33 @@
     "height": 895
   },
   ".model-panel": {
-    "x": 210,
+    "x": 198,
     "y": 65,
-    "width": 880,
+    "width": 882,
     "height": 895
   },
   ".detail-panel": {
-    "x": 1090,
+    "x": 1080,
     "y": 65,
-    "width": 350,
+    "width": 360,
     "height": 895
   },
   ".properties": {
     "x": 0,
     "y": 388,
-    "width": 209,
+    "width": 197,
     "height": 445
   },
   ".chat-form": {
-    "x": 1091,
+    "x": 1081,
     "y": 808,
-    "width": 349,
+    "width": 359,
     "height": 152
   },
   ".job-list": {
-    "x": 1091,
+    "x": 1081,
     "y": 300.9375,
-    "width": 349,
+    "width": 359,
     "height": 507.0625
   }
 }

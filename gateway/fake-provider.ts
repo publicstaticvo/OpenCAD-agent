@@ -2,11 +2,20 @@
 import type {Job} from './supervisor.ts';
 import {scriptedTextRunner,type TextRunner,type Turn,type CadSession} from './agent.ts';
 import plate from '../tests/fixtures/models/plate.json';import ring from '../tests/fixtures/models/ring.json';import step from '../tests/fixtures/models/step.json';
+import {approvedStages} from './plan.ts';
 export function fixtureTextRunner():TextRunner{
  const runner=async(job:Job,session:CadSession,signal:AbortSignal)=>{
   const snapshot=await session.snapshot(),text=job.request.text as string,numbers=(text.match(/-?\d+(?:\.\d+)?/g)??[]).map(Number);
   let operations:any[]|undefined,criteria:any;
   const has=(...values:number[])=>values.every(v=>numbers.includes(v));
+  if(/装配|assembly/i.test(text)&&has(80,60,10,8,20)&&(numbers.includes(7)||numbers.includes(9))){
+   if(session.mode==='planning'){
+    await session.propose!({kind:'pin_plate_assembly',assembly:{length:80,width:60,thickness:10,holeDiameter:8,pinDiameter:numbers.includes(9)?9:7,pinLength:20}});
+    session.transcript({provider:'fake',toolCalls:0,messages:[{role:'assistant',content:[{type:'text',text:'已生成离线装配计划；未调用真实模型。'}]}]});return;
+   }
+   const stages=approvedStages(session.plan!);
+   return scriptedTextRunner([{calls:[{name:'cad_inspect',args:{}}]},...stages.map(stage=>({calls:[{name:'cad_apply',args:{operations:stage.operations}}]})),{calls:[{name:'cad_finish',args:{criteria:session.plan!.criteria}}]}])(job,session,signal);
+  }
   if(snapshot.revision===0){
    const sample=/(孔板|plate)/i.test(text)&&has(80,60,10,6,20,15)?plate:/(垫套|ring)/i.test(text)&&has(20,10)?ring:/(台阶|step)/i.test(text)&&has(40,30,10,20)?step:undefined;
    if(sample){operations=sample.operations;criteria=sample.criteria;}

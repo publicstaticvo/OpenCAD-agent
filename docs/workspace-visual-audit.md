@@ -35,12 +35,12 @@ Varen 的大面积三维视口在左侧，Agent 区域在右侧，输入框位�
 
 验证入口：`tests/e2e/workspace-layout.spec.ts` 检查真实创建与尺寸修改、消息正序、底部输入、属性位置、旧记录阅读位置、新任务更新、刷新恢复和紧凑布局；`tests/e2e/approval-preview.spec.ts` 在真实 Worker 完成草图及 Pad 后暂停等待浏览器检查，随后继续验证提交和历史候选恢复。暂停只控制测试检查时机，所有模型和事件均来自实际 FreeCAD 执行。其余浏览器测试覆盖取消、失败保护、项目/对话切换、WebSocket 恢复、特征查看与下载文件独立重开。
 
-本机验证：`npm run typecheck`、`npm run build`、`npm run test:unit`（126 项）、`npm run test:cad`（22 项）、`npm run test:e2e`（11 项）、`npm run verify:pi`。构建保留既有的大文件提示；硬件 GPU、其他浏览器和真实模型服务本轮未验收。实际运行日志位于 `.work/visual-*.log`。
+本机验证：`npm run typecheck`、`npm run build`、`npm run test:unit`（128 项）、`npm run test:cad`（29 项）、`npm run test:e2e`（13 项）、`npm run verify:pi`、`git diff --check` 全部通过。构建保留既有的大文件提示；硬件 GPU、其他浏览器和真实模型服务本轮未验收。实际截图与测试产物位于 `artifacts/workspace-visual-review/`。
 
 ## 使用与实现边界
 
 在项目目录执行 `mkdir -p .work/tmp`、`export TMPDIR="$PWD/.work/tmp"`、`npm run build`，随后 `npm run dev`，打开 `http://127.0.0.1:3000`。工作区访问密钥来自本地数据目录的 `access-token` 文件，请通过本机方式读取。已保存的模型配置继续使用；设置入口仍为“模型设置”。本轮没有修改配置、读取服务密钥或调用模型。在线设置及运行要求见[在线模式](online-mode.md)，离线演示使用 `CAD_PROVIDER=fake npm run dev`，固定样例仍执行真实 FreeCAD。浏览器检查由 `npm run test:e2e` 自动启动隔离的数据目录和服务，无需修改现有项目数据。
 
-本轮应用代码只涉及 `web/src/App.tsx` 和 `web/src/style.css`；另修改两个浏览器测试、一个测试辅助服务及本报告。Pi、模型协议、Gateway 生产代码、CAD 工具、审批、Worker 和验证逻辑保持不变。
+本轮视觉改造涉及 `web/src/App.tsx` 和 `web/src/style.css`；工作区中同时保留了装配演示所需的 Gateway、Worker、FreeCAD 验证和测试变更，本次视觉调整没有改变这些执行逻辑。Pi、模型协议和 Agent Runtime 核心没有修改。
 
 Pi 简要核查：`gateway/model-config.ts` → `gateway/agent.ts` → `gateway/pi-adapter.mjs:runPiLoop` 每次调用创建一个 `Agent`（第 76 行），注册阶段允许的 CAD 工具，通过既有 `beforeToolCall` 和顺序执行接口检查调用。`gateway/supervisor.ts` 第 94、195 行分别创建规划和执行阶段的应用会话，分别调用同一个运行入口，因此每个正常获批任务依次创建两个 Agent 实例；没有 Agent 间委派或五个职责 Agent，也未使用 Pi Coding Agent 的 `AgentSession`。CAD 写入、候选、审批及提交由 Gateway/Worker 管理。`gateway/eval-provider.mjs` 选择 Pi 已有的 Chat Completions/Responses 流处理；应用维护的 Pi 协议文件包含关闭 SDK 默认超时的适配（提交 `16be6a8`）。M1/M2 提交 `e8eaaf6` 未改动 Pi 核心执行循环、会话管理或工具分发源码；当前核心源码指纹检查通过。独立的上游 Git 元数据已不存在，指纹能确认记录基线一致，无法凭此审定全部源码与上游每项差异。

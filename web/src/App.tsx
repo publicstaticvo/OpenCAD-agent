@@ -4,21 +4,28 @@ import {WorkspaceStore} from './store.ts';
 import {Viewer} from './viewer.tsx';
 import {ModelSettings} from './ModelSettings.tsx';
 import {SketchPreview} from './SketchPreview.tsx';
+import {AssemblyPanel} from './AssemblyPanel.tsx';
 import type {LoadedRevision} from './store.ts';
 import {describeModelFailure} from '../../shared/model-errors.ts';
 import type {Job} from '../../gateway/supervisor.ts';
 import type {AppEvent} from '../../shared/cad-contracts.ts';
 import './style.css';
-const names:Record<string,string>={'PartDesign::Body':'主体','Sketcher::SketchObject':'草图','PartDesign::Pad':'拉伸','PartDesign::Pocket':'切除'};
+const names:Record<string,string>={'PartDesign::Body':'主体','Sketcher::SketchObject':'草图','PartDesign::Pad':'拉伸','PartDesign::Pocket':'切除','Assembly::AssemblyObject':'装配','App::Link':'组件'};
 const statuses:Record<string,string>={planning:'生成计划',clarifying:'等待补充信息',awaiting_approval:'等待批准',approved:'已批准',queued:'排队中',running:'建模中',validating:'验证文件与几何',committing:'提交版本中',committed:'已提交',answered:'已回复，模型未修改',rejected:'计划已拒绝',failed:'失败',cancelled:'已取消',interrupted:'已中断'};
 const terminal=new Set(['committed','answered','rejected','failed','cancelled','interrupted']);
 function CadProgress({data}:{data:any}){
  const stages:Record<string,string>={geometry:'几何验证',save:'保存 FCStd',reopen:'独立重开',export_step:'导出 STEP',export_glb:'导出 GLB'};
+ if(data.stage==='assembly')return <span>{data.partId==='plate'?'底板':data.partId==='pin'?'圆柱销':'装配'} · {({part_start:'开始真实建模',sketch_complete:'实际草图与约束完成',feature_complete:`${data.feature} ${data.operation} 完成`,part_complete:'单体几何验证完成',assembly_complete:'原生固定关节装配完成'} as Record<string,string>)[data.status]??data.status}</span>;
+ if(data.stage==='interference')return <span>实际装配几何检查 · {data.report?.status==='clear'?'装配有效，无实体材料重叠':data.report?.status==='invalid'?`装配无效：${data.report.reason}`:'存在真实材料干涉'} {data.report?.pairs?.map((pair:any)=>`${pair.components.join(' ↔ ')}：${pair.volume} mm³`).join('，')}</span>;
  const operations:Record<string,string>={create_body:'创建主体',create_sketch:'创建草图',add_geometry:'添加几何',add_constraint:'添加约束',pad:'Pad 拉伸',pocket:'Pocket 切除',set_parameter:'修改参数'};
  const statuses:Record<string,string>={start:'开始',returned:'操作返回，等待批次完成',batch_complete:'批次事务完成',batch_aborted:'批次事务已中止，修改未保留',complete:'完成'};
  return <span>{data.stage==='operation'?(operations[data.operation?.op]??'CAD 批次'):stages[data.stage]} · {statuses[data.status]??data.status}</span>;
 }
 function PlanCard({job,decide}:{job:Job;decide:(decision:'approve'|'reject')=>void}){
+ if(job.plan?.kind==='pin_plate_assembly'||job.plan?.kind==='edit_pin_plate_assembly'){
+  const p=job.plan,a=p.assembly!;const editing=p.kind==='edit_pin_plate_assembly';
+  return <section className="plan-card" data-testid="approval-plan"><h3>{editing?'双零件装配修改计划':'双零件装配计划'}</h3><p>基于正式版本 {p.baseRevision} · mm</p><p>Plate / 底板 × 1：{a.length} × {a.width} × {a.thickness} mm，中心贯穿孔 Ø{a.holeDiameter} mm。</p><p>Pin / 圆柱销 × 1：Ø{a.pinDiameter} × {a.pinLength} mm。</p><p>底板接地；圆柱销固定于 [{a.length/2}, {a.width/2}, 0]，不旋转。</p><ol>{editing?<li>仅修改圆柱销直径并重新验证现有装配</li>:<><li>底板草图、约束、Pad、Pocket 和单体验证</li><li>圆柱销草图、约束、Pad 和单体验证</li><li>创建两个组件链接及原生固定关节</li></>}<li>真实几何交集检查，交叠时拒绝提交</li><li>保存、独立重开和 STEP / GLB 验证后提交</li></ol><button onClick={()=>decide('approve')}>批准并开始建模</button><button onClick={()=>decide('reject')}>拒绝计划</button></section>;
+ }
  const p=job.plan!;const steps=p.kind==='create_box'?['创建一个主体','创建矩形草图和完全约束','Pad 拉伸实体']:p.kind==='add_hole'?['在顶面建立中心圆草图和完全约束','Pocket 贯穿切除']:p.kind==='edit_hole'?['修改已有草图的直径约束']:['执行列出的结构化 CAD 操作'];
  return <section className="plan-card" data-testid="approval-plan"><h3>建模计划</h3><p>基于正式版本 {p.baseRevision} · 单零件 · mm</p><p>外形：{p.dimensions.length} × {p.dimensions.width} × {p.dimensions.height} mm</p>{p.diameter!==undefined&&<p>中心：[{p.center?.join(', ')}] mm；孔径：{p.previousDiameter===undefined?'':`${p.previousDiameter} → `}{p.diameter} mm；贯穿</p>}<ol>{steps.map(step=><li key={step}>{step}</li>)}<li>验证、保存、独立重开、导出，全部通过后提交</li></ol><p>验收：包围盒 [{p.criteria.bbox.join(', ')}] mm；体积 {Number(p.criteria.volume.toFixed(6))} mm³；一个有效实体</p><small>批准范围：本任务列出的结构与尺寸。改变设计需要重新批准。</small>{p.program&&<details><summary>批准的全部操作和验收条件</summary><pre>{JSON.stringify(p.program,null,2)}</pre></details>}<button onClick={()=>decide('approve')}>批准并开始建模</button><button onClick={()=>decide('reject')}>拒绝计划</button></section>;
 }
@@ -145,10 +152,12 @@ function Workspace({api,id,onLogout,onSettings,onProject}:{api:Api;id:string;onL
      {candidateAsset&&<div className="candidate-viewer"><Viewer asset={candidateAsset} selected={false} onSelect={()=>{}}/></div>}
      {latestCandidate.geometry&&!candidateAsset&&<p>正在读取实际候选模型…</p>}
      <details className="candidate-data" open={!latestCandidate.geometry}><summary>实际草图、约束与候选特征</summary>
-     <SketchPreview snapshot={latestCandidate}/>
+     {latestCandidate.sketch&&<SketchPreview snapshot={latestCandidate}/>}
+     {latestCandidate.assembly&&<AssemblyPanel assembly={latestCandidate.assembly} revision={latestCandidate.baseRevision} candidate/>}
      <details open><summary>候选特征与参数</summary><ul>{latestCandidate.tree.map((f:any)=><li key={f.id}>{f.id} · {names[f.type]} · {Object.entries(f.parameters).map(([name,value])=>`${name}=${value} mm`).join('，')}</li>)}</ul></details>
      </details>{latestCandidate.geometry&&<p>候选几何：[{latestCandidate.geometry.bbox.join(', ')}] mm · {Number(latestCandidate.geometry.volume.toFixed(6))} mm³</p>}
     </section>:loaded?.asset?<Viewer asset={loaded.asset} selected={!!feature} onSelect={()=>setSelected('Body')}/>:<div className="empty-model"><div className="empty-cube">◇</div><h2>{state.pendingRevision!==null?'正在载入模型':'尚无正式模型'}</h2><p>候选只有通过几何与文件验收后才会成为正式版本。</p></div>}
+    {loaded?.snapshot.validation?.assembly&&<details className="model-assembly"><summary>正式修订 {revision} · 装配组件、BOM 与干涉报告</summary><AssemblyPanel assembly={loaded.snapshot.validation.assembly} revision={revision} onSelect={setSelected}/></details>}
     <footer className="model-footer">{candidateVisible?'左侧特征树及下载仍对应正式版本':feature?`所选：${feature.label} · ${names[feature.type]}`:'选择特征查看参数'}<span>正式模型与候选预览分别标识</span></footer>
    </section>
    <aside className="detail-panel">

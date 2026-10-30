@@ -75,6 +75,19 @@ def verify_saved(directory,progress=lambda stage,status: None):
     directory=Path(directory)
     criteria=json.loads((directory/'criteria.json').read_text())
     progress('reopen','start')
+    design=json.loads((directory/'design.json').read_text()) if (directory/'design.json').exists() else None
+    if design and design.get('kind') in ('pin_plate_assembly','edit_pin_plate_assembly'):
+        from worker.assembly import validate_assembly,export_assembly
+        doc=App.openDocument(str(directory/'model.FCStd'))
+        if doc is None:raise ValueError('Invalid assembly FCStd')
+        try:
+            validation=validate_assembly(doc,criteria,design)
+            progress('reopen','complete')
+            exported=export_assembly(doc,directory,progress)
+            validation.update(step=exported['step'],glb=exported['glb'],verifierPid=os.getpid(),meshFeatureId='Assembly')
+            write_json(directory/'tree.json',inspect_document(doc));write_json(directory/'validation.json',validation)
+            return validation
+        finally:App.closeDocument(doc.Name)
     doc=App.openDocument(str(directory/'model.FCStd'))
     if doc is None:raise ValueError('Invalid FCStd')
     imported=None
@@ -110,7 +123,11 @@ def prepare_revision(doc,directory,criteria,progress=lambda stage,status: None):
     directory=Path(directory)
     (directory/'manifest.json').unlink(missing_ok=True)
     progress('geometry','start')
-    validate_document(doc,criteria)
+    design=json.loads((directory/'design.json').read_text()) if (directory/'design.json').exists() else None
+    if design and design.get('kind') in ('pin_plate_assembly','edit_pin_plate_assembly'):
+        from worker.assembly import validate_assembly
+        validate_assembly(doc,criteria,design)
+    else:validate_document(doc,criteria)
     progress('geometry','complete')
     write_json(directory/'criteria.json',criteria)
     progress('save','start')

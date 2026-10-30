@@ -1,0 +1,3944 @@
+{
+  "events": [
+    {
+      "seq": 138,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "job_updated",
+      "data": {
+        "documentId": "advanced-assembly-1793292585606",
+        "baseRevision": 1,
+        "operationId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+        "candidateId": "",
+        "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44",
+        "status": "planning",
+        "request": {
+          "kind": "text",
+          "text": "请将当前装配中的圆柱销直径从7 mm修改为10 mm。保持底板60×40×8 mm、中心孔直径8 mm、底板位置、圆柱销长度20 mm、Z轴方向和位置(30,20,0)不变。请先生成新的结构化计划并等待批准。批准后执行真实CAD修改和装配检查；发现干涉时不得提交新的正式装配。"
+        },
+        "result": null,
+        "error": null
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 139,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "0842b9e0-0401-4ff0-b2fe-79713f74c5ae",
+        "deltaIndex": 3,
+        "messageIndex": 0,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "我会先核"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292733572,
+          "responseId": "resp_03e368852eb1a2ec016ae379bebb90819a852cd9e508d4f2f3"
+        },
+        "delta": "我会先核"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 140,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "0842b9e0-0401-4ff0-b2fe-79713f74c5ae",
+        "deltaIndex": 12,
+        "messageIndex": 0,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "我会先核对实际 CAD 状态，再提交仅将"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292733572,
+          "responseId": "resp_03e368852eb1a2ec016ae379bebb90819a852cd9e508d4f2f3"
+        },
+        "delta": "对实际 CAD 状态，再提交仅将"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 141,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "0842b9e0-0401-4ff0-b2fe-79713f74c5ae",
+        "deltaIndex": 37,
+        "messageIndex": 0,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "我会先核对实际 CAD 状态，再提交仅将销直径改为 10 mm 的结构化修改计划；本轮停在审批阶段，不执行写入。"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292733572,
+          "responseId": "resp_03e368852eb1a2ec016ae379bebb90819a852cd9e508d4f2f3"
+        },
+        "delta": "销直径改为 10 mm 的结构化修改计划；本轮停在审批阶段，不执行写入。"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 142,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "message_end",
+        "messageId": "0842b9e0-0401-4ff0-b2fe-79713f74c5ae",
+        "messageIndex": 0,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "我会先核对实际 CAD 状态，再提交仅将销直径改为 10 mm 的结构化修改计划；本轮停在审批阶段，不执行写入。"
+            },
+            {
+              "type": "toolCall",
+              "id": "call_5188084e71d64d38ae1a95d1aff150fa",
+              "name": "cad_inspect",
+              "arguments": {}
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 9535,
+            "output": 120,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "reasoning": 57,
+            "totalTokens": 9655,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "toolUse",
+          "timestamp": 1793292733572,
+          "responseId": "resp_03e368852eb1a2ec016ae379bebb90819a852cd9e508d4f2f3",
+          "rawStopReason": "tool_calls",
+          "durationMs": 3341,
+          "thinkingLevel": "off"
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 143,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "tool_execution_start",
+        "toolCallId": "call_5188084e71d64d38ae1a95d1aff150fa",
+        "name": "cad_inspect",
+        "args": {}
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 144,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "tool_execution_end",
+        "toolCallId": "call_5188084e71d64d38ae1a95d1aff150fa",
+        "name": "cad_inspect",
+        "isError": false,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"tree\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}],\"revision\":1}"
+            }
+          ],
+          "details": {}
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 145,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "message_end",
+        "messageId": "fb006815-5a7c-4523-b490-37cffc8dcbb1",
+        "messageIndex": 1,
+        "message": {
+          "role": "toolResult",
+          "toolCallId": "call_5188084e71d64d38ae1a95d1aff150fa",
+          "toolName": "cad_inspect",
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"tree\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}],\"revision\":1}"
+            }
+          ],
+          "details": {},
+          "isError": false,
+          "durationMs": 13,
+          "timestamp": 1793292736935
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 146,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "message_end",
+        "messageId": "851beea1-2166-42bd-a645-d7d036a2b79a",
+        "messageIndex": 2,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "toolCall",
+              "id": "call_027a60c1fc294ae3a0f78185ee4797e9",
+              "name": "cad_plan",
+              "arguments": {
+                "plan": {
+                  "kind": "edit_pin_plate_assembly",
+                  "assembly": {
+                    "length": 60,
+                    "width": 40,
+                    "thickness": 8,
+                    "holeDiameter": 8,
+                    "pinDiameter": 10,
+                    "pinLength": 20
+                  }
+                }
+              }
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 5312,
+            "output": 56,
+            "cacheRead": 4736,
+            "cacheWrite": 0,
+            "reasoning": 0,
+            "totalTokens": 10104,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "toolUse",
+          "timestamp": 1793292736951,
+          "responseId": "resp_07e38734b3525771016ae379c1e8f4819bbfcecb567f25d388",
+          "rawStopReason": "tool_calls",
+          "durationMs": 2104,
+          "thinkingLevel": "off"
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 147,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "tool_execution_start",
+        "toolCallId": "call_027a60c1fc294ae3a0f78185ee4797e9",
+        "name": "cad_plan",
+        "args": {
+          "plan": {
+            "kind": "edit_pin_plate_assembly",
+            "assembly": {
+              "length": 60,
+              "width": 40,
+              "thickness": 8,
+              "holeDiameter": 8,
+              "pinDiameter": 10,
+              "pinLength": 20
+            }
+          }
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 148,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "tool_execution_end",
+        "toolCallId": "call_027a60c1fc294ae3a0f78185ee4797e9",
+        "name": "cad_plan",
+        "isError": false,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"awaitingUserApproval\":true,\"plan\":{\"version\":1,\"documentId\":\"advanced-assembly-1793292585606\",\"operationId\":\"121405d4-edcf-409a-8ee8-d30f2e624cac\",\"requestHash\":\"68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86\",\"kind\":\"edit_pin_plate_assembly\",\"baseRevision\":1,\"assembly\":{\"length\":60,\"width\":40,\"thickness\":8,\"holeDiameter\":8,\"pinDiameter\":10,\"pinLength\":20},\"dimensions\":{\"length\":60,\"width\":40,\"height\":20,\"unit\":\"mm\"},\"criteria\":{\"bbox\":[60,40,20],\"volume\":20368.672467135406},\"planHash\":\"48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110\"}}"
+            }
+          ],
+          "details": {}
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 149,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "message_end",
+        "messageId": "905d5f16-10f0-4cc9-a9d2-456f1d122365",
+        "messageIndex": 3,
+        "message": {
+          "role": "toolResult",
+          "toolCallId": "call_027a60c1fc294ae3a0f78185ee4797e9",
+          "toolName": "cad_plan",
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"awaitingUserApproval\":true,\"plan\":{\"version\":1,\"documentId\":\"advanced-assembly-1793292585606\",\"operationId\":\"121405d4-edcf-409a-8ee8-d30f2e624cac\",\"requestHash\":\"68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86\",\"kind\":\"edit_pin_plate_assembly\",\"baseRevision\":1,\"assembly\":{\"length\":60,\"width\":40,\"thickness\":8,\"holeDiameter\":8,\"pinDiameter\":10,\"pinLength\":20},\"dimensions\":{\"length\":60,\"width\":40,\"height\":20,\"unit\":\"mm\"},\"criteria\":{\"bbox\":[60,40,20],\"volume\":20368.672467135406},\"planHash\":\"48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110\"}}"
+            }
+          ],
+          "details": {},
+          "isError": false,
+          "durationMs": 10,
+          "timestamp": 1793292739079
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 150,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "job_updated",
+      "data": {
+        "documentId": "advanced-assembly-1793292585606",
+        "baseRevision": 1,
+        "operationId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+        "candidateId": "",
+        "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44",
+        "status": "awaiting_approval",
+        "request": {
+          "kind": "text",
+          "text": "请将当前装配中的圆柱销直径从7 mm修改为10 mm。保持底板60×40×8 mm、中心孔直径8 mm、底板位置、圆柱销长度20 mm、Z轴方向和位置(30,20,0)不变。请先生成新的结构化计划并等待批准。批准后执行真实CAD修改和装配检查；发现干涉时不得提交新的正式装配。"
+        },
+        "result": null,
+        "error": null,
+        "plan": {
+          "version": 1,
+          "documentId": "advanced-assembly-1793292585606",
+          "operationId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+          "requestHash": "68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86",
+          "kind": "edit_pin_plate_assembly",
+          "baseRevision": 1,
+          "assembly": {
+            "length": 60,
+            "width": 40,
+            "thickness": 8,
+            "holeDiameter": 8,
+            "pinDiameter": 10,
+            "pinLength": 20
+          },
+          "dimensions": {
+            "length": 60,
+            "width": 40,
+            "height": 20,
+            "unit": "mm"
+          },
+          "criteria": {
+            "bbox": [
+              60,
+              40,
+              20
+            ],
+            "volume": 20368.672467135406
+          },
+          "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110"
+        },
+        "planningAgent": {
+          "provider": "live",
+          "toolCalls": 2,
+          "blockedCalls": 0,
+          "rawCoercionsObserved": 0,
+          "contextRevision": 1,
+          "contextRevisions": [
+            1,
+            1
+          ],
+          "historyRoundsIncluded": 1,
+          "historyRoundsOmitted": 0,
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"请将当前装配中的圆柱销直径从7 mm修改为10 mm。保持底板60×40×8 mm、中心孔直径8 mm、底板位置、圆柱销长度20 mm、Z轴方向和位置(30,20,0)不变。请先生成新的结构化计划并等待批准。批准后执行真实CAD修改和装配检查；发现干涉时不得提交新的正式装配。\",\"phase\":\"planning\",\"documentId\":\"advanced-assembly-1793292585606\",\"revision\":1,\"features\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}]}"
+                }
+              ],
+              "timestamp": 1793292733561
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "我会先核对实际 CAD 状态，再提交仅将销直径改为 10 mm 的结构化修改计划；本轮停在审批阶段，不执行写入。"
+                },
+                {
+                  "type": "toolCall",
+                  "id": "call_5188084e71d64d38ae1a95d1aff150fa",
+                  "name": "cad_inspect",
+                  "arguments": {}
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 9535,
+                "output": 120,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "reasoning": 57,
+                "totalTokens": 9655,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292733572,
+              "responseId": "resp_03e368852eb1a2ec016ae379bebb90819a852cd9e508d4f2f3",
+              "rawStopReason": "tool_calls",
+              "durationMs": 3341,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_5188084e71d64d38ae1a95d1aff150fa",
+              "toolName": "cad_inspect",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tree\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}],\"revision\":1}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 13,
+              "timestamp": 1793292736935
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "toolCall",
+                  "id": "call_027a60c1fc294ae3a0f78185ee4797e9",
+                  "name": "cad_plan",
+                  "arguments": {
+                    "plan": {
+                      "kind": "edit_pin_plate_assembly",
+                      "assembly": {
+                        "length": 60,
+                        "width": 40,
+                        "thickness": 8,
+                        "holeDiameter": 8,
+                        "pinDiameter": 10,
+                        "pinLength": 20
+                      }
+                    }
+                  }
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 5312,
+                "output": 56,
+                "cacheRead": 4736,
+                "cacheWrite": 0,
+                "reasoning": 0,
+                "totalTokens": 10104,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292736951,
+              "responseId": "resp_07e38734b3525771016ae379c1e8f4819bbfcecb567f25d388",
+              "rawStopReason": "tool_calls",
+              "durationMs": 2104,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_027a60c1fc294ae3a0f78185ee4797e9",
+              "toolName": "cad_plan",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"awaitingUserApproval\":true,\"plan\":{\"version\":1,\"documentId\":\"advanced-assembly-1793292585606\",\"operationId\":\"121405d4-edcf-409a-8ee8-d30f2e624cac\",\"requestHash\":\"68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86\",\"kind\":\"edit_pin_plate_assembly\",\"baseRevision\":1,\"assembly\":{\"length\":60,\"width\":40,\"thickness\":8,\"holeDiameter\":8,\"pinDiameter\":10,\"pinLength\":20},\"dimensions\":{\"length\":60,\"width\":40,\"height\":20,\"unit\":\"mm\"},\"criteria\":{\"bbox\":[60,40,20],\"volume\":20368.672467135406},\"planHash\":\"48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110\"}}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 10,
+              "timestamp": 1793292739079
+            }
+          ],
+          "usage": [
+            {
+              "input": 9535,
+              "output": 120,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "reasoning": 57,
+              "totalTokens": 9655,
+              "cost": null
+            },
+            {
+              "input": 5312,
+              "output": 56,
+              "cacheRead": 4736,
+              "cacheWrite": 0,
+              "reasoning": 0,
+              "totalTokens": 10104,
+              "cost": null
+            }
+          ]
+        },
+        "agent": {
+          "provider": "live",
+          "toolCalls": 2,
+          "blockedCalls": 0,
+          "rawCoercionsObserved": 0,
+          "contextRevision": 1,
+          "contextRevisions": [
+            1,
+            1
+          ],
+          "historyRoundsIncluded": 1,
+          "historyRoundsOmitted": 0,
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"请将当前装配中的圆柱销直径从7 mm修改为10 mm。保持底板60×40×8 mm、中心孔直径8 mm、底板位置、圆柱销长度20 mm、Z轴方向和位置(30,20,0)不变。请先生成新的结构化计划并等待批准。批准后执行真实CAD修改和装配检查；发现干涉时不得提交新的正式装配。\",\"phase\":\"planning\",\"documentId\":\"advanced-assembly-1793292585606\",\"revision\":1,\"features\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}]}"
+                }
+              ],
+              "timestamp": 1793292733561
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "我会先核对实际 CAD 状态，再提交仅将销直径改为 10 mm 的结构化修改计划；本轮停在审批阶段，不执行写入。"
+                },
+                {
+                  "type": "toolCall",
+                  "id": "call_5188084e71d64d38ae1a95d1aff150fa",
+                  "name": "cad_inspect",
+                  "arguments": {}
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 9535,
+                "output": 120,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "reasoning": 57,
+                "totalTokens": 9655,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292733572,
+              "responseId": "resp_03e368852eb1a2ec016ae379bebb90819a852cd9e508d4f2f3",
+              "rawStopReason": "tool_calls",
+              "durationMs": 3341,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_5188084e71d64d38ae1a95d1aff150fa",
+              "toolName": "cad_inspect",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tree\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}],\"revision\":1}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 13,
+              "timestamp": 1793292736935
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "toolCall",
+                  "id": "call_027a60c1fc294ae3a0f78185ee4797e9",
+                  "name": "cad_plan",
+                  "arguments": {
+                    "plan": {
+                      "kind": "edit_pin_plate_assembly",
+                      "assembly": {
+                        "length": 60,
+                        "width": 40,
+                        "thickness": 8,
+                        "holeDiameter": 8,
+                        "pinDiameter": 10,
+                        "pinLength": 20
+                      }
+                    }
+                  }
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 5312,
+                "output": 56,
+                "cacheRead": 4736,
+                "cacheWrite": 0,
+                "reasoning": 0,
+                "totalTokens": 10104,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292736951,
+              "responseId": "resp_07e38734b3525771016ae379c1e8f4819bbfcecb567f25d388",
+              "rawStopReason": "tool_calls",
+              "durationMs": 2104,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_027a60c1fc294ae3a0f78185ee4797e9",
+              "toolName": "cad_plan",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"awaitingUserApproval\":true,\"plan\":{\"version\":1,\"documentId\":\"advanced-assembly-1793292585606\",\"operationId\":\"121405d4-edcf-409a-8ee8-d30f2e624cac\",\"requestHash\":\"68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86\",\"kind\":\"edit_pin_plate_assembly\",\"baseRevision\":1,\"assembly\":{\"length\":60,\"width\":40,\"thickness\":8,\"holeDiameter\":8,\"pinDiameter\":10,\"pinLength\":20},\"dimensions\":{\"length\":60,\"width\":40,\"height\":20,\"unit\":\"mm\"},\"criteria\":{\"bbox\":[60,40,20],\"volume\":20368.672467135406},\"planHash\":\"48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110\"}}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 10,
+              "timestamp": 1793292739079
+            }
+          ],
+          "usage": [
+            {
+              "input": 9535,
+              "output": 120,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "reasoning": 57,
+              "totalTokens": 9655,
+              "cost": null
+            },
+            {
+              "input": 5312,
+              "output": 56,
+              "cacheRead": 4736,
+              "cacheWrite": 0,
+              "reasoning": 0,
+              "totalTokens": 10104,
+              "cost": null
+            }
+          ]
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 151,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "plan_ready",
+      "data": {
+        "version": 1,
+        "documentId": "advanced-assembly-1793292585606",
+        "operationId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+        "requestHash": "68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86",
+        "kind": "edit_pin_plate_assembly",
+        "baseRevision": 1,
+        "assembly": {
+          "length": 60,
+          "width": 40,
+          "thickness": 8,
+          "holeDiameter": 8,
+          "pinDiameter": 10,
+          "pinLength": 20
+        },
+        "dimensions": {
+          "length": 60,
+          "width": 40,
+          "height": 20,
+          "unit": "mm"
+        },
+        "criteria": {
+          "bbox": [
+            60,
+            40,
+            20
+          ],
+          "volume": 20368.672467135406
+        },
+        "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 152,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "plan_approved",
+      "data": {
+        "documentId": "advanced-assembly-1793292585606",
+        "baseRevision": 1,
+        "operationId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+        "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+        "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44",
+        "status": "approved",
+        "request": {
+          "kind": "text",
+          "text": "请将当前装配中的圆柱销直径从7 mm修改为10 mm。保持底板60×40×8 mm、中心孔直径8 mm、底板位置、圆柱销长度20 mm、Z轴方向和位置(30,20,0)不变。请先生成新的结构化计划并等待批准。批准后执行真实CAD修改和装配检查；发现干涉时不得提交新的正式装配。"
+        },
+        "result": null,
+        "error": null,
+        "plan": {
+          "version": 1,
+          "documentId": "advanced-assembly-1793292585606",
+          "operationId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+          "requestHash": "68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86",
+          "kind": "edit_pin_plate_assembly",
+          "baseRevision": 1,
+          "assembly": {
+            "length": 60,
+            "width": 40,
+            "thickness": 8,
+            "holeDiameter": 8,
+            "pinDiameter": 10,
+            "pinLength": 20
+          },
+          "dimensions": {
+            "length": 60,
+            "width": 40,
+            "height": 20,
+            "unit": "mm"
+          },
+          "criteria": {
+            "bbox": [
+              60,
+              40,
+              20
+            ],
+            "volume": 20368.672467135406
+          },
+          "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110"
+        },
+        "planningAgent": {
+          "provider": "live",
+          "toolCalls": 2,
+          "blockedCalls": 0,
+          "rawCoercionsObserved": 0,
+          "contextRevision": 1,
+          "contextRevisions": [
+            1,
+            1
+          ],
+          "historyRoundsIncluded": 1,
+          "historyRoundsOmitted": 0,
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"请将当前装配中的圆柱销直径从7 mm修改为10 mm。保持底板60×40×8 mm、中心孔直径8 mm、底板位置、圆柱销长度20 mm、Z轴方向和位置(30,20,0)不变。请先生成新的结构化计划并等待批准。批准后执行真实CAD修改和装配检查；发现干涉时不得提交新的正式装配。\",\"phase\":\"planning\",\"documentId\":\"advanced-assembly-1793292585606\",\"revision\":1,\"features\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}]}"
+                }
+              ],
+              "timestamp": 1793292733561
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "我会先核对实际 CAD 状态，再提交仅将销直径改为 10 mm 的结构化修改计划；本轮停在审批阶段，不执行写入。"
+                },
+                {
+                  "type": "toolCall",
+                  "id": "call_5188084e71d64d38ae1a95d1aff150fa",
+                  "name": "cad_inspect",
+                  "arguments": {}
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 9535,
+                "output": 120,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "reasoning": 57,
+                "totalTokens": 9655,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292733572,
+              "responseId": "resp_03e368852eb1a2ec016ae379bebb90819a852cd9e508d4f2f3",
+              "rawStopReason": "tool_calls",
+              "durationMs": 3341,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_5188084e71d64d38ae1a95d1aff150fa",
+              "toolName": "cad_inspect",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tree\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}],\"revision\":1}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 13,
+              "timestamp": 1793292736935
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "toolCall",
+                  "id": "call_027a60c1fc294ae3a0f78185ee4797e9",
+                  "name": "cad_plan",
+                  "arguments": {
+                    "plan": {
+                      "kind": "edit_pin_plate_assembly",
+                      "assembly": {
+                        "length": 60,
+                        "width": 40,
+                        "thickness": 8,
+                        "holeDiameter": 8,
+                        "pinDiameter": 10,
+                        "pinLength": 20
+                      }
+                    }
+                  }
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 5312,
+                "output": 56,
+                "cacheRead": 4736,
+                "cacheWrite": 0,
+                "reasoning": 0,
+                "totalTokens": 10104,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292736951,
+              "responseId": "resp_07e38734b3525771016ae379c1e8f4819bbfcecb567f25d388",
+              "rawStopReason": "tool_calls",
+              "durationMs": 2104,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_027a60c1fc294ae3a0f78185ee4797e9",
+              "toolName": "cad_plan",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"awaitingUserApproval\":true,\"plan\":{\"version\":1,\"documentId\":\"advanced-assembly-1793292585606\",\"operationId\":\"121405d4-edcf-409a-8ee8-d30f2e624cac\",\"requestHash\":\"68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86\",\"kind\":\"edit_pin_plate_assembly\",\"baseRevision\":1,\"assembly\":{\"length\":60,\"width\":40,\"thickness\":8,\"holeDiameter\":8,\"pinDiameter\":10,\"pinLength\":20},\"dimensions\":{\"length\":60,\"width\":40,\"height\":20,\"unit\":\"mm\"},\"criteria\":{\"bbox\":[60,40,20],\"volume\":20368.672467135406},\"planHash\":\"48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110\"}}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 10,
+              "timestamp": 1793292739079
+            }
+          ],
+          "usage": [
+            {
+              "input": 9535,
+              "output": 120,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "reasoning": 57,
+              "totalTokens": 9655,
+              "cost": null
+            },
+            {
+              "input": 5312,
+              "output": 56,
+              "cacheRead": 4736,
+              "cacheWrite": 0,
+              "reasoning": 0,
+              "totalTokens": 10104,
+              "cost": null
+            }
+          ]
+        },
+        "agent": {
+          "provider": "live",
+          "toolCalls": 2,
+          "blockedCalls": 0,
+          "rawCoercionsObserved": 0,
+          "contextRevision": 1,
+          "contextRevisions": [
+            1,
+            1
+          ],
+          "historyRoundsIncluded": 1,
+          "historyRoundsOmitted": 0,
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"请将当前装配中的圆柱销直径从7 mm修改为10 mm。保持底板60×40×8 mm、中心孔直径8 mm、底板位置、圆柱销长度20 mm、Z轴方向和位置(30,20,0)不变。请先生成新的结构化计划并等待批准。批准后执行真实CAD修改和装配检查；发现干涉时不得提交新的正式装配。\",\"phase\":\"planning\",\"documentId\":\"advanced-assembly-1793292585606\",\"revision\":1,\"features\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}]}"
+                }
+              ],
+              "timestamp": 1793292733561
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "我会先核对实际 CAD 状态，再提交仅将销直径改为 10 mm 的结构化修改计划；本轮停在审批阶段，不执行写入。"
+                },
+                {
+                  "type": "toolCall",
+                  "id": "call_5188084e71d64d38ae1a95d1aff150fa",
+                  "name": "cad_inspect",
+                  "arguments": {}
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 9535,
+                "output": 120,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "reasoning": 57,
+                "totalTokens": 9655,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292733572,
+              "responseId": "resp_03e368852eb1a2ec016ae379bebb90819a852cd9e508d4f2f3",
+              "rawStopReason": "tool_calls",
+              "durationMs": 3341,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_5188084e71d64d38ae1a95d1aff150fa",
+              "toolName": "cad_inspect",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tree\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}],\"revision\":1}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 13,
+              "timestamp": 1793292736935
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "toolCall",
+                  "id": "call_027a60c1fc294ae3a0f78185ee4797e9",
+                  "name": "cad_plan",
+                  "arguments": {
+                    "plan": {
+                      "kind": "edit_pin_plate_assembly",
+                      "assembly": {
+                        "length": 60,
+                        "width": 40,
+                        "thickness": 8,
+                        "holeDiameter": 8,
+                        "pinDiameter": 10,
+                        "pinLength": 20
+                      }
+                    }
+                  }
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 5312,
+                "output": 56,
+                "cacheRead": 4736,
+                "cacheWrite": 0,
+                "reasoning": 0,
+                "totalTokens": 10104,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292736951,
+              "responseId": "resp_07e38734b3525771016ae379c1e8f4819bbfcecb567f25d388",
+              "rawStopReason": "tool_calls",
+              "durationMs": 2104,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_027a60c1fc294ae3a0f78185ee4797e9",
+              "toolName": "cad_plan",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"awaitingUserApproval\":true,\"plan\":{\"version\":1,\"documentId\":\"advanced-assembly-1793292585606\",\"operationId\":\"121405d4-edcf-409a-8ee8-d30f2e624cac\",\"requestHash\":\"68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86\",\"kind\":\"edit_pin_plate_assembly\",\"baseRevision\":1,\"assembly\":{\"length\":60,\"width\":40,\"thickness\":8,\"holeDiameter\":8,\"pinDiameter\":10,\"pinLength\":20},\"dimensions\":{\"length\":60,\"width\":40,\"height\":20,\"unit\":\"mm\"},\"criteria\":{\"bbox\":[60,40,20],\"volume\":20368.672467135406},\"planHash\":\"48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110\"}}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 10,
+              "timestamp": 1793292739079
+            }
+          ],
+          "usage": [
+            {
+              "input": 9535,
+              "output": 120,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "reasoning": 57,
+              "totalTokens": 9655,
+              "cost": null
+            },
+            {
+              "input": 5312,
+              "output": 56,
+              "cacheRead": 4736,
+              "cacheWrite": 0,
+              "reasoning": 0,
+              "totalTokens": 10104,
+              "cost": null
+            }
+          ]
+        },
+        "approval": {
+          "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110",
+          "decision": "approved",
+          "decidedAt": 1793292739238
+        },
+        "stage": 0
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 153,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "job_updated",
+      "data": {
+        "documentId": "advanced-assembly-1793292585606",
+        "baseRevision": 1,
+        "operationId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+        "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+        "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44",
+        "status": "running",
+        "request": {
+          "kind": "text",
+          "text": "请将当前装配中的圆柱销直径从7 mm修改为10 mm。保持底板60×40×8 mm、中心孔直径8 mm、底板位置、圆柱销长度20 mm、Z轴方向和位置(30,20,0)不变。请先生成新的结构化计划并等待批准。批准后执行真实CAD修改和装配检查；发现干涉时不得提交新的正式装配。"
+        },
+        "result": null,
+        "error": null,
+        "plan": {
+          "version": 1,
+          "documentId": "advanced-assembly-1793292585606",
+          "operationId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+          "requestHash": "68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86",
+          "kind": "edit_pin_plate_assembly",
+          "baseRevision": 1,
+          "assembly": {
+            "length": 60,
+            "width": 40,
+            "thickness": 8,
+            "holeDiameter": 8,
+            "pinDiameter": 10,
+            "pinLength": 20
+          },
+          "dimensions": {
+            "length": 60,
+            "width": 40,
+            "height": 20,
+            "unit": "mm"
+          },
+          "criteria": {
+            "bbox": [
+              60,
+              40,
+              20
+            ],
+            "volume": 20368.672467135406
+          },
+          "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110"
+        },
+        "planningAgent": {
+          "provider": "live",
+          "toolCalls": 2,
+          "blockedCalls": 0,
+          "rawCoercionsObserved": 0,
+          "contextRevision": 1,
+          "contextRevisions": [
+            1,
+            1
+          ],
+          "historyRoundsIncluded": 1,
+          "historyRoundsOmitted": 0,
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"请将当前装配中的圆柱销直径从7 mm修改为10 mm。保持底板60×40×8 mm、中心孔直径8 mm、底板位置、圆柱销长度20 mm、Z轴方向和位置(30,20,0)不变。请先生成新的结构化计划并等待批准。批准后执行真实CAD修改和装配检查；发现干涉时不得提交新的正式装配。\",\"phase\":\"planning\",\"documentId\":\"advanced-assembly-1793292585606\",\"revision\":1,\"features\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}]}"
+                }
+              ],
+              "timestamp": 1793292733561
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "我会先核对实际 CAD 状态，再提交仅将销直径改为 10 mm 的结构化修改计划；本轮停在审批阶段，不执行写入。"
+                },
+                {
+                  "type": "toolCall",
+                  "id": "call_5188084e71d64d38ae1a95d1aff150fa",
+                  "name": "cad_inspect",
+                  "arguments": {}
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 9535,
+                "output": 120,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "reasoning": 57,
+                "totalTokens": 9655,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292733572,
+              "responseId": "resp_03e368852eb1a2ec016ae379bebb90819a852cd9e508d4f2f3",
+              "rawStopReason": "tool_calls",
+              "durationMs": 3341,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_5188084e71d64d38ae1a95d1aff150fa",
+              "toolName": "cad_inspect",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tree\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}],\"revision\":1}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 13,
+              "timestamp": 1793292736935
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "toolCall",
+                  "id": "call_027a60c1fc294ae3a0f78185ee4797e9",
+                  "name": "cad_plan",
+                  "arguments": {
+                    "plan": {
+                      "kind": "edit_pin_plate_assembly",
+                      "assembly": {
+                        "length": 60,
+                        "width": 40,
+                        "thickness": 8,
+                        "holeDiameter": 8,
+                        "pinDiameter": 10,
+                        "pinLength": 20
+                      }
+                    }
+                  }
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 5312,
+                "output": 56,
+                "cacheRead": 4736,
+                "cacheWrite": 0,
+                "reasoning": 0,
+                "totalTokens": 10104,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292736951,
+              "responseId": "resp_07e38734b3525771016ae379c1e8f4819bbfcecb567f25d388",
+              "rawStopReason": "tool_calls",
+              "durationMs": 2104,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_027a60c1fc294ae3a0f78185ee4797e9",
+              "toolName": "cad_plan",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"awaitingUserApproval\":true,\"plan\":{\"version\":1,\"documentId\":\"advanced-assembly-1793292585606\",\"operationId\":\"121405d4-edcf-409a-8ee8-d30f2e624cac\",\"requestHash\":\"68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86\",\"kind\":\"edit_pin_plate_assembly\",\"baseRevision\":1,\"assembly\":{\"length\":60,\"width\":40,\"thickness\":8,\"holeDiameter\":8,\"pinDiameter\":10,\"pinLength\":20},\"dimensions\":{\"length\":60,\"width\":40,\"height\":20,\"unit\":\"mm\"},\"criteria\":{\"bbox\":[60,40,20],\"volume\":20368.672467135406},\"planHash\":\"48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110\"}}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 10,
+              "timestamp": 1793292739079
+            }
+          ],
+          "usage": [
+            {
+              "input": 9535,
+              "output": 120,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "reasoning": 57,
+              "totalTokens": 9655,
+              "cost": null
+            },
+            {
+              "input": 5312,
+              "output": 56,
+              "cacheRead": 4736,
+              "cacheWrite": 0,
+              "reasoning": 0,
+              "totalTokens": 10104,
+              "cost": null
+            }
+          ]
+        },
+        "agent": {
+          "provider": "live",
+          "toolCalls": 2,
+          "blockedCalls": 0,
+          "rawCoercionsObserved": 0,
+          "contextRevision": 1,
+          "contextRevisions": [
+            1,
+            1
+          ],
+          "historyRoundsIncluded": 1,
+          "historyRoundsOmitted": 0,
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"请将当前装配中的圆柱销直径从7 mm修改为10 mm。保持底板60×40×8 mm、中心孔直径8 mm、底板位置、圆柱销长度20 mm、Z轴方向和位置(30,20,0)不变。请先生成新的结构化计划并等待批准。批准后执行真实CAD修改和装配检查；发现干涉时不得提交新的正式装配。\",\"phase\":\"planning\",\"documentId\":\"advanced-assembly-1793292585606\",\"revision\":1,\"features\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}]}"
+                }
+              ],
+              "timestamp": 1793292733561
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "我会先核对实际 CAD 状态，再提交仅将销直径改为 10 mm 的结构化修改计划；本轮停在审批阶段，不执行写入。"
+                },
+                {
+                  "type": "toolCall",
+                  "id": "call_5188084e71d64d38ae1a95d1aff150fa",
+                  "name": "cad_inspect",
+                  "arguments": {}
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 9535,
+                "output": 120,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "reasoning": 57,
+                "totalTokens": 9655,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292733572,
+              "responseId": "resp_03e368852eb1a2ec016ae379bebb90819a852cd9e508d4f2f3",
+              "rawStopReason": "tool_calls",
+              "durationMs": 3341,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_5188084e71d64d38ae1a95d1aff150fa",
+              "toolName": "cad_inspect",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tree\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}],\"revision\":1}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 13,
+              "timestamp": 1793292736935
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "toolCall",
+                  "id": "call_027a60c1fc294ae3a0f78185ee4797e9",
+                  "name": "cad_plan",
+                  "arguments": {
+                    "plan": {
+                      "kind": "edit_pin_plate_assembly",
+                      "assembly": {
+                        "length": 60,
+                        "width": 40,
+                        "thickness": 8,
+                        "holeDiameter": 8,
+                        "pinDiameter": 10,
+                        "pinLength": 20
+                      }
+                    }
+                  }
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 5312,
+                "output": 56,
+                "cacheRead": 4736,
+                "cacheWrite": 0,
+                "reasoning": 0,
+                "totalTokens": 10104,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292736951,
+              "responseId": "resp_07e38734b3525771016ae379c1e8f4819bbfcecb567f25d388",
+              "rawStopReason": "tool_calls",
+              "durationMs": 2104,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_027a60c1fc294ae3a0f78185ee4797e9",
+              "toolName": "cad_plan",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"awaitingUserApproval\":true,\"plan\":{\"version\":1,\"documentId\":\"advanced-assembly-1793292585606\",\"operationId\":\"121405d4-edcf-409a-8ee8-d30f2e624cac\",\"requestHash\":\"68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86\",\"kind\":\"edit_pin_plate_assembly\",\"baseRevision\":1,\"assembly\":{\"length\":60,\"width\":40,\"thickness\":8,\"holeDiameter\":8,\"pinDiameter\":10,\"pinLength\":20},\"dimensions\":{\"length\":60,\"width\":40,\"height\":20,\"unit\":\"mm\"},\"criteria\":{\"bbox\":[60,40,20],\"volume\":20368.672467135406},\"planHash\":\"48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110\"}}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 10,
+              "timestamp": 1793292739079
+            }
+          ],
+          "usage": [
+            {
+              "input": 9535,
+              "output": 120,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "reasoning": 57,
+              "totalTokens": 9655,
+              "cost": null
+            },
+            {
+              "input": 5312,
+              "output": 56,
+              "cacheRead": 4736,
+              "cacheWrite": 0,
+              "reasoning": 0,
+              "totalTokens": 10104,
+              "cost": null
+            }
+          ]
+        },
+        "approval": {
+          "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110",
+          "decision": "approved",
+          "decidedAt": 1793292739238
+        },
+        "stage": 0
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 154,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "db747937-6fcd-446a-acc5-08d4442dbdba",
+        "deltaIndex": 3,
+        "messageIndex": 5,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "已收到批准计划"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292741248,
+          "responseId": "resp_0b258cb5941194fd016ae379c67afc8190a38f5f20d1ac2b70"
+        },
+        "delta": "已收到批准计划"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 155,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "db747937-6fcd-446a-acc5-08d4442dbdba",
+        "deltaIndex": 5,
+        "messageIndex": 5,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "已收到批准计划及 revision"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292741248,
+          "responseId": "resp_0b258cb5941194fd016ae379c67afc8190a38f5f20d1ac2b70"
+        },
+        "delta": "及 revision"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 156,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "db747937-6fcd-446a-acc5-08d4442dbdba",
+        "deltaIndex": 10,
+        "messageIndex": 5,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "已收到批准计划及 revision 1 的正式快"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292741248,
+          "responseId": "resp_0b258cb5941194fd016ae379c67afc8190a38f5f20d1ac2b70"
+        },
+        "delta": " 1 的正式快"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 157,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "db747937-6fcd-446a-acc5-08d4442dbdba",
+        "deltaIndex": 13,
+        "messageIndex": 5,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "已收到批准计划及 revision 1 的正式快照。将"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292741248,
+          "responseId": "resp_0b258cb5941194fd016ae379c67afc8190a38f5f20d1ac2b70"
+        },
+        "delta": "照。将"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 158,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "db747937-6fcd-446a-acc5-08d4442dbdba",
+        "deltaIndex": 25,
+        "messageIndex": 5,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "已收到批准计划及 revision 1 的正式快照。将仅编辑 `PinOutline` 的直径为 10"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292741248,
+          "responseId": "resp_0b258cb5941194fd016ae379c67afc8190a38f5f20d1ac2b70"
+        },
+        "delta": "仅编辑 `PinOutline` 的直径为 10"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 159,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "db747937-6fcd-446a-acc5-08d4442dbdba",
+        "deltaIndex": 39,
+        "messageIndex": 5,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "已收到批准计划及 revision 1 的正式快照。将仅编辑 `PinOutline` 的直径为 10 mm，保持底板、孔、销长度、位置、方向"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292741248,
+          "responseId": "resp_0b258cb5941194fd016ae379c67afc8190a38f5f20d1ac2b70"
+        },
+        "delta": " mm，保持底板、孔、销长度、位置、方向"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 160,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "db747937-6fcd-446a-acc5-08d4442dbdba",
+        "deltaIndex": 47,
+        "messageIndex": 5,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "已收到批准计划及 revision 1 的正式快照。将仅编辑 `PinOutline` 的直径为 10 mm，保持底板、孔、销长度、位置、方向和固定关系不变；随后执行"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292741248,
+          "responseId": "resp_0b258cb5941194fd016ae379c67afc8190a38f5f20d1ac2b70"
+        },
+        "delta": "和固定关系不变；随后执行"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 161,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "db747937-6fcd-446a-acc5-08d4442dbdba",
+        "deltaIndex": 55,
+        "messageIndex": 5,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "已收到批准计划及 revision 1 的正式快照。将仅编辑 `PinOutline` 的直径为 10 mm，保持底板、孔、销长度、位置、方向和固定关系不变；随后执行一次装配干涉检查，并按"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292741248,
+          "responseId": "resp_0b258cb5941194fd016ae379c67afc8190a38f5f20d1ac2b70"
+        },
+        "delta": "一次装配干涉检查，并按"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 162,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "db747937-6fcd-446a-acc5-08d4442dbdba",
+        "deltaIndex": 62,
+        "messageIndex": 5,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "已收到批准计划及 revision 1 的正式快照。将仅编辑 `PinOutline` 的直径为 10 mm，保持底板、孔、销长度、位置、方向和固定关系不变；随后执行一次装配干涉检查，并按批准标准做最终校验。"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292741248,
+          "responseId": "resp_0b258cb5941194fd016ae379c67afc8190a38f5f20d1ac2b70"
+        },
+        "delta": "批准标准做最终校验。"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 163,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "message_end",
+        "messageId": "db747937-6fcd-446a-acc5-08d4442dbdba",
+        "messageIndex": 5,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "已收到批准计划及 revision 1 的正式快照。将仅编辑 `PinOutline` 的直径为 10 mm，保持底板、孔、销长度、位置、方向和固定关系不变；随后执行一次装配干涉检查，并按批准标准做最终校验。"
+            },
+            {
+              "type": "toolCall",
+              "id": "call_e59285da1f024de9af86e1ff97f10e49",
+              "name": "cad_apply",
+              "arguments": {
+                "operations": [
+                  {
+                    "op": "assembly_stage",
+                    "stage": "pin_edit",
+                    "design": {
+                      "length": 60,
+                      "width": 40,
+                      "thickness": 8,
+                      "holeDiameter": 8,
+                      "pinDiameter": 10,
+                      "pinLength": 20
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 10792,
+            "output": 299,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "reasoning": 168,
+            "totalTokens": 11091,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "toolUse",
+          "timestamp": 1793292741248,
+          "responseId": "resp_0b258cb5941194fd016ae379c67afc8190a38f5f20d1ac2b70",
+          "rawStopReason": "tool_calls",
+          "durationMs": 13920,
+          "thinkingLevel": "off"
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 164,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "tool_execution_start",
+        "toolCallId": "call_e59285da1f024de9af86e1ff97f10e49",
+        "name": "cad_apply",
+        "args": {
+          "operations": [
+            {
+              "op": "assembly_stage",
+              "stage": "pin_edit",
+              "design": {
+                "length": 60,
+                "width": 40,
+                "thickness": 8,
+                "holeDiameter": 8,
+                "pinDiameter": 10,
+                "pinLength": 20
+              }
+            }
+          ]
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 165,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "cad_operation_start",
+      "data": {
+        "stepId": "7c3bd983505e564d01f2b1280db3ebe4dbafaa11cafef5699b3988dabdc19846",
+        "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110",
+        "stage": "修改圆柱销直径",
+        "operations": [
+          {
+            "op": "assembly_stage",
+            "stage": "pin_edit",
+            "design": {
+              "length": 60,
+              "width": 40,
+              "thickness": 8,
+              "holeDiameter": 8,
+              "pinDiameter": 10,
+              "pinLength": 20
+            }
+          }
+        ]
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 166,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+        "stage": "assembly",
+        "status": "feature_complete",
+        "sequence": 1,
+        "partId": "pin",
+        "feature": "PinOutline",
+        "operation": "set_parameter",
+        "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 167,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+        "stage": "assembly",
+        "status": "part_complete",
+        "sequence": 2,
+        "partId": "pin",
+        "volume": 1570.7963267948965,
+        "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 168,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "cad_operation_complete",
+      "data": {
+        "stepId": "7c3bd983505e564d01f2b1280db3ebe4dbafaa11cafef5699b3988dabdc19846",
+        "stage": "修改圆柱销直径",
+        "result": {
+          "tree": [
+            {
+              "id": "plate",
+              "label": "底板",
+              "type": "PartDesign::Body",
+              "parent": null,
+              "parameters": {},
+              "constraints": {}
+            },
+            {
+              "id": "PlateOutline",
+              "label": "PlateOutline",
+              "type": "Sketcher::SketchObject",
+              "parent": "plate",
+              "parameters": {
+                "length": 60,
+                "width": 40
+              },
+              "constraints": {
+                "axis0": 1,
+                "axis1": 3,
+                "axis2": 5,
+                "axis3": 7,
+                "corner0": 0,
+                "corner1": 2,
+                "corner2": 4,
+                "corner3": 6,
+                "length": 9,
+                "origin": 8,
+                "width": 10
+              }
+            },
+            {
+              "id": "PlatePad",
+              "label": "PlatePad",
+              "type": "PartDesign::Pad",
+              "parent": "plate",
+              "parameters": {
+                "Length": 8
+              },
+              "constraints": {}
+            },
+            {
+              "id": "PlateHole",
+              "label": "PlateHole",
+              "type": "Sketcher::SketchObject",
+              "parent": "plate",
+              "parameters": {
+                "center_x": 30,
+                "center_y": 20,
+                "diameter": 8
+              },
+              "constraints": {
+                "center_x": 0,
+                "center_y": 1,
+                "diameter": 2
+              }
+            },
+            {
+              "id": "PlatePocket",
+              "label": "PlatePocket",
+              "type": "PartDesign::Pocket",
+              "parent": "plate",
+              "parameters": {
+                "Length": 8
+              },
+              "constraints": {}
+            },
+            {
+              "id": "pin",
+              "label": "圆柱销",
+              "type": "PartDesign::Body",
+              "parent": null,
+              "parameters": {},
+              "constraints": {}
+            },
+            {
+              "id": "PinOutline",
+              "label": "PinOutline",
+              "type": "Sketcher::SketchObject",
+              "parent": "pin",
+              "parameters": {
+                "diameter": 10
+              },
+              "constraints": {
+                "diameter": 1,
+                "origin": 0
+              }
+            },
+            {
+              "id": "PinPad",
+              "label": "PinPad",
+              "type": "PartDesign::Pad",
+              "parent": "pin",
+              "parameters": {
+                "Length": 20
+              },
+              "constraints": {}
+            },
+            {
+              "id": "Assembly",
+              "label": "固定关节装配",
+              "type": "Assembly::AssemblyObject",
+              "parent": null,
+              "parameters": {}
+            },
+            {
+              "id": "PlateComponent",
+              "label": "底板组件",
+              "type": "App::Link",
+              "parent": "Assembly",
+              "parameters": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              }
+            },
+            {
+              "id": "PinComponent",
+              "label": "圆柱销组件",
+              "type": "App::Link",
+              "parent": "Assembly",
+              "parameters": {
+                "x": 30,
+                "y": 20,
+                "z": 0
+              }
+            }
+          ],
+          "stage": "pin_edit",
+          "geometry": {
+            "solids": 1,
+            "volume": 1570.7963267948965,
+            "bbox": [
+              10,
+              10,
+              20
+            ]
+          }
+        },
+        "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 169,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "candidate_snapshot",
+      "data": {
+        "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+        "tree": [
+          {
+            "id": "plate",
+            "label": "底板",
+            "type": "PartDesign::Body",
+            "parent": null,
+            "parameters": {},
+            "constraints": {}
+          },
+          {
+            "id": "PlateOutline",
+            "label": "PlateOutline",
+            "type": "Sketcher::SketchObject",
+            "parent": "plate",
+            "parameters": {
+              "length": 60,
+              "width": 40
+            },
+            "constraints": {
+              "axis0": 1,
+              "axis1": 3,
+              "axis2": 5,
+              "axis3": 7,
+              "corner0": 0,
+              "corner1": 2,
+              "corner2": 4,
+              "corner3": 6,
+              "length": 9,
+              "origin": 8,
+              "width": 10
+            }
+          },
+          {
+            "id": "PlatePad",
+            "label": "PlatePad",
+            "type": "PartDesign::Pad",
+            "parent": "plate",
+            "parameters": {
+              "Length": 8
+            },
+            "constraints": {}
+          },
+          {
+            "id": "PlateHole",
+            "label": "PlateHole",
+            "type": "Sketcher::SketchObject",
+            "parent": "plate",
+            "parameters": {
+              "center_x": 30,
+              "center_y": 20,
+              "diameter": 8
+            },
+            "constraints": {
+              "center_x": 0,
+              "center_y": 1,
+              "diameter": 2
+            }
+          },
+          {
+            "id": "PlatePocket",
+            "label": "PlatePocket",
+            "type": "PartDesign::Pocket",
+            "parent": "plate",
+            "parameters": {
+              "Length": 8
+            },
+            "constraints": {}
+          },
+          {
+            "id": "pin",
+            "label": "圆柱销",
+            "type": "PartDesign::Body",
+            "parent": null,
+            "parameters": {},
+            "constraints": {}
+          },
+          {
+            "id": "PinOutline",
+            "label": "PinOutline",
+            "type": "Sketcher::SketchObject",
+            "parent": "pin",
+            "parameters": {
+              "diameter": 10
+            },
+            "constraints": {
+              "diameter": 1,
+              "origin": 0
+            }
+          },
+          {
+            "id": "PinPad",
+            "label": "PinPad",
+            "type": "PartDesign::Pad",
+            "parent": "pin",
+            "parameters": {
+              "Length": 20
+            },
+            "constraints": {}
+          },
+          {
+            "id": "Assembly",
+            "label": "固定关节装配",
+            "type": "Assembly::AssemblyObject",
+            "parent": null,
+            "parameters": {}
+          },
+          {
+            "id": "PlateComponent",
+            "label": "底板组件",
+            "type": "App::Link",
+            "parent": "Assembly",
+            "parameters": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          {
+            "id": "PinComponent",
+            "label": "圆柱销组件",
+            "type": "App::Link",
+            "parent": "Assembly",
+            "parameters": {
+              "x": 30,
+              "y": 20,
+              "z": 0
+            }
+          }
+        ],
+        "geometry": {
+          "volume": 20368.672467135402,
+          "solids": 2,
+          "bbox": [
+            60,
+            40,
+            20
+          ]
+        },
+        "preview": {
+          "file": "candidate-1.glb",
+          "bytes": 44176,
+          "sha256": "34339efd7ee97e6d41a1eaf4d29ff9c13df124758258295808e19c5b6399337d",
+          "url": "/api/documents/advanced-assembly-1793292585606/jobs/121405d4-edcf-409a-8ee8-d30f2e624cac/candidate/preview?sequence=1"
+        },
+        "assembly": {
+          "bom": [
+            {
+              "partId": "plate",
+              "number": "Plate",
+              "name": "底板",
+              "quantity": 1,
+              "parameters": {
+                "PlateOutline": {
+                  "length": 60,
+                  "width": 40
+                },
+                "PlatePad": {
+                  "length": 8
+                },
+                "PlateHole": {
+                  "center_x": 30,
+                  "center_y": 20,
+                  "diameter": 8
+                },
+                "PlatePocket": {
+                  "length": 8
+                }
+              }
+            },
+            {
+              "partId": "pin",
+              "number": "Pin",
+              "name": "圆柱销",
+              "quantity": 1,
+              "parameters": {
+                "PinOutline": {
+                  "diameter": 10
+                },
+                "PinPad": {
+                  "length": 20
+                }
+              }
+            }
+          ],
+          "components": [
+            {
+              "id": "PlateComponent",
+              "partId": "plate",
+              "position": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0,
+                1
+              ],
+              "volume": 18797.876140340504
+            },
+            {
+              "id": "PinComponent",
+              "partId": "pin",
+              "position": [
+                30,
+                20,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0,
+                1
+              ],
+              "volume": 1570.7963267948965
+            }
+          ],
+          "relation": {
+            "type": "Fixed",
+            "first": "PlateComponent",
+            "second": "PinComponent"
+          },
+          "interference": {
+            "status": "collision",
+            "reason": "实体发生材料重叠",
+            "pairs": [
+              {
+                "components": [
+                  "PlateComponent",
+                  "PinComponent"
+                ],
+                "volume": 226.19467105846513
+              }
+            ]
+          }
+        },
+        "baseRevision": 1,
+        "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110",
+        "sequence": 1
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 170,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "tool_execution_end",
+        "toolCallId": "call_e59285da1f024de9af86e1ff97f10e49",
+        "name": "cad_apply",
+        "isError": false,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"tree\":[{\"id\":\"plate\",\"label\":\"底板\",\"type\":\"PartDesign::Body\",\"parent\":null,\"parameters\":{},\"constraints\":{}},{\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"type\":\"Sketcher::SketchObject\",\"parent\":\"plate\",\"parameters\":{\"length\":60,\"width\":40},\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10}},{\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"type\":\"PartDesign::Pad\",\"parent\":\"plate\",\"parameters\":{\"Length\":8},\"constraints\":{}},{\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"type\":\"Sketcher::SketchObject\",\"parent\":\"plate\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2}},{\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"type\":\"PartDesign::Pocket\",\"parent\":\"plate\",\"parameters\":{\"Length\":8},\"constraints\":{}},{\"id\":\"pin\",\"label\":\"圆柱销\",\"type\":\"PartDesign::Body\",\"parent\":null,\"parameters\":{},\"constraints\":{}},{\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"type\":\"Sketcher::SketchObject\",\"parent\":\"pin\",\"parameters\":{\"diameter\":10},\"constraints\":{\"diameter\":1,\"origin\":0}},{\"id\":\"PinPad\",\"label\":\"PinPad\",\"type\":\"PartDesign::Pad\",\"parent\":\"pin\",\"parameters\":{\"Length\":20},\"constraints\":{}},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"type\":\"Assembly::AssemblyObject\",\"parent\":null,\"parameters\":{}},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"type\":\"App::Link\",\"parent\":\"Assembly\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0}},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"type\":\"App::Link\",\"parent\":\"Assembly\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0}}],\"stage\":\"pin_edit\",\"geometry\":{\"solids\":1,\"volume\":1570.7963267948965,\"bbox\":[10,10,20]}}"
+            }
+          ],
+          "details": {}
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 171,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "message_end",
+        "messageId": "786ed00b-1a85-41b3-b9b2-b42b61e295d4",
+        "messageIndex": 6,
+        "message": {
+          "role": "toolResult",
+          "toolCallId": "call_e59285da1f024de9af86e1ff97f10e49",
+          "toolName": "cad_apply",
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"tree\":[{\"id\":\"plate\",\"label\":\"底板\",\"type\":\"PartDesign::Body\",\"parent\":null,\"parameters\":{},\"constraints\":{}},{\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"type\":\"Sketcher::SketchObject\",\"parent\":\"plate\",\"parameters\":{\"length\":60,\"width\":40},\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10}},{\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"type\":\"PartDesign::Pad\",\"parent\":\"plate\",\"parameters\":{\"Length\":8},\"constraints\":{}},{\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"type\":\"Sketcher::SketchObject\",\"parent\":\"plate\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2}},{\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"type\":\"PartDesign::Pocket\",\"parent\":\"plate\",\"parameters\":{\"Length\":8},\"constraints\":{}},{\"id\":\"pin\",\"label\":\"圆柱销\",\"type\":\"PartDesign::Body\",\"parent\":null,\"parameters\":{},\"constraints\":{}},{\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"type\":\"Sketcher::SketchObject\",\"parent\":\"pin\",\"parameters\":{\"diameter\":10},\"constraints\":{\"diameter\":1,\"origin\":0}},{\"id\":\"PinPad\",\"label\":\"PinPad\",\"type\":\"PartDesign::Pad\",\"parent\":\"pin\",\"parameters\":{\"Length\":20},\"constraints\":{}},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"type\":\"Assembly::AssemblyObject\",\"parent\":null,\"parameters\":{}},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"type\":\"App::Link\",\"parent\":\"Assembly\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0}},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"type\":\"App::Link\",\"parent\":\"Assembly\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0}}],\"stage\":\"pin_edit\",\"geometry\":{\"solids\":1,\"volume\":1570.7963267948965,\"bbox\":[10,10,20]}}"
+            }
+          ],
+          "details": {},
+          "isError": false,
+          "durationMs": 286,
+          "timestamp": 1793292755461
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 172,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "97720e19-d6d7-4176-acde-b2b34d1c2486",
+        "deltaIndex": 0,
+        "messageIndex": 7,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "销"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292755474,
+          "responseId": "resp_0dab31bc79a527c4016ae379d4802c819780710e5fc0857db7"
+        },
+        "delta": "销"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 173,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "97720e19-d6d7-4176-acde-b2b34d1c2486",
+        "deltaIndex": 4,
+        "messageIndex": 7,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "销直径已在"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292755474,
+          "responseId": "resp_0dab31bc79a527c4016ae379d4802c819780710e5fc0857db7"
+        },
+        "delta": "直径已在"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 174,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "97720e19-d6d7-4176-acde-b2b34d1c2486",
+        "deltaIndex": 9,
+        "messageIndex": 7,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "销直径已在候选 CAD 中更新"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292755474,
+          "responseId": "resp_0dab31bc79a527c4016ae379d4802c819780710e5fc0857db7"
+        },
+        "delta": "候选 CAD 中更新"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 175,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "97720e19-d6d7-4176-acde-b2b34d1c2486",
+        "deltaIndex": 19,
+        "messageIndex": 7,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "销直径已在候选 CAD 中更新为 10 mm，其他结构与装配"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292755474,
+          "responseId": "resp_0dab31bc79a527c4016ae379d4802c819780710e5fc0857db7"
+        },
+        "delta": "为 10 mm，其他结构与装配"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 176,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "97720e19-d6d7-4176-acde-b2b34d1c2486",
+        "deltaIndex": 26,
+        "messageIndex": 7,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "销直径已在候选 CAD 中更新为 10 mm，其他结构与装配位置保持原值。现在执行"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292755474,
+          "responseId": "resp_0dab31bc79a527c4016ae379d4802c819780710e5fc0857db7"
+        },
+        "delta": "位置保持原值。现在执行"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 177,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "97720e19-d6d7-4176-acde-b2b34d1c2486",
+        "deltaIndex": 28,
+        "messageIndex": 7,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "销直径已在候选 CAD 中更新为 10 mm，其他结构与装配位置保持原值。现在执行批准流程"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292755474,
+          "responseId": "resp_0dab31bc79a527c4016ae379d4802c819780710e5fc0857db7"
+        },
+        "delta": "批准流程"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 178,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "text_delta",
+        "messageId": "97720e19-d6d7-4176-acde-b2b34d1c2486",
+        "deltaIndex": 36,
+        "messageIndex": 7,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "销直径已在候选 CAD 中更新为 10 mm，其他结构与装配位置保持原值。现在执行批准流程规定的只读装配检查。"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "pending",
+          "timestamp": 1793292755474,
+          "responseId": "resp_0dab31bc79a527c4016ae379d4802c819780710e5fc0857db7"
+        },
+        "delta": "规定的只读装配检查。"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 179,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "message_end",
+        "messageId": "97720e19-d6d7-4176-acde-b2b34d1c2486",
+        "messageIndex": 7,
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "销直径已在候选 CAD 中更新为 10 mm，其他结构与装配位置保持原值。现在执行批准流程规定的只读装配检查。"
+            },
+            {
+              "type": "toolCall",
+              "id": "call_82dccf238925406ca71117b001b940cd",
+              "name": "cad_apply",
+              "arguments": {
+                "operations": [
+                  {
+                    "op": "assembly_check",
+                    "design": {
+                      "length": 60,
+                      "width": 40,
+                      "thickness": 8,
+                      "holeDiameter": 8,
+                      "pinDiameter": 10,
+                      "pinLength": 20
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "cad-configured",
+          "model": "gpt-5.6-sol",
+          "usage": {
+            "input": 5644,
+            "output": 146,
+            "cacheRead": 5760,
+            "cacheWrite": 0,
+            "reasoning": 46,
+            "totalTokens": 11550,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "toolUse",
+          "timestamp": 1793292755474,
+          "responseId": "resp_0dab31bc79a527c4016ae379d4802c819780710e5fc0857db7",
+          "rawStopReason": "tool_calls",
+          "durationMs": 10383,
+          "thinkingLevel": "off"
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 180,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "tool_execution_start",
+        "toolCallId": "call_82dccf238925406ca71117b001b940cd",
+        "name": "cad_apply",
+        "args": {
+          "operations": [
+            {
+              "op": "assembly_check",
+              "design": {
+                "length": 60,
+                "width": 40,
+                "thickness": 8,
+                "holeDiameter": 8,
+                "pinDiameter": 10,
+                "pinLength": 20
+              }
+            }
+          ]
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 181,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "cad_operation_start",
+      "data": {
+        "stepId": "571978de6c929f07180e419bf59a82f0fa138b6f02abd79148159adabfe1c066",
+        "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110",
+        "stage": "实际几何干涉检查",
+        "operations": [
+          {
+            "op": "assembly_check",
+            "design": {
+              "length": 60,
+              "width": 40,
+              "thickness": 8,
+              "holeDiameter": 8,
+              "pinDiameter": 10,
+              "pinLength": 20
+            }
+          }
+        ]
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 182,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 5,
+        "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+        "stage": "interference",
+        "status": "complete",
+        "sequence": 3,
+        "report": {
+          "status": "collision",
+          "reason": "实体发生材料重叠",
+          "pairs": [
+            {
+              "components": [
+                "PlateComponent",
+                "PinComponent"
+              ],
+              "volume": 226.19467105846513
+            }
+          ]
+        },
+        "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 183,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "cad_operation_failed",
+      "data": {
+        "stepId": "571978de6c929f07180e419bf59a82f0fa138b6f02abd79148159adabfe1c066",
+        "error": "Error: Assembly validation failed: {\"status\": \"collision\", \"reason\": \"\\u5b9e\\u4f53\\u53d1\\u751f\\u6750\\u6599\\u91cd\\u53e0\", \"pairs\": [{\"components\": [\"PlateComponent\", \"PinComponent\"], \"volume\": 226.19467105846513}]}",
+        "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110"
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 184,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "tool_execution_end",
+        "toolCallId": "call_82dccf238925406ca71117b001b940cd",
+        "name": "cad_apply",
+        "isError": true,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Assembly validation failed: {\"status\": \"collision\", \"reason\": \"\\u5b9e\\u4f53\\u53d1\\u751f\\u6750\\u6599\\u91cd\\u53e0\", \"pairs\": [{\"components\": [\"PlateComponent\", \"PinComponent\"], \"volume\": 226.19467105846513}]}"
+            }
+          ],
+          "details": {}
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 185,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "agent_progress",
+      "data": {
+        "type": "message_end",
+        "messageId": "668958a3-8f47-4109-9d56-8396231f8c79",
+        "messageIndex": 8,
+        "message": {
+          "role": "toolResult",
+          "toolCallId": "call_82dccf238925406ca71117b001b940cd",
+          "toolName": "cad_apply",
+          "content": [
+            {
+              "type": "text",
+              "text": "Assembly validation failed: {\"status\": \"collision\", \"reason\": \"\\u5b9e\\u4f53\\u53d1\\u751f\\u6750\\u6599\\u91cd\\u53e0\", \"pairs\": [{\"components\": [\"PlateComponent\", \"PinComponent\"], \"volume\": 226.19467105846513}]}"
+            }
+          ],
+          "details": {},
+          "isError": true,
+          "durationMs": 96,
+          "timestamp": 1793292765960
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    },
+    {
+      "seq": 186,
+      "documentId": "advanced-assembly-1793292585606",
+      "type": "job_updated",
+      "data": {
+        "documentId": "advanced-assembly-1793292585606",
+        "baseRevision": 1,
+        "operationId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+        "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+        "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44",
+        "status": "failed",
+        "request": {
+          "kind": "text",
+          "text": "请将当前装配中的圆柱销直径从7 mm修改为10 mm。保持底板60×40×8 mm、中心孔直径8 mm、底板位置、圆柱销长度20 mm、Z轴方向和位置(30,20,0)不变。请先生成新的结构化计划并等待批准。批准后执行真实CAD修改和装配检查；发现干涉时不得提交新的正式装配。"
+        },
+        "result": null,
+        "error": "CAD tool execution failed: Assembly validation failed: {\"status\": \"collision\", \"reason\": \"\\u5b9e\\u4f53\\u53d1\\u751f\\u6750\\u6599\\u91cd\\u53e0\", \"pairs\": [{\"components\": [\"PlateComponent\", \"PinComponent\"], \"volume\": 226.19467105846513}]}",
+        "plan": {
+          "version": 1,
+          "documentId": "advanced-assembly-1793292585606",
+          "operationId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+          "requestHash": "68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86",
+          "kind": "edit_pin_plate_assembly",
+          "baseRevision": 1,
+          "assembly": {
+            "length": 60,
+            "width": 40,
+            "thickness": 8,
+            "holeDiameter": 8,
+            "pinDiameter": 10,
+            "pinLength": 20
+          },
+          "dimensions": {
+            "length": 60,
+            "width": 40,
+            "height": 20,
+            "unit": "mm"
+          },
+          "criteria": {
+            "bbox": [
+              60,
+              40,
+              20
+            ],
+            "volume": 20368.672467135406
+          },
+          "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110"
+        },
+        "planningAgent": {
+          "provider": "live",
+          "toolCalls": 2,
+          "blockedCalls": 0,
+          "rawCoercionsObserved": 0,
+          "contextRevision": 1,
+          "contextRevisions": [
+            1,
+            1
+          ],
+          "historyRoundsIncluded": 1,
+          "historyRoundsOmitted": 0,
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"请将当前装配中的圆柱销直径从7 mm修改为10 mm。保持底板60×40×8 mm、中心孔直径8 mm、底板位置、圆柱销长度20 mm、Z轴方向和位置(30,20,0)不变。请先生成新的结构化计划并等待批准。批准后执行真实CAD修改和装配检查；发现干涉时不得提交新的正式装配。\",\"phase\":\"planning\",\"documentId\":\"advanced-assembly-1793292585606\",\"revision\":1,\"features\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}]}"
+                }
+              ],
+              "timestamp": 1793292733561
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "我会先核对实际 CAD 状态，再提交仅将销直径改为 10 mm 的结构化修改计划；本轮停在审批阶段，不执行写入。"
+                },
+                {
+                  "type": "toolCall",
+                  "id": "call_5188084e71d64d38ae1a95d1aff150fa",
+                  "name": "cad_inspect",
+                  "arguments": {}
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 9535,
+                "output": 120,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "reasoning": 57,
+                "totalTokens": 9655,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292733572,
+              "responseId": "resp_03e368852eb1a2ec016ae379bebb90819a852cd9e508d4f2f3",
+              "rawStopReason": "tool_calls",
+              "durationMs": 3341,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_5188084e71d64d38ae1a95d1aff150fa",
+              "toolName": "cad_inspect",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tree\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}],\"revision\":1}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 13,
+              "timestamp": 1793292736935
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "toolCall",
+                  "id": "call_027a60c1fc294ae3a0f78185ee4797e9",
+                  "name": "cad_plan",
+                  "arguments": {
+                    "plan": {
+                      "kind": "edit_pin_plate_assembly",
+                      "assembly": {
+                        "length": 60,
+                        "width": 40,
+                        "thickness": 8,
+                        "holeDiameter": 8,
+                        "pinDiameter": 10,
+                        "pinLength": 20
+                      }
+                    }
+                  }
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 5312,
+                "output": 56,
+                "cacheRead": 4736,
+                "cacheWrite": 0,
+                "reasoning": 0,
+                "totalTokens": 10104,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292736951,
+              "responseId": "resp_07e38734b3525771016ae379c1e8f4819bbfcecb567f25d388",
+              "rawStopReason": "tool_calls",
+              "durationMs": 2104,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_027a60c1fc294ae3a0f78185ee4797e9",
+              "toolName": "cad_plan",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"awaitingUserApproval\":true,\"plan\":{\"version\":1,\"documentId\":\"advanced-assembly-1793292585606\",\"operationId\":\"121405d4-edcf-409a-8ee8-d30f2e624cac\",\"requestHash\":\"68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86\",\"kind\":\"edit_pin_plate_assembly\",\"baseRevision\":1,\"assembly\":{\"length\":60,\"width\":40,\"thickness\":8,\"holeDiameter\":8,\"pinDiameter\":10,\"pinLength\":20},\"dimensions\":{\"length\":60,\"width\":40,\"height\":20,\"unit\":\"mm\"},\"criteria\":{\"bbox\":[60,40,20],\"volume\":20368.672467135406},\"planHash\":\"48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110\"}}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 10,
+              "timestamp": 1793292739079
+            }
+          ],
+          "usage": [
+            {
+              "input": 9535,
+              "output": 120,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "reasoning": 57,
+              "totalTokens": 9655,
+              "cost": null
+            },
+            {
+              "input": 5312,
+              "output": 56,
+              "cacheRead": 4736,
+              "cacheWrite": 0,
+              "reasoning": 0,
+              "totalTokens": 10104,
+              "cost": null
+            }
+          ]
+        },
+        "agent": {
+          "provider": "live",
+          "toolCalls": 2,
+          "blockedCalls": 1,
+          "rawCoercionsObserved": 0,
+          "contextRevision": 1,
+          "contextRevisions": [
+            1,
+            1
+          ],
+          "historyRoundsIncluded": 1,
+          "historyRoundsOmitted": 0,
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"请将当前装配中的圆柱销直径从7 mm修改为10 mm。保持底板60×40×8 mm、中心孔直径8 mm、底板位置、圆柱销长度20 mm、Z轴方向和位置(30,20,0)不变。请先生成新的结构化计划并等待批准。批准后执行真实CAD修改和装配检查；发现干涉时不得提交新的正式装配。\",\"phase\":\"planning\",\"documentId\":\"advanced-assembly-1793292585606\",\"revision\":1,\"features\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}]}"
+                }
+              ],
+              "timestamp": 1793292733561
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "我会先核对实际 CAD 状态，再提交仅将销直径改为 10 mm 的结构化修改计划；本轮停在审批阶段，不执行写入。"
+                },
+                {
+                  "type": "toolCall",
+                  "id": "call_5188084e71d64d38ae1a95d1aff150fa",
+                  "name": "cad_inspect",
+                  "arguments": {}
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 9535,
+                "output": 120,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "reasoning": 57,
+                "totalTokens": 9655,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292733572,
+              "responseId": "resp_03e368852eb1a2ec016ae379bebb90819a852cd9e508d4f2f3",
+              "rawStopReason": "tool_calls",
+              "durationMs": 3341,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_5188084e71d64d38ae1a95d1aff150fa",
+              "toolName": "cad_inspect",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tree\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}],\"revision\":1}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 13,
+              "timestamp": 1793292736935
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "toolCall",
+                  "id": "call_027a60c1fc294ae3a0f78185ee4797e9",
+                  "name": "cad_plan",
+                  "arguments": {
+                    "plan": {
+                      "kind": "edit_pin_plate_assembly",
+                      "assembly": {
+                        "length": 60,
+                        "width": 40,
+                        "thickness": 8,
+                        "holeDiameter": 8,
+                        "pinDiameter": 10,
+                        "pinLength": 20
+                      }
+                    }
+                  }
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 5312,
+                "output": 56,
+                "cacheRead": 4736,
+                "cacheWrite": 0,
+                "reasoning": 0,
+                "totalTokens": 10104,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292736951,
+              "responseId": "resp_07e38734b3525771016ae379c1e8f4819bbfcecb567f25d388",
+              "rawStopReason": "tool_calls",
+              "durationMs": 2104,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_027a60c1fc294ae3a0f78185ee4797e9",
+              "toolName": "cad_plan",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"awaitingUserApproval\":true,\"plan\":{\"version\":1,\"documentId\":\"advanced-assembly-1793292585606\",\"operationId\":\"121405d4-edcf-409a-8ee8-d30f2e624cac\",\"requestHash\":\"68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86\",\"kind\":\"edit_pin_plate_assembly\",\"baseRevision\":1,\"assembly\":{\"length\":60,\"width\":40,\"thickness\":8,\"holeDiameter\":8,\"pinDiameter\":10,\"pinLength\":20},\"dimensions\":{\"length\":60,\"width\":40,\"height\":20,\"unit\":\"mm\"},\"criteria\":{\"bbox\":[60,40,20],\"volume\":20368.672467135406},\"planHash\":\"48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110\"}}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 10,
+              "timestamp": 1793292739079
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"请将当前装配中的圆柱销直径从7 mm修改为10 mm。保持底板60×40×8 mm、中心孔直径8 mm、底板位置、圆柱销长度20 mm、Z轴方向和位置(30,20,0)不变。请先生成新的结构化计划并等待批准。批准后执行真实CAD修改和装配检查；发现干涉时不得提交新的正式装配。\",\"phase\":\"execution\",\"approvedPlan\":{\"version\":1,\"documentId\":\"advanced-assembly-1793292585606\",\"operationId\":\"121405d4-edcf-409a-8ee8-d30f2e624cac\",\"requestHash\":\"68d57f69fc1b2799fbcd0e2263c758bdb83cabd4e8b336ba908483a9737bbe86\",\"kind\":\"edit_pin_plate_assembly\",\"baseRevision\":1,\"assembly\":{\"length\":60,\"width\":40,\"thickness\":8,\"holeDiameter\":8,\"pinDiameter\":10,\"pinLength\":20},\"dimensions\":{\"length\":60,\"width\":40,\"height\":20,\"unit\":\"mm\"},\"criteria\":{\"bbox\":[60,40,20],\"volume\":20368.672467135406},\"planHash\":\"48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110\"},\"documentId\":\"advanced-assembly-1793292585606\",\"revision\":1,\"features\":[{\"constraints\":{},\"id\":\"plate\",\"label\":\"底板\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10},\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"parameters\":{\"length\":60,\"width\":40},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pad\"},{\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2},\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"parent\":\"plate\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"parameters\":{\"Length\":8},\"parent\":\"plate\",\"type\":\"PartDesign::Pocket\"},{\"constraints\":{},\"id\":\"pin\",\"label\":\"圆柱销\",\"parameters\":{},\"parent\":null,\"type\":\"PartDesign::Body\"},{\"constraints\":{\"diameter\":1,\"origin\":0},\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"parameters\":{\"diameter\":7},\"parent\":\"pin\",\"type\":\"Sketcher::SketchObject\"},{\"constraints\":{},\"id\":\"PinPad\",\"label\":\"PinPad\",\"parameters\":{\"Length\":20},\"parent\":\"pin\",\"type\":\"PartDesign::Pad\"},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"parameters\":{},\"parent\":null,\"type\":\"Assembly::AssemblyObject\"},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0},\"parent\":\"Assembly\",\"type\":\"App::Link\"}]}"
+                }
+              ],
+              "timestamp": 1793292741237
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "已收到批准计划及 revision 1 的正式快照。将仅编辑 `PinOutline` 的直径为 10 mm，保持底板、孔、销长度、位置、方向和固定关系不变；随后执行一次装配干涉检查，并按批准标准做最终校验。"
+                },
+                {
+                  "type": "toolCall",
+                  "id": "call_e59285da1f024de9af86e1ff97f10e49",
+                  "name": "cad_apply",
+                  "arguments": {
+                    "operations": [
+                      {
+                        "op": "assembly_stage",
+                        "stage": "pin_edit",
+                        "design": {
+                          "length": 60,
+                          "width": 40,
+                          "thickness": 8,
+                          "holeDiameter": 8,
+                          "pinDiameter": 10,
+                          "pinLength": 20
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 10792,
+                "output": 299,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "reasoning": 168,
+                "totalTokens": 11091,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292741248,
+              "responseId": "resp_0b258cb5941194fd016ae379c67afc8190a38f5f20d1ac2b70",
+              "rawStopReason": "tool_calls",
+              "durationMs": 13920,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_e59285da1f024de9af86e1ff97f10e49",
+              "toolName": "cad_apply",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tree\":[{\"id\":\"plate\",\"label\":\"底板\",\"type\":\"PartDesign::Body\",\"parent\":null,\"parameters\":{},\"constraints\":{}},{\"id\":\"PlateOutline\",\"label\":\"PlateOutline\",\"type\":\"Sketcher::SketchObject\",\"parent\":\"plate\",\"parameters\":{\"length\":60,\"width\":40},\"constraints\":{\"axis0\":1,\"axis1\":3,\"axis2\":5,\"axis3\":7,\"corner0\":0,\"corner1\":2,\"corner2\":4,\"corner3\":6,\"length\":9,\"origin\":8,\"width\":10}},{\"id\":\"PlatePad\",\"label\":\"PlatePad\",\"type\":\"PartDesign::Pad\",\"parent\":\"plate\",\"parameters\":{\"Length\":8},\"constraints\":{}},{\"id\":\"PlateHole\",\"label\":\"PlateHole\",\"type\":\"Sketcher::SketchObject\",\"parent\":\"plate\",\"parameters\":{\"center_x\":30,\"center_y\":20,\"diameter\":8},\"constraints\":{\"center_x\":0,\"center_y\":1,\"diameter\":2}},{\"id\":\"PlatePocket\",\"label\":\"PlatePocket\",\"type\":\"PartDesign::Pocket\",\"parent\":\"plate\",\"parameters\":{\"Length\":8},\"constraints\":{}},{\"id\":\"pin\",\"label\":\"圆柱销\",\"type\":\"PartDesign::Body\",\"parent\":null,\"parameters\":{},\"constraints\":{}},{\"id\":\"PinOutline\",\"label\":\"PinOutline\",\"type\":\"Sketcher::SketchObject\",\"parent\":\"pin\",\"parameters\":{\"diameter\":10},\"constraints\":{\"diameter\":1,\"origin\":0}},{\"id\":\"PinPad\",\"label\":\"PinPad\",\"type\":\"PartDesign::Pad\",\"parent\":\"pin\",\"parameters\":{\"Length\":20},\"constraints\":{}},{\"id\":\"Assembly\",\"label\":\"固定关节装配\",\"type\":\"Assembly::AssemblyObject\",\"parent\":null,\"parameters\":{}},{\"id\":\"PlateComponent\",\"label\":\"底板组件\",\"type\":\"App::Link\",\"parent\":\"Assembly\",\"parameters\":{\"x\":0,\"y\":0,\"z\":0}},{\"id\":\"PinComponent\",\"label\":\"圆柱销组件\",\"type\":\"App::Link\",\"parent\":\"Assembly\",\"parameters\":{\"x\":30,\"y\":20,\"z\":0}}],\"stage\":\"pin_edit\",\"geometry\":{\"solids\":1,\"volume\":1570.7963267948965,\"bbox\":[10,10,20]}}"
+                }
+              ],
+              "details": {},
+              "isError": false,
+              "durationMs": 286,
+              "timestamp": 1793292755461
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "销直径已在候选 CAD 中更新为 10 mm，其他结构与装配位置保持原值。现在执行批准流程规定的只读装配检查。"
+                },
+                {
+                  "type": "toolCall",
+                  "id": "call_82dccf238925406ca71117b001b940cd",
+                  "name": "cad_apply",
+                  "arguments": {
+                    "operations": [
+                      {
+                        "op": "assembly_check",
+                        "design": {
+                          "length": 60,
+                          "width": 40,
+                          "thickness": 8,
+                          "holeDiameter": 8,
+                          "pinDiameter": 10,
+                          "pinLength": 20
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "api": "openai-completions",
+              "provider": "cad-configured",
+              "model": "gpt-5.6-sol",
+              "usage": {
+                "input": 5644,
+                "output": 146,
+                "cacheRead": 5760,
+                "cacheWrite": 0,
+                "reasoning": 46,
+                "totalTokens": 11550,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1793292755474,
+              "responseId": "resp_0dab31bc79a527c4016ae379d4802c819780710e5fc0857db7",
+              "rawStopReason": "tool_calls",
+              "durationMs": 10383,
+              "thinkingLevel": "off"
+            },
+            {
+              "role": "toolResult",
+              "toolCallId": "call_82dccf238925406ca71117b001b940cd",
+              "toolName": "cad_apply",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Assembly validation failed: {\"status\": \"collision\", \"reason\": \"\\u5b9e\\u4f53\\u53d1\\u751f\\u6750\\u6599\\u91cd\\u53e0\", \"pairs\": [{\"components\": [\"PlateComponent\", \"PinComponent\"], \"volume\": 226.19467105846513}]}"
+                }
+              ],
+              "details": {},
+              "isError": true,
+              "durationMs": 96,
+              "timestamp": 1793292765960
+            }
+          ],
+          "usage": [
+            {
+              "input": 10792,
+              "output": 299,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "reasoning": 168,
+              "totalTokens": 11091,
+              "cost": null
+            },
+            {
+              "input": 5644,
+              "output": 146,
+              "cacheRead": 5760,
+              "cacheWrite": 0,
+              "reasoning": 46,
+              "totalTokens": 11550,
+              "cost": null
+            }
+          ]
+        },
+        "approval": {
+          "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110",
+          "decision": "approved",
+          "decidedAt": 1793292739238
+        },
+        "stage": 1,
+        "candidateSequence": 1,
+        "candidateSnapshot": {
+          "candidateId": "8c0f28e1-7510-4283-8b11-38e74c41f900",
+          "tree": [
+            {
+              "id": "plate",
+              "label": "底板",
+              "type": "PartDesign::Body",
+              "parent": null,
+              "parameters": {},
+              "constraints": {}
+            },
+            {
+              "id": "PlateOutline",
+              "label": "PlateOutline",
+              "type": "Sketcher::SketchObject",
+              "parent": "plate",
+              "parameters": {
+                "length": 60,
+                "width": 40
+              },
+              "constraints": {
+                "axis0": 1,
+                "axis1": 3,
+                "axis2": 5,
+                "axis3": 7,
+                "corner0": 0,
+                "corner1": 2,
+                "corner2": 4,
+                "corner3": 6,
+                "length": 9,
+                "origin": 8,
+                "width": 10
+              }
+            },
+            {
+              "id": "PlatePad",
+              "label": "PlatePad",
+              "type": "PartDesign::Pad",
+              "parent": "plate",
+              "parameters": {
+                "Length": 8
+              },
+              "constraints": {}
+            },
+            {
+              "id": "PlateHole",
+              "label": "PlateHole",
+              "type": "Sketcher::SketchObject",
+              "parent": "plate",
+              "parameters": {
+                "center_x": 30,
+                "center_y": 20,
+                "diameter": 8
+              },
+              "constraints": {
+                "center_x": 0,
+                "center_y": 1,
+                "diameter": 2
+              }
+            },
+            {
+              "id": "PlatePocket",
+              "label": "PlatePocket",
+              "type": "PartDesign::Pocket",
+              "parent": "plate",
+              "parameters": {
+                "Length": 8
+              },
+              "constraints": {}
+            },
+            {
+              "id": "pin",
+              "label": "圆柱销",
+              "type": "PartDesign::Body",
+              "parent": null,
+              "parameters": {},
+              "constraints": {}
+            },
+            {
+              "id": "PinOutline",
+              "label": "PinOutline",
+              "type": "Sketcher::SketchObject",
+              "parent": "pin",
+              "parameters": {
+                "diameter": 10
+              },
+              "constraints": {
+                "diameter": 1,
+                "origin": 0
+              }
+            },
+            {
+              "id": "PinPad",
+              "label": "PinPad",
+              "type": "PartDesign::Pad",
+              "parent": "pin",
+              "parameters": {
+                "Length": 20
+              },
+              "constraints": {}
+            },
+            {
+              "id": "Assembly",
+              "label": "固定关节装配",
+              "type": "Assembly::AssemblyObject",
+              "parent": null,
+              "parameters": {}
+            },
+            {
+              "id": "PlateComponent",
+              "label": "底板组件",
+              "type": "App::Link",
+              "parent": "Assembly",
+              "parameters": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              }
+            },
+            {
+              "id": "PinComponent",
+              "label": "圆柱销组件",
+              "type": "App::Link",
+              "parent": "Assembly",
+              "parameters": {
+                "x": 30,
+                "y": 20,
+                "z": 0
+              }
+            }
+          ],
+          "geometry": {
+            "volume": 20368.672467135402,
+            "solids": 2,
+            "bbox": [
+              60,
+              40,
+              20
+            ]
+          },
+          "preview": {
+            "file": "candidate-1.glb",
+            "bytes": 44176,
+            "sha256": "34339efd7ee97e6d41a1eaf4d29ff9c13df124758258295808e19c5b6399337d",
+            "url": "/api/documents/advanced-assembly-1793292585606/jobs/121405d4-edcf-409a-8ee8-d30f2e624cac/candidate/preview?sequence=1"
+          },
+          "assembly": {
+            "bom": [
+              {
+                "partId": "plate",
+                "number": "Plate",
+                "name": "底板",
+                "quantity": 1,
+                "parameters": {
+                  "PlateOutline": {
+                    "length": 60,
+                    "width": 40
+                  },
+                  "PlatePad": {
+                    "length": 8
+                  },
+                  "PlateHole": {
+                    "center_x": 30,
+                    "center_y": 20,
+                    "diameter": 8
+                  },
+                  "PlatePocket": {
+                    "length": 8
+                  }
+                }
+              },
+              {
+                "partId": "pin",
+                "number": "Pin",
+                "name": "圆柱销",
+                "quantity": 1,
+                "parameters": {
+                  "PinOutline": {
+                    "diameter": 10
+                  },
+                  "PinPad": {
+                    "length": 20
+                  }
+                }
+              }
+            ],
+            "components": [
+              {
+                "id": "PlateComponent",
+                "partId": "plate",
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "volume": 18797.876140340504
+              },
+              {
+                "id": "PinComponent",
+                "partId": "pin",
+                "position": [
+                  30,
+                  20,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "volume": 1570.7963267948965
+              }
+            ],
+            "relation": {
+              "type": "Fixed",
+              "first": "PlateComponent",
+              "second": "PinComponent"
+            },
+            "interference": {
+              "status": "collision",
+              "reason": "实体发生材料重叠",
+              "pairs": [
+                {
+                  "components": [
+                    "PlateComponent",
+                    "PinComponent"
+                  ],
+                  "volume": 226.19467105846513
+                }
+              ]
+            }
+          },
+          "baseRevision": 1,
+          "planHash": "48a9f7ca17d34c6b97901f4e75e2df6c51858d14074fe40326e9abac8bc3a110",
+          "sequence": 1
+        }
+      },
+      "jobId": "121405d4-edcf-409a-8ee8-d30f2e624cac",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "99cac6bb-93d7-47ab-b779-7bd341567b44"
+    }
+  ],
+  "hasMore": false,
+  "lastSeq": 186
+}

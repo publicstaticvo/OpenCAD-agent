@@ -86,7 +86,9 @@ export class RevisionStore {
    if(stat.size!==entry.bytes||hash(contents)!==entry.sha256)throw new StoreError('corrupt','Artifact hash mismatch');
   }
   const tree=JSON.parse(readFileSync(join(directory,'tree.json'),'utf8')),validation=JSON.parse(readFileSync(join(directory,'validation.json'),'utf8'));
-  if(!Array.isArray(tree)||!tree.length||validation.solids!==1||!(validation.volume>0)||!validation.glb?.triangles||!validation.step)throw new StoreError('corrupt','Missing validation report');
+  const assembly=validation.assembly;
+  if(assembly&&(validation.solids!==2||assembly.bom?.length!==2||assembly.components?.length!==2||assembly.interference?.status!=='clear'||validation.glb?.meshes!==2||validation.step?.solids!==2))throw new StoreError('corrupt','Invalid assembly validation report');
+  if(!Array.isArray(tree)||!tree.length||validation.solids!==(assembly?2:1)||!(validation.volume>0)||!validation.glb?.triangles||!validation.step)throw new StoreError('corrupt','Missing validation report');
   return{manifestHash:hash(raw),tree,validation};
  }
  operationResult(documentId:string,operationId:string,request:unknown,baseRevision:number){
@@ -151,12 +153,12 @@ export class RevisionStore {
  }
  snapshot(id:string):DocumentSnapshot{
   const doc=this.document(id);if(doc.health!=='healthy')throw new StoreError('corrupt','Formal revision corrupt or missing; no silent rollback');
-  let tree:any[]=[],artifacts:Record<string,string>={};
-  if(doc.head){const row:any=this.db.prepare('SELECT * FROM revisions WHERE document_id=? AND revision=?').get(id,doc.head);this.verify(this.packagePath(row.candidate_id),row.manifest_hash);tree=JSON.parse(row.tree);artifacts=Object.fromEntries(FILES.map(name=>[name,`/api/documents/${id}/revisions/${doc.head}/artifacts/${name}`]));}
+  let tree:any[]=[],artifacts:Record<string,string>={},validation:any;
+  if(doc.head){const row:any=this.db.prepare('SELECT * FROM revisions WHERE document_id=? AND revision=?').get(id,doc.head);this.verify(this.packagePath(row.candidate_id),row.manifest_hash);tree=JSON.parse(row.tree);validation=JSON.parse(row.validation);artifacts=Object.fromEntries(FILES.map(name=>[name,`/api/documents/${id}/revisions/${doc.head}/artifacts/${name}`]));}
   const seq:any=this.db.prepare('SELECT COALESCE(MAX(seq),0) AS seq FROM events WHERE document_id=?').get(id);
   const jobs=this.db.prepare('SELECT job FROM jobs WHERE document_id=? ORDER BY rowid').all(id).map((r:any)=>JSON.parse(r.job));
   const progress=(this.db.prepare("SELECT event FROM events WHERE document_id=? AND json_extract(event,'$.type') IN ('agent_progress','cad_progress','cad_operation_start','cad_operation_complete','cad_operation_failed','cad_operation_rejected','candidate_snapshot','plan_ready','plan_approved','plan_rejected','clarification_required') ORDER BY seq DESC LIMIT 500").all(id) as any[]).reverse().map(row=>JSON.parse(row.event));
-  return{documentId:id,name:doc.name,conversations:this.listConversations(id),progress,revision:doc.head,lastSeq:seq.seq,tree,artifacts,jobs};
+  return{documentId:id,name:doc.name,conversations:this.listConversations(id),progress,revision:doc.head,lastSeq:seq.seq,tree,artifacts,jobs,validation};
  }
  artifactPath(id:string,revision:number,name:string){
   this.document(id);if(!Number.isSafeInteger(revision)||revision<1||!FILES.includes(name))throw new StoreError('not_found','Artifact not found');

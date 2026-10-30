@@ -46,4 +46,4 @@ export type RpcResponse = {jsonrpc:'2.0';id:string|number;result:unknown} | {jso
 export interface Feature {id:string;label:string;type:string;parent:string|null;parameters:Record<string,number>;constraints?:Record<string,number>}
 export interface CandidateResult {candidateId:string;manifest:Record<string,{sha256:string;bytes:number}>;tree:Feature[];validation:{volume:number;bbox:number[];solids:number}}
 export interface AppEvent {seq:number;documentId:string;jobId:string|null;type:string;revision:number;candidateId:string|null;conversationId?:string|null;data:unknown}
-export interface DocumentSnapshot {documentId:string;name?:string;conversations?:any[];progress?:AppEvent[];revision:number;lastSeq:number;tree:Feature[];artifacts:Record<string,string>;jobs:unknown[]}
+export interface DocumentSnapshot {documentId:string;name?:string;conversations?:any[];progress?:AppEvent[];revision:number;lastSeq:number;tree:Feature[];artifacts:Record<string,string>;jobs:unknown[];validation?:any}

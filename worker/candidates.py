@@ -13,8 +13,10 @@ class Candidates:
         self.envelope=None
         self.directory=None
         self.prepared=None
-        self.progress=lambda stage,status: None
+        self.progress=lambda stage,status,**details: None
         self.operation=lambda status,index,operation,step_id: None
+        self.assembly_design=None
+        self.assembly_stage=0
     def dispatch(self, method, params):
         if method=='begin_candidate':
             self.keys(params,{'envelope'})
@@ -37,6 +39,16 @@ class Candidates:
         if method=='candidate_snapshot':
             self.keys(params,{'envelope','sketchId','includePreview','sequence'});self.check_envelope(params['envelope'])
             if type(params['sequence']) is not int or not 1<=params['sequence']<=256 or type(params['includePreview']) is not bool:raise ValueError('Invalid snapshot identity')
+            if self.assembly_design:
+                from worker.assembly import export_preview,inspect_assembly
+                from worker.artifacts import glb_metrics
+                path=self.directory/f'candidate-{params["sequence"]}.glb'
+                if path.exists():raise ValueError('Snapshot sequence already exists')
+                shape=export_preview(self.doc,path);box=shape.BoundBox
+                glb_metrics(path,shape)
+                result=dict(candidateId=self.envelope['candidateId'],tree=inspect_document(self.doc),geometry=dict(volume=shape.Volume,solids=len(shape.Solids),bbox=[box.XLength,box.YLength,box.ZLength]),preview=dict(file=path.name,bytes=path.stat().st_size,sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
+                if self.doc.getObject('Assembly'):result['assembly']=inspect_assembly(self.doc)
+                return result
             result=dict(candidateId=self.envelope['candidateId'],tree=inspect_document(self.doc),sketch=sketch_snapshot(self.doc,params['sketchId']))
             body_list=[o for o in self.doc.Objects if o.TypeId=='PartDesign::Body']
             if body_list and body_list[0].Tip and hasattr(body_list[0].Tip,'Shape') and not body_list[0].Tip.Shape.isNull() and body_list[0].Tip.Shape.Solids:
@@ -57,6 +69,47 @@ class Candidates:
             self.check_envelope(params['envelope'])
             if self.prepared:raise ValueError('Candidate sealed; no later writes')
             return apply_operations(self.doc,params['operations'],self.envelope['operationId'],params['stepId'],lambda status,index,op:self.operation(status,index,op,params['stepId']))
+        if method=='assembly_stage':
+            self.keys(params,{'envelope','stage','design'});self.check_envelope(params['envelope'])
+            if self.prepared:raise ValueError('Candidate sealed; no later writes')
+            from worker.assembly import build_plate,build_pin,edit_pin,assemble,inspect_assembly,validate_plate,validate_pin
+            design=params['design']
+            self.keys(design,{'length','width','thickness','holeDiameter','pinDiameter','pinLength'})
+            import math
+            if any(type(value) not in (int,float) or not math.isfinite(value) or value<=0 or value>1000000 for value in design.values()):raise ValueError('Invalid assembly dimensions')
+            if design['holeDiameter']>=min(design['length'],design['width']):raise ValueError('Hole exceeds plate')
+            if self.assembly_design is not None and self.assembly_design!=design:raise ValueError('Assembly design changed during execution')
+            stages=['plate','pin','assemble','check'] if self.envelope['baseRevision']==0 else ['pin_edit','check']
+            if self.assembly_stage>=len(stages) or params['stage']!=stages[self.assembly_stage]:raise ValueError('Assembly stage order rejected')
+            observe=lambda stage,data:self.progress('assembly',stage,**data)
+            result_geometry=None
+            if params['stage']=='plate':
+                build_plate(self.doc,design['length'],design['width'],design['thickness'],design['holeDiameter'],observe)
+                result_geometry=validate_plate(self.doc,design)
+            elif params['stage']=='pin':
+                build_pin(self.doc,design['pinDiameter'],design['pinLength'],observe)
+                result_geometry=validate_pin(self.doc,design)
+            elif params['stage']=='pin_edit':
+                edit_pin(self.doc,design['pinDiameter'],observe)
+                result_geometry=validate_pin(self.doc,design)
+            elif params['stage']=='assemble':assemble(self.doc,design['length']/2,design['width']/2,observe);result_geometry=None
+            result=dict(tree=inspect_document(self.doc),stage=params['stage'])
+            if result_geometry:result['geometry']=result_geometry
+            if self.assembly_stage>=2:result['assembly']=inspect_assembly(self.doc)
+            self.assembly_design=dict(design);self.assembly_stage+=1
+            return result
+        if method=='assembly_check':
+            self.keys(params,{'envelope','design'});self.check_envelope(params['envelope'])
+            required_stage=3 if self.envelope['baseRevision']==0 else 1
+            if self.prepared or self.assembly_stage!=required_stage or self.assembly_design!=params['design']:raise ValueError('Assembly is not ready for validation')
+            from worker.assembly import inspect_assembly,validate_assembly
+            import math
+            design=params['design'];report=inspect_assembly(self.doc)
+            self.progress('interference','complete',report=report['interference'])
+            criteria=dict(bbox=[design['length'],design['width'],max(design['thickness'],design['pinLength'])],volume=design['length']*design['width']*design['thickness']-math.pi*(design['holeDiameter']/2)**2*design['thickness']+math.pi*(design['pinDiameter']/2)**2*design['pinLength'])
+            validate_assembly(self.doc,criteria,dict(kind='edit_pin_plate_assembly' if self.envelope['baseRevision'] else 'pin_plate_assembly',assembly=design))
+            self.assembly_stage+=1
+            return dict(assembly=report)
         if method=='prepare_candidate':
             self.keys(params,{'envelope','criteria','design'} if 'design' in params else {'envelope','criteria'});self.check_envelope(params['envelope'])
             assert_contract('criteria',params['criteria'])
@@ -65,8 +118,14 @@ class Candidates:
                 return self.prepared['result']
             from worker.artifacts import prepare_revision
             if 'design' in params:
-                from worker.validation import validate_design
-                validate_design(self.doc,params['design'])
+                if params['design'].get('kind') in ('pin_plate_assembly','edit_pin_plate_assembly'):
+                    from worker.assembly import validate_assembly
+                    required_stage=4 if self.envelope['baseRevision']==0 else 2
+                    if self.assembly_stage!=required_stage:raise ValueError('Assembly stages incomplete')
+                    validate_assembly(self.doc,params['criteria'],params['design'])
+                else:
+                    from worker.validation import validate_design
+                    validate_design(self.doc,params['design'])
                 (self.directory/'design.json').write_text(json.dumps(params['design'],allow_nan=False))
             result=prepare_revision(self.doc,self.directory,params['criteria'],self.progress)
             result['candidateId']=self.envelope['candidateId']
@@ -74,7 +133,7 @@ class Candidates:
             return result
         if method=='discard_candidate':
             self.keys(params,{'envelope'});self.check_envelope(params['envelope'])
-            App.closeDocument(self.doc.Name);self.doc=None;self.envelope=None;self.directory=None;self.prepared=None
+            App.closeDocument(self.doc.Name);self.doc=None;self.envelope=None;self.directory=None;self.prepared=None;self.assembly_design=None;self.assembly_stage=0
             return dict(discarded=True)
         raise LookupError('Method not found')
     def check_envelope(self,envelope):

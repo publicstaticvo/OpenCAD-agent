@@ -178,10 +178,12 @@ export class Supervisor{
     const stage=approvedStages(job.plan!)[job.stage??0];
     this.store.appendEvent(job.documentId,'cad_operation_start',{stepId,planHash:job.plan!.planHash,stage:stage.name,operations},job.operationId,undefined,job.candidateId);
     try{
-     const result=await this.activeWorker!.request('apply_operations',{envelope,stepId,operations});guard();
+     const assemblyOperation=(operations as any[])[0];
+     const assemblyPlan=job.plan!.kind==='pin_plate_assembly'||job.plan!.kind==='edit_pin_plate_assembly';
+     const result=assemblyPlan?(assemblyOperation.op==='assembly_check'?await this.activeWorker!.request('assembly_check',{envelope,design:assemblyOperation.design}):await this.activeWorker!.request('assembly_stage',{envelope,stage:assemblyOperation.stage,design:assemblyOperation.design})):await this.activeWorker!.request('apply_operations',{envelope,stepId,operations});guard();
      this.store.appendEvent(job.documentId,'cad_operation_complete',{stepId,stage:stage.name,result,planHash:job.plan!.planHash},job.operationId,undefined,job.candidateId);
      job.stage=(job.stage??0)+1;this.persist(job);
-     if(stage.sketchId)await this.candidateSnapshot(job,stage.sketchId,job.stage===approvedStages(job.plan!).length);
+     if(stage.sketchId||assemblyPlan)await this.candidateSnapshot(job,stage.sketchId,job.stage===approvedStages(job.plan!).length);
      await this.phase('modified',job);return result;
     }catch(error){fatal=error as Error;this.store.appendEvent(job.documentId,'cad_operation_failed',{stepId,error:String(error),planHash:job.plan!.planHash},job.operationId,undefined,job.candidateId);throw error;}
    };
@@ -192,7 +194,7 @@ export class Supervisor{
    };
    if(job.request.kind==='text'){
     const offset=job.planningAgent?.messages.length??0;
-    const session:CadSession={mode:'execution',plan:job.plan,stages:approvedStages(job.plan!),baseRevision:job.baseRevision,history:this.store.conversationContext(job.documentId,job.conversationId!,job.operationId),inspect:()=>this.activeWorker!.request('inspect_document',{}),apply,prepare,snapshot:async()=>this.store.snapshot(job.documentId),progress:event=>this.progress(job,event.messageIndex===undefined?event:{...event,messageIndex:event.messageIndex+offset}),transcript:report=>this.saveAgent(job,report,false)};
+    const session:CadSession={mode:'execution',plan:job.plan,stages:approvedStages(job.plan!),get stage(){return job.stage??0;},baseRevision:job.baseRevision,history:this.store.conversationContext(job.documentId,job.conversationId!,job.operationId),inspect:()=>this.activeWorker!.request('inspect_document',{}),apply,prepare,snapshot:async()=>this.store.snapshot(job.documentId),progress:event=>this.progress(job,event.messageIndex===undefined?event:{...event,messageIndex:event.messageIndex+offset}),transcript:report=>this.saveAgent(job,report,false)};
     const criteria=await this.options.textRunner!(job,session,this.controller.signal);guard();
     if(criteria===undefined){discardCandidate=true;this.state(job,'answered');return;}
    }else{await apply(job.request.operations,'program');await prepare(job.request.criteria);}
@@ -220,7 +222,13 @@ export class Supervisor{
   const data:any=await this.activeWorker.request('candidate_snapshot',{envelope:{documentId:job.documentId,baseRevision:job.baseRevision,operationId:job.operationId,candidateId:job.candidateId},sketchId,includePreview,sequence});
   this.check();this.assertApproval(job);
   if(data.candidateId!==job.candidateId)throw new Error('Candidate snapshot identity mismatch');
-  assertCandidateSnapshot(job.plan,job.stage!,data);
+  if(job.plan.kind==='pin_plate_assembly'||job.plan.kind==='edit_pin_plate_assembly'){
+   const expected=job.plan.kind==='edit_pin_plate_assembly'?2:job.stage===1?1:2;
+   if(data.geometry?.solids!==expected||data.tree.filter((row:any)=>row.type==='PartDesign::Body').length!==expected)throw new Error('Assembly candidate part count mismatch');
+   if((job.plan.kind==='edit_pin_plate_assembly'&&job.stage!>=1)||(job.plan.kind==='pin_plate_assembly'&&job.stage!>=3)){
+    if(data.assembly?.components.length!==2)throw new Error('Assembly components missing');
+   }
+  }else assertCandidateSnapshot(job.plan,job.stage!,data);
   data.baseRevision=job.baseRevision;data.planHash=job.plan.planHash;data.sequence=sequence;
   if(data.preview)data.preview.url=`/api/documents/${job.documentId}/jobs/${job.operationId}/candidate/preview?sequence=${sequence}`;
   this.store.db.exec('BEGIN IMMEDIATE');try{
