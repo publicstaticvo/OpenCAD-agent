@@ -48,7 +48,7 @@ export async function createGateway(options:Options):Promise<Gateway>{
     if(req.method==='POST'){
      const input=await body(req);
      if(url.pathname.endsWith('/discover')){keys(input,['baseUrl'],['apiKey','protocol','timeouts']);json(res,200,await options.modelConfig.discover(input as any));}
-     else{keys(input,['baseUrl','model'],['apiKey','protocol','timeouts']);json(res,200,url.pathname.endsWith('/probe')?await options.modelConfig.probe(input as any):await options.modelConfig.save(input as any));}
+     else{keys(input,['baseUrl','model'],['apiKey','protocol','timeouts','imageInput']);json(res,200,url.pathname.endsWith('/probe')?await options.modelConfig.probe(input as any):await options.modelConfig.save(input as any));}
      return;
     }
    }
@@ -74,20 +74,24 @@ export async function createGateway(options:Options):Promise<Gateway>{
    if(candidate&&req.method==='GET'){
     const job=supervisor.job(id,candidate[1]);if(!job.candidateId||!['running','validating','committing','committed'].includes(job.status))throw new StoreError('not_found','Candidate preview unavailable');
     if(candidate[2]==='snapshot'){json(res,200,{status:job.status,snapshot:job.candidateSnapshot??null});return;}
-    const sequence=Number(url.searchParams.get('sequence'));if(!Number.isSafeInteger(sequence)||sequence<1||sequence!==job.candidateSnapshot?.sequence||!job.candidateSnapshot?.preview)throw new StoreError('not_found','Candidate sequence unavailable');
+    const sequence=Number(url.searchParams.get('sequence'));if(!Number.isSafeInteger(sequence)||sequence<1)throw new StoreError('not_found','Candidate sequence unavailable');
+    const recorded:any=store.db.prepare("SELECT event FROM events WHERE document_id=? AND json_extract(event,'$.jobId')=? AND json_extract(event,'$.type')='candidate_snapshot' AND json_extract(event,'$.data.sequence')=?").get(id,job.operationId,sequence);
+    const snapshot=recorded?JSON.parse(recorded.event).data:null;
+    if(!snapshot?.preview||snapshot.candidateId!==job.candidateId||(job.plan?.kind!=='python'&&snapshot.planHash!==job.plan?.planHash))throw new StoreError('not_found','Candidate sequence unavailable');
     if(job.status==='committed'&&(job.result?.candidateId!==job.candidateId||job.result?.operationId!==job.operationId))throw new StoreError('corrupt','Recorded candidate identity mismatch');
     const directory=job.status==='committed'?dirname(store.artifactPath(id,job.result.revision,'model.FCStd')):store.candidatePath(job.candidateId);
     const path=join(directory,`candidate-${sequence}.glb`);
     if(!existsSync(path))throw new StoreError('not_found','Candidate preview is not ready');
     const stat=lstatSync(path);if(!stat.isFile()||stat.isSymbolicLink()||stat.size<1||stat.size>64*1024*1024)throw new StoreError('corrupt','Invalid candidate preview file');
-    const bytes=readFileSync(path);if(bytes.length!==job.candidateSnapshot.preview.bytes||createHash('sha256').update(bytes).digest('hex')!==job.candidateSnapshot.preview.sha256)throw new StoreError('corrupt','Candidate preview content changed');
-    res.writeHead(200,{'Content-Type':'model/gltf-binary','Content-Length':bytes.length,'Cache-Control':'no-store','X-CAD-Candidate':job.candidateId,'X-CAD-Base-Revision':String(job.baseRevision),'X-CAD-Sequence':String(sequence),'X-CAD-Content-Hash':job.candidateSnapshot.preview.sha256,'X-Content-Type-Options':'nosniff'});res.end(bytes);return;
+    const bytes=readFileSync(path);if(bytes.length!==snapshot.preview.bytes||createHash('sha256').update(bytes).digest('hex')!==snapshot.preview.sha256)throw new StoreError('corrupt','Candidate preview content changed');
+    res.writeHead(200,{'Content-Type':'model/gltf-binary','Content-Length':bytes.length,'Cache-Control':'no-store','X-CAD-Candidate':job.candidateId,'X-CAD-Base-Revision':String(job.baseRevision),'X-CAD-Sequence':String(sequence),'X-CAD-Content-Hash':snapshot.preview.sha256,'X-Content-Type-Options':'nosniff'});res.end(bytes);return;
    }
    if(suffix==='jobs'&&req.method==='POST'){
-    const input=await body(req);keys(input,['baseRevision','operationId'],['program','text','conversationId']);
-    if(Object.hasOwn(input,'program')===Object.hasOwn(input,'text'))throw new StoreError('invalid','Choose exactly one program or text task');
+    const input=await body(req);keys(input,['baseRevision','operationId'],['program','text','plan','python','conversationId']);
+    if(['program','text','plan','python'].filter(key=>Object.hasOwn(input,key)).length!==1)throw new StoreError('invalid','Choose exactly one program, text, plan or python task');
+    if(Object.hasOwn(input,'python')){json(res,202,supervisor.submitPython(id,input.baseRevision,input.operationId,{kind:'python',submission:input.python},input.conversationId));return;}
     if(Object.hasOwn(input,'text')&&providerMode()==='none')throw new StoreError('unavailable','请先配置模型服务');
-    json(res,202,Object.hasOwn(input,'text')?supervisor.submitText(id,input.baseRevision,input.operationId,input.text,input.conversationId):supervisor.submit(id,input.baseRevision,input.operationId,input.program,input.conversationId));return;
+    json(res,202,Object.hasOwn(input,'text')?supervisor.submitText(id,input.baseRevision,input.operationId,input.text,input.conversationId):Object.hasOwn(input,'plan')?supervisor.submitOperationPlan(id,input.baseRevision,input.operationId,input.plan,input.conversationId):supervisor.submit(id,input.baseRevision,input.operationId,input.program,input.conversationId));return;
    }
    const approval=suffix.match(/^jobs\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})\/(approve|reject)$/);
    if(approval&&req.method==='POST'){const input=await body(req);keys(input,['planHash']);json(res,200,approval[2]==='approve'?supervisor.approveJob(id,approval[1],input.planHash):supervisor.rejectJob(id,approval[1],input.planHash));return;}

@@ -17,9 +17,47 @@ class Candidates:
         self.operation=lambda status,index,operation,step_id: None
         self.assembly_design=None
         self.assembly_stage=0
+        self.design=None
+        self.completed_stages=0
     def dispatch(self, method, params):
-        if method=='begin_candidate':
+        if method=='begin_python':
             self.keys(params,{'envelope'})
+            assert_contract('envelope',params['envelope'])
+            if self.envelope:raise ValueError('Another candidate is loaded')
+            self.envelope=dict(params['envelope']);self.directory=self.workspace/self.envelope['candidateId']
+            if self.directory.is_symlink() or self.directory.resolve().parent!=self.workspace:raise ValueError('Invalid candidate directory')
+            self.directory.mkdir(mode=0o700,exist_ok=True)
+            return dict(candidateId=self.envelope['candidateId'])
+        if method=='execute_script':
+            self.keys(params,{'envelope','source','criteria','executionId','seconds'})
+            if self.envelope!=params['envelope'] or self.prepared:raise ValueError('Python candidate identity or state mismatch')
+            assert_contract('criteria',params['criteria'])
+            import uuid,shutil
+            execution_id=str(uuid.UUID(params['executionId']))
+            if execution_id!=params['executionId']:raise ValueError('Invalid execution identity')
+            from worker.python_execution import execute_script
+            result=execute_script(self.directory/'executions'/execution_id,params['source'],params['criteria'],params['seconds'],self.directory/'base.FCStd')
+            if result['status']=='valid':
+                directory=self.directory/'executions'/execution_id
+                for name in ('model.FCStd','model.step','preview.glb','observation.png','tree.json','validation.json'):
+                    shutil.copyfile(directory/name,self.directory/name)
+            return result
+        if method=='prepare_python':
+            self.keys(params,{'envelope','identity','criteria'})
+            if self.envelope!=params['envelope'] or self.prepared:raise ValueError('Python candidate identity or state mismatch')
+            from worker.artifacts import write_json
+            validation=json.loads((self.directory/'validation.json').read_text());validation.update(params['identity'])
+            write_json(self.directory/'validation.json',validation);write_json(self.directory/'criteria.json',params['criteria'])
+            files={}
+            for name in ('model.FCStd','model.step','preview.glb','tree.json','validation.json','criteria.json','script.py','execution.json','scripts.json','observation.png'):
+                path=self.directory/name
+                if path.is_symlink() or not path.is_file():raise ValueError('Invalid Python artifact')
+                raw=path.read_bytes();files[name]=dict(bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest())
+            write_json(self.directory/'manifest.json',dict(files=files))
+            self.prepared=dict(result=dict(validation=validation))
+            return dict(validation=validation)
+        if method=='begin_candidate':
+            self.keys(params,{'envelope','design'} if 'design' in params else {'envelope'})
             envelope=params['envelope'];assert_contract('envelope',envelope)
             if self.doc:
                 if envelope!=self.envelope:raise ValueError('Another candidate is loaded')
@@ -31,11 +69,18 @@ class Candidates:
                 if model.is_symlink():raise ValueError('Invalid candidate model')
                 self.doc=App.openDocument(str(model)) if model.exists() else App.newDocument('Candidate')
                 self.envelope=dict(envelope);self.directory=directory
+                if 'design' in params:
+                    from worker.operation_plan import verify_plan
+                    self.design=params['design'];verify_plan(self.doc,self.design,0)
             return dict(candidateId=envelope['candidateId'],tree=inspect_document(self.doc))
         if method=='inspect_document':
             self.keys(params,set())
             if not self.doc:return dict(tree=[],loaded=False)
-            return dict(tree=inspect_document(self.doc),loaded=True,candidateId=self.envelope['candidateId'])
+            result=dict(tree=inspect_document(self.doc),loaded=True,candidateId=self.envelope['candidateId'])
+            if self.design:
+                from worker.operation_plan import model_state
+                result['operationModel']=model_state(self.doc)
+            return result
         if method=='candidate_snapshot':
             self.keys(params,{'envelope','sketchId','includePreview','sequence'});self.check_envelope(params['envelope'])
             if type(params['sequence']) is not int or not 1<=params['sequence']<=256 or type(params['includePreview']) is not bool:raise ValueError('Invalid snapshot identity')
@@ -50,6 +95,9 @@ class Candidates:
                 if self.doc.getObject('Assembly'):result['assembly']=inspect_assembly(self.doc)
                 return result
             result=dict(candidateId=self.envelope['candidateId'],tree=inspect_document(self.doc),sketch=sketch_snapshot(self.doc,params['sketchId']))
+            if self.design:
+                from worker.operation_plan import verify_plan
+                result.update(verify_plan(self.doc,self.design,self.completed_stages))
             body_list=[o for o in self.doc.Objects if o.TypeId=='PartDesign::Body']
             if body_list and body_list[0].Tip and hasattr(body_list[0].Tip,'Shape') and not body_list[0].Tip.Shape.isNull() and body_list[0].Tip.Shape.Solids:
                 from worker.validation import shape_metrics
@@ -68,6 +116,11 @@ class Candidates:
             self.keys(params,{'envelope','stepId','operations'})
             self.check_envelope(params['envelope'])
             if self.prepared:raise ValueError('Candidate sealed; no later writes')
+            if self.design:
+                from worker.operation_plan import apply_stage
+                result=apply_stage(self.doc,self.design,self.completed_stages,params['operations'],self.envelope['operationId'],params['stepId'],lambda status,index,op:self.operation(status,index,op,params['stepId']))
+                self.completed_stages+=1
+                return result
             return apply_operations(self.doc,params['operations'],self.envelope['operationId'],params['stepId'],lambda status,index,op:self.operation(status,index,op,params['stepId']))
         if method=='assembly_stage':
             self.keys(params,{'envelope','stage','design'});self.check_envelope(params['envelope'])
@@ -118,6 +171,7 @@ class Candidates:
                 return self.prepared['result']
             from worker.artifacts import prepare_revision
             if 'design' in params:
+                if self.design and (params['design']!=self.design or params['criteria']!=self.design['criteria'] or self.completed_stages!=len(self.design['stages'])):raise ValueError('Approved operation plan incomplete or changed')
                 if params['design'].get('kind') in ('pin_plate_assembly','edit_pin_plate_assembly'):
                     from worker.assembly import validate_assembly
                     required_stage=4 if self.envelope['baseRevision']==0 else 2
@@ -133,7 +187,7 @@ class Candidates:
             return result
         if method=='discard_candidate':
             self.keys(params,{'envelope'});self.check_envelope(params['envelope'])
-            App.closeDocument(self.doc.Name);self.doc=None;self.envelope=None;self.directory=None;self.prepared=None;self.assembly_design=None;self.assembly_stage=0
+            App.closeDocument(self.doc.Name);self.doc=None;self.envelope=None;self.directory=None;self.prepared=None;self.assembly_design=None;self.assembly_stage=0;self.design=None;self.completed_stages=0
             return dict(discarded=True)
         raise LookupError('Method not found')
     def check_envelope(self,envelope):

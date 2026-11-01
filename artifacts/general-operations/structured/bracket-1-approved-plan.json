@@ -1,0 +1,108 @@
+{
+  "version": 2,
+  "kind": "operations",
+  "documentId": "operations-bracket-1793454146047",
+  "operationId": "step-1",
+  "requestHash": "ab48ee1bbde512fdc7fd0e274f78477675383abae1a455cb8cb221454786624f",
+  "baseRevision": 1,
+  "baseHistoryHash": "7828ef56f324338ef3c0247e33c9f4620672fcb0d16e017d30c63b2690b3126e",
+  "goal": "L 形支架底臂增加 Ø4 mm 贯穿孔，中心 [30,5]",
+  "stages": [
+    {
+      "name": "偏心孔草图与约束",
+      "sketchId": "hole",
+      "operations": [
+        {
+          "op": "create_sketch",
+          "id": "hole",
+          "body": "Body",
+          "plane": "XY",
+          "origin": [
+            0,
+            0,
+            8
+          ]
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "hole",
+          "geometryId": 0,
+          "geometry": {
+            "kind": "circle",
+            "center": [
+              30,
+              5
+            ],
+            "radius": 2
+          }
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "hole",
+          "name": "diameter",
+          "kind": "Diameter",
+          "args": [
+            0,
+            4
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "hole",
+          "name": "center_x",
+          "kind": "DistanceX",
+          "args": [
+            0,
+            3,
+            30
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "hole",
+          "name": "center_y",
+          "kind": "DistanceY",
+          "args": [
+            0,
+            3,
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pocket 贯穿孔",
+      "sketchId": "hole",
+      "operations": [
+        {
+          "op": "pocket",
+          "id": "cut",
+          "sketch": "hole",
+          "length": 8
+        }
+      ]
+    }
+  ],
+  "dimensions": {
+    "length": 60,
+    "width": 50,
+    "height": 8,
+    "unit": "mm"
+  },
+  "criteria": {
+    "bbox": [
+      60,
+      50,
+      8
+    ],
+    "volume": 7899.469035085127,
+    "parameters": [
+      {
+        "feature": "hole",
+        "parameter": "diameter",
+        "value": 4
+      }
+    ]
+  },
+  "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+}

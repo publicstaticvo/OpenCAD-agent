@@ -18,6 +18,7 @@
     "test:e2e:live": "playwright test --config playwright.live.config.ts"
   },
   "dependencies": {
+    "diff": "8.0.2",
     "openai": "7.19.0",
     "partial-json": "0.1.7",
     "react": "19.3.1",

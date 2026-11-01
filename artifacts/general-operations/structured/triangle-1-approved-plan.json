@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "kind": "operations",
+  "documentId": "operations-triangle-1793454155810",
+  "operationId": "step-1",
+  "requestHash": "760cce7dcf99d671e29c82857da692c2f926b98fa6a0d0a83f6781f319a2e794",
+  "baseRevision": 1,
+  "baseHistoryHash": "75c679f97ed4e7b2567d4279b6cfc38d77d2eae2de57043925f7eee14ad051f9",
+  "goal": "三角棱柱拉伸高度改为12 mm",
+  "stages": [
+    {
+      "name": "修改 Pad 长度",
+      "sketchId": "outline",
+      "operations": [
+        {
+          "op": "set_parameter",
+          "feature": "solid",
+          "parameter": "Length",
+          "value": 12
+        }
+      ]
+    }
+  ],
+  "dimensions": {
+    "length": 40,
+    "width": 30,
+    "height": 12,
+    "unit": "mm"
+  },
+  "criteria": {
+    "bbox": [
+      40,
+      30,
+      12
+    ],
+    "volume": 7200,
+    "parameters": [
+      {
+        "feature": "solid",
+        "parameter": "Length",
+        "value": 12
+      }
+    ]
+  },
+  "planHash": "b4310977424754e3d967fd241fed91e7093766c1c2897f803697b9ad1f3f5a82"
+}

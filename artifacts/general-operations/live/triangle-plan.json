@@ -1,0 +1,211 @@
+{
+  "version": 2,
+  "kind": "operations",
+  "documentId": "live-general-triangle-1793454202187",
+  "operationId": "b3431196-ad60-4be3-8f54-37246ded0420",
+  "requestHash": "63109ac6d19043087d9413009bf95ed0b9fb75f763c5bbadcec792a2b817ad89",
+  "baseRevision": 0,
+  "baseHistoryHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "goal": "创建一个参数化直角三角棱柱：XY 平面三角形顶点为 (0,0)、(40,0)、(0,30) mm，草图真实完全约束，并沿 +Z Pad 10 mm，形成一个 Body 中的单一连通实体。",
+  "stages": [
+    {
+      "name": "创建并完全约束直角三角形草图",
+      "sketchId": "TriangleSketch",
+      "operations": [
+        {
+          "op": "create_body",
+          "id": "TrianglePrismBody"
+        },
+        {
+          "op": "create_sketch",
+          "id": "TriangleSketch",
+          "body": "TrianglePrismBody",
+          "plane": "XY",
+          "origin": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "TriangleSketch",
+          "geometryId": 0,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              0,
+              0
+            ],
+            "to": [
+              40,
+              0
+            ]
+          }
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "TriangleSketch",
+          "geometryId": 1,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              40,
+              0
+            ],
+            "to": [
+              0,
+              30
+            ]
+          }
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "TriangleSketch",
+          "geometryId": 2,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              0,
+              30
+            ],
+            "to": [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "TriangleSketch",
+          "name": "join0",
+          "kind": "Coincident",
+          "args": [
+            0,
+            2,
+            1,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "TriangleSketch",
+          "name": "join1",
+          "kind": "Coincident",
+          "args": [
+            1,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "TriangleSketch",
+          "name": "join2",
+          "kind": "Coincident",
+          "args": [
+            2,
+            2,
+            0,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "TriangleSketch",
+          "name": "horizontal_base",
+          "kind": "Horizontal",
+          "args": [
+            0
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "TriangleSketch",
+          "name": "vertical_height",
+          "kind": "Vertical",
+          "args": [
+            2
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "TriangleSketch",
+          "name": "origin",
+          "kind": "Coincident",
+          "args": [
+            0,
+            1,
+            -1,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "TriangleSketch",
+          "name": "base_length",
+          "kind": "Distance",
+          "args": [
+            0,
+            40
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "TriangleSketch",
+          "name": "height_length",
+          "kind": "Distance",
+          "args": [
+            2,
+            30
+          ]
+        }
+      ]
+    },
+    {
+      "name": "沿 +Z 拉伸形成三角棱柱",
+      "sketchId": "TriangleSketch",
+      "operations": [
+        {
+          "op": "pad",
+          "id": "TrianglePad",
+          "sketch": "TriangleSketch",
+          "length": 10
+        }
+      ]
+    }
+  ],
+  "dimensions": {
+    "length": 40,
+    "width": 30,
+    "height": 10,
+    "unit": "mm"
+  },
+  "criteria": {
+    "bbox": [
+      40,
+      30,
+      10
+    ],
+    "volume": 6000,
+    "parameters": [
+      {
+        "feature": "TriangleSketch",
+        "parameter": "base_length",
+        "value": 40
+      },
+      {
+        "feature": "TriangleSketch",
+        "parameter": "height_length",
+        "value": 30
+      },
+      {
+        "feature": "TrianglePad",
+        "parameter": "Length",
+        "value": 10
+      }
+    ]
+  },
+  "planHash": "67f83d9c45bab0d4d2a0983cdd448c66d3ac92907fa74e0e736b5a0bfb0b3ed1"
+}

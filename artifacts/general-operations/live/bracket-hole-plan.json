@@ -1,0 +1,148 @@
+{
+  "version": 2,
+  "kind": "operations",
+  "documentId": "live-general-bracket-1793454343737",
+  "operationId": "964ed455-1ddc-4eac-aae0-8115779741a8",
+  "requestHash": "041421b3bfe957c03c927b85c37fa8980141cb3c32a2bb4b4b16a2e3f5114fb1",
+  "baseRevision": 1,
+  "baseHistoryHash": "c1c14b615618959e4bd96b47cc937d37ce8e60ec26a95544c3b64d64a85dad21",
+  "goal": "在现有 L 形支架 L_Bracket_Body 的底臂增加一个 Z 方向贯穿孔：孔中心 (30,5) mm，直径 4 mm；保留现有 L_Profile 轮廓和 L_Bracket_Pad 的 8 mm 厚度，仅形成一个连接实体。",
+  "stages": [
+    {
+      "name": "在支架顶面高度创建并完全约束孔草图",
+      "sketchId": "BottomArm_Hole_Profile",
+      "operations": [
+        {
+          "op": "create_sketch",
+          "id": "BottomArm_Hole_Profile",
+          "body": "L_Bracket_Body",
+          "plane": "XY",
+          "origin": [
+            0,
+            0,
+            8
+          ]
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "BottomArm_Hole_Profile",
+          "geometryId": 0,
+          "geometry": {
+            "kind": "circle",
+            "center": [
+              30,
+              5
+            ],
+            "radius": 2
+          }
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "BottomArm_Hole_Profile",
+          "name": "hole_center_x",
+          "kind": "DistanceX",
+          "args": [
+            0,
+            3,
+            30
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "BottomArm_Hole_Profile",
+          "name": "hole_center_y",
+          "kind": "DistanceY",
+          "args": [
+            0,
+            3,
+            5
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "BottomArm_Hole_Profile",
+          "name": "hole_diameter",
+          "kind": "Diameter",
+          "args": [
+            0,
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "name": "从顶面向下贯穿切除 8 mm",
+      "sketchId": "BottomArm_Hole_Profile",
+      "operations": [
+        {
+          "op": "pocket",
+          "id": "BottomArm_Through_Hole",
+          "sketch": "BottomArm_Hole_Profile",
+          "length": 8
+        }
+      ]
+    }
+  ],
+  "dimensions": {
+    "length": 60,
+    "width": 50,
+    "height": 8,
+    "unit": "mm"
+  },
+  "criteria": {
+    "bbox": [
+      60,
+      50,
+      8
+    ],
+    "volume": 7899.469035085126,
+    "parameters": [
+      {
+        "feature": "L_Profile",
+        "parameter": "overall_length",
+        "value": 60
+      },
+      {
+        "feature": "L_Profile",
+        "parameter": "horizontal_arm_thickness",
+        "value": 10
+      },
+      {
+        "feature": "L_Profile",
+        "parameter": "vertical_arm_width",
+        "value": 10
+      },
+      {
+        "feature": "L_Profile",
+        "parameter": "overall_height",
+        "value": 50
+      },
+      {
+        "feature": "L_Bracket_Pad",
+        "parameter": "Length",
+        "value": 8
+      },
+      {
+        "feature": "BottomArm_Hole_Profile",
+        "parameter": "hole_center_x",
+        "value": 30
+      },
+      {
+        "feature": "BottomArm_Hole_Profile",
+        "parameter": "hole_center_y",
+        "value": 5
+      },
+      {
+        "feature": "BottomArm_Hole_Profile",
+        "parameter": "hole_diameter",
+        "value": 4
+      },
+      {
+        "feature": "BottomArm_Through_Hole",
+        "parameter": "Length",
+        "value": 8
+      }
+    ]
+  },
+  "planHash": "eec55d76a6e561af322b58f9850a1b05424cac40b3d4410291a5224e648c5208"
+}

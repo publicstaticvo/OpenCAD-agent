@@ -9,10 +9,10 @@ import {timeoutSettings,type TimeoutSettings} from './timeouts.ts';
 import {modelFetch} from './model-http.mjs';
 
 type ModelEntry={id:string;[key:string]:unknown};
-export interface ModelLimits {contextWindow:number;maxTokens:number;contextSource:string;outputSource:string}
+export interface ModelLimits {contextWindow:number;maxTokens:number;contextSource:string;outputSource:string;imageInput?:boolean}
 export type ModelProtocol='openai-completions'|'openai-responses';
 interface Settings {version:3;apiKey:string;provider:ModelLimits&{protocol:ModelProtocol;baseUrl:string;model:string};timeouts:TimeoutSettings;configuredAt:string}
-type ConfigInput={baseUrl:unknown;apiKey?:unknown;model:unknown;protocol?:unknown;timeouts?:unknown};
+type ConfigInput={baseUrl:unknown;apiKey?:unknown;model:unknown;protocol?:unknown;timeouts?:unknown;imageInput?:unknown};
 export function modelProtocol(value:unknown):ModelProtocol{if(value===undefined)return'openai-completions';if(value==='openai-completions'||value==='openai-responses')return value;throw new StoreError('invalid','不支持的 API 协议');}
 export function normalizeBaseUrl(value:unknown):string{
  if(typeof value!=='string'||!value.trim())throw new StoreError('invalid','请填写模型服务地址');
@@ -54,7 +54,8 @@ export function readModelYaml(path:string){
  const value=parse(readFileSync(path,'utf8'));
  const data=value?.test_llm??value;
  if(!data||typeof data.model!=='string'||!data.model.trim()||typeof data.api_key!=='string'||!data.api_key.trim())throw new Error('模型 YAML 需要 base_url、api_key、model');
- return{baseUrl:normalizeBaseUrl(data.base_url),apiKey:data.api_key.trim(),model:data.model.trim(),protocol:modelProtocol(data.protocol),...(data.timeouts===undefined?{}:{timeouts:timeoutSettings(data.timeouts)})};
+ if(data.image_input!==undefined&&typeof data.image_input!=='boolean')throw new Error('image_input 必须为布尔值');
+ return{baseUrl:normalizeBaseUrl(data.base_url),apiKey:data.api_key.trim(),model:data.model.trim(),protocol:modelProtocol(data.protocol),...(data.image_input===undefined?{}:{imageInput:data.image_input}),...(data.timeouts===undefined?{}:{timeouts:timeoutSettings(data.timeouts)})};
 }
 export class ModelConfig{
  private current:Settings|undefined;
@@ -71,6 +72,7 @@ export class ModelConfig{
    settings.provider.protocol=modelProtocol(settings.provider.protocol);
    if(normalizeBaseUrl(settings.provider.baseUrl)!==settings.provider.baseUrl)throw new Error('Invalid persisted model URL');
    positive(settings.provider.contextWindow,'contextWindow');positive(settings.provider.maxTokens,'maxTokens');
+   if(settings.provider.imageInput!==undefined&&typeof settings.provider.imageInput!=='boolean')throw new Error('Invalid persisted image input setting');
    if(!['service','pi-catalog','default-256k'].includes(settings.provider.contextSource)||!['service','pi-catalog','pi-custom-default'].includes(settings.provider.outputSource))throw new Error('Invalid persisted model limit sources');
    if(settings.version!==3){settings.version=3;this.write('model-settings.json',settings);}
    chmodSync(path,0o600);this.current=settings;
@@ -107,7 +109,9 @@ export class ModelConfig{
   if(typeof input.model!=='string'||!input.model.trim()||input.model.trim().length>256)throw new StoreError('invalid','请填写模型 ID');
   let limits=resolveModelLimits({id:input.model.trim()},baseUrl);
   try{const found=(await this.discover({baseUrl,apiKey,protocol,timeouts})).models.find(m=>m.id===input.model!.toString().trim());if(found){const{id,...available}=found;limits=available;}}catch(error){if(!(error instanceof StoreError)||!['invalid','unavailable'].includes(error.code))throw error;}
-  return{apiKey,provider:{protocol,baseUrl,model:input.model.trim(),...limits},timeouts};
+  if(input.imageInput!==undefined&&typeof input.imageInput!=='boolean')throw new StoreError('invalid','图像输入设置必须为布尔值');
+  const imageInput=input.imageInput??(this.current?.provider.baseUrl===baseUrl&&this.current.provider.model===input.model.trim()?this.current.provider.imageInput:undefined);
+  return{apiKey,provider:{protocol,baseUrl,model:input.model.trim(),...limits,...(imageInput===undefined?{}:{imageInput:imageInput as boolean})},timeouts};
  }
  async probe(input:ConfigInput){const settings=await this.resolve(input);return probeProvider(evaluationProvider({provider:settings.provider},settings.apiKey,undefined,{timeouts:settings.timeouts}),this.dataDir,settings.timeouts);}
  async save(input:ConfigInput){
@@ -129,7 +133,7 @@ export class ModelConfig{
   }finally{this.saving=false;}
  }
  private publicSettings(settings:Settings){return{provider:settings.provider,timeouts:settings.timeouts,configuredAt:settings.configuredAt,pricing:null};}
- private writeApproval(settings:Settings){this.write('approved.json',{version:1,approved:true,...this.publicSettings(settings),dataScope:'text-and-structured-cad-summary-only'});}
+ private writeApproval(settings:Settings){this.write('approved.json',{version:1,approved:true,...this.publicSettings(settings),dataScope:settings.provider.imageInput?'text-structured-cad-and-generated-geometry-images':'text-and-structured-cad-summary-only'});}
  private write(name:string,value:unknown){
   const path=join(this.dataDir,name),pending=path+'.pending';
   if(existsSync(path)&&lstatSync(path).isSymbolicLink()||existsSync(pending)&&lstatSync(pending).isSymbolicLink())throw new Error('Unsafe model configuration path');

@@ -1,0 +1,361 @@
+{
+  "version": 2,
+  "kind": "operations",
+  "documentId": "live-general-bracket-1793454343737",
+  "operationId": "648d7473-25a8-4849-84c3-7fa4f55bd0c5",
+  "requestHash": "8acbd3ec438e68c86b5f62749cb3079c08a1cc5f126b767904da428f3ba67e99",
+  "baseRevision": 0,
+  "baseHistoryHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "goal": "创建一个可编辑的单实体 L 形平板支架：XY 平面六边闭合轮廓按 (0,0)、(60,0)、(60,10)、(10,10)、(10,50)、(0,50) mm，并沿 +Z 拉伸 8 mm。",
+  "stages": [
+    {
+      "name": "创建并完全约束 L 形轮廓草图",
+      "sketchId": "L_Profile",
+      "operations": [
+        {
+          "op": "create_body",
+          "id": "L_Bracket_Body"
+        },
+        {
+          "op": "create_sketch",
+          "id": "L_Profile",
+          "body": "L_Bracket_Body",
+          "plane": "XY",
+          "origin": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "L_Profile",
+          "geometryId": 0,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              0,
+              0
+            ],
+            "to": [
+              60,
+              0
+            ]
+          }
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "L_Profile",
+          "geometryId": 1,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              60,
+              0
+            ],
+            "to": [
+              60,
+              10
+            ]
+          }
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "L_Profile",
+          "geometryId": 2,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              60,
+              10
+            ],
+            "to": [
+              10,
+              10
+            ]
+          }
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "L_Profile",
+          "geometryId": 3,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              10,
+              50
+            ]
+          }
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "L_Profile",
+          "geometryId": 4,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              10,
+              50
+            ],
+            "to": [
+              0,
+              50
+            ]
+          }
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "L_Profile",
+          "geometryId": 5,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              0,
+              50
+            ],
+            "to": [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "join0",
+          "kind": "Coincident",
+          "args": [
+            0,
+            2,
+            1,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "join1",
+          "kind": "Coincident",
+          "args": [
+            1,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "join2",
+          "kind": "Coincident",
+          "args": [
+            2,
+            2,
+            3,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "join3",
+          "kind": "Coincident",
+          "args": [
+            3,
+            2,
+            4,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "join4",
+          "kind": "Coincident",
+          "args": [
+            4,
+            2,
+            5,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "join5",
+          "kind": "Coincident",
+          "args": [
+            5,
+            2,
+            0,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "horizontal0",
+          "kind": "Horizontal",
+          "args": [
+            0
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "vertical1",
+          "kind": "Vertical",
+          "args": [
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "horizontal2",
+          "kind": "Horizontal",
+          "args": [
+            2
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "vertical3",
+          "kind": "Vertical",
+          "args": [
+            3
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "horizontal4",
+          "kind": "Horizontal",
+          "args": [
+            4
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "vertical5",
+          "kind": "Vertical",
+          "args": [
+            5
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "origin",
+          "kind": "Coincident",
+          "args": [
+            0,
+            1,
+            -1,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "overall_length",
+          "kind": "Distance",
+          "args": [
+            0,
+            60
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "horizontal_arm_thickness",
+          "kind": "Distance",
+          "args": [
+            1,
+            10
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "vertical_arm_width",
+          "kind": "Distance",
+          "args": [
+            4,
+            10
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "L_Profile",
+          "name": "overall_height",
+          "kind": "Distance",
+          "args": [
+            5,
+            50
+          ]
+        }
+      ]
+    },
+    {
+      "name": "沿 +Z 拉伸形成单一实体",
+      "sketchId": "L_Profile",
+      "operations": [
+        {
+          "op": "pad",
+          "id": "L_Bracket_Pad",
+          "sketch": "L_Profile",
+          "length": 8
+        }
+      ]
+    }
+  ],
+  "dimensions": {
+    "length": 60,
+    "width": 50,
+    "height": 8,
+    "unit": "mm"
+  },
+  "criteria": {
+    "bbox": [
+      60,
+      50,
+      8
+    ],
+    "volume": 8000,
+    "parameters": [
+      {
+        "feature": "L_Profile",
+        "parameter": "overall_length",
+        "value": 60
+      },
+      {
+        "feature": "L_Profile",
+        "parameter": "horizontal_arm_thickness",
+        "value": 10
+      },
+      {
+        "feature": "L_Profile",
+        "parameter": "vertical_arm_width",
+        "value": 10
+      },
+      {
+        "feature": "L_Profile",
+        "parameter": "overall_height",
+        "value": 50
+      },
+      {
+        "feature": "L_Bracket_Pad",
+        "parameter": "Length",
+        "value": 8
+      }
+    ]
+  },
+  "planHash": "f1e466cb5e0f0923b84c0c13ce90a406a9e6dbb1d1d06724aca499426610c704"
+}

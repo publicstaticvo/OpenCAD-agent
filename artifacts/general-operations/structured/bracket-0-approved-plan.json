@@ -1,0 +1,334 @@
+{
+  "version": 2,
+  "kind": "operations",
+  "documentId": "operations-bracket-1793454146047",
+  "operationId": "step-0",
+  "requestHash": "b2accd780ba76de35a77b72c646ea8e29b5eb4638a42919155c7ab10d97e773e",
+  "baseRevision": 0,
+  "baseHistoryHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "goal": "60 × 50 × 8 mm L 形支架，臂宽10 mm",
+  "stages": [
+    {
+      "name": "实际多边形草图与约束",
+      "sketchId": "outline",
+      "operations": [
+        {
+          "op": "create_body",
+          "id": "Body"
+        },
+        {
+          "op": "create_sketch",
+          "id": "outline",
+          "body": "Body",
+          "plane": "XY",
+          "origin": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "outline",
+          "geometryId": 0,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              0,
+              0
+            ],
+            "to": [
+              60,
+              0
+            ]
+          }
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "outline",
+          "geometryId": 1,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              60,
+              0
+            ],
+            "to": [
+              60,
+              10
+            ]
+          }
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "outline",
+          "geometryId": 2,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              60,
+              10
+            ],
+            "to": [
+              10,
+              10
+            ]
+          }
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "outline",
+          "geometryId": 3,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              10,
+              50
+            ]
+          }
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "outline",
+          "geometryId": 4,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              10,
+              50
+            ],
+            "to": [
+              0,
+              50
+            ]
+          }
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "outline",
+          "geometryId": 5,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              0,
+              50
+            ],
+            "to": [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "corner0",
+          "kind": "Coincident",
+          "args": [
+            0,
+            2,
+            1,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "corner1",
+          "kind": "Coincident",
+          "args": [
+            1,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "corner2",
+          "kind": "Coincident",
+          "args": [
+            2,
+            2,
+            3,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "corner3",
+          "kind": "Coincident",
+          "args": [
+            3,
+            2,
+            4,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "corner4",
+          "kind": "Coincident",
+          "args": [
+            4,
+            2,
+            5,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "corner5",
+          "kind": "Coincident",
+          "args": [
+            5,
+            2,
+            0,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "axis0",
+          "kind": "Horizontal",
+          "args": [
+            0
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "axis1",
+          "kind": "Vertical",
+          "args": [
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "axis2",
+          "kind": "Horizontal",
+          "args": [
+            2
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "axis3",
+          "kind": "Vertical",
+          "args": [
+            3
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "axis4",
+          "kind": "Horizontal",
+          "args": [
+            4
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "axis5",
+          "kind": "Vertical",
+          "args": [
+            5
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "origin",
+          "kind": "Coincident",
+          "args": [
+            0,
+            1,
+            -1,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "size0",
+          "kind": "Distance",
+          "args": [
+            0,
+            60
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "size1",
+          "kind": "Distance",
+          "args": [
+            1,
+            10
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "size2",
+          "kind": "Distance",
+          "args": [
+            2,
+            50
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "size3",
+          "kind": "Distance",
+          "args": [
+            3,
+            40
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pad 实体",
+      "sketchId": "outline",
+      "operations": [
+        {
+          "op": "pad",
+          "id": "solid",
+          "sketch": "outline",
+          "length": 8
+        }
+      ]
+    }
+  ],
+  "dimensions": {
+    "length": 60,
+    "width": 50,
+    "height": 8,
+    "unit": "mm"
+  },
+  "criteria": {
+    "bbox": [
+      60,
+      50,
+      8
+    ],
+    "volume": 8000
+  },
+  "planHash": "7fc5c58eaa457ff9c7544d2779e05266ba4aa3bd96a7864c1b9122e224a5b81d"
+}

@@ -107,6 +107,9 @@ def verify_saved(directory,progress=lambda stage,status: None):
         shapes=[o.Shape for o in imported.Objects if hasattr(o,'Shape') and not o.Shape.isNull() and len(o.Shape.Solids)]
         if len(shapes)!=1:raise ValueError('STEP solid count mismatch')
         step=shape_metrics(shapes[0]);compare(step,criteria)
+        if design and design.get('kind')=='operations':
+            from worker.operation_plan import compare_shapes
+            compare_shapes(shapes[0],body.Tip.Shape)
         progress('export_step','complete')
         progress('export_glb','start')
         body.Shape.tessellate(0.1)

@@ -2,7 +2,8 @@ import {stableHash} from './revision-store.ts';
 import {assertContract,type Criteria,type CadOperation} from '../shared/cad-contracts.ts';
 
 export interface CadPlan {
- version:1;kind:'create_box'|'add_hole'|'edit_hole'|'program'|'pin_plate_assembly'|'edit_pin_plate_assembly';documentId:string;operationId:string;requestHash:string;
+ version:1|2;kind:'python'|'operations'|'create_box'|'add_hole'|'edit_hole'|'program'|'pin_plate_assembly'|'edit_pin_plate_assembly';documentId:string;operationId:string;requestHash:string;
+ goal?:string;stages?:{name:string;sketchId:string;operations:CadOperation[]}[];baseHistoryHash?:string;
  assembly?:{length:number;width:number;thickness:number;holeDiameter:number;pinDiameter:number;pinLength:number};
  baseRevision:number;dimensions:{length:number;width:number;height:number;unit:'mm'};
  diameter?:number;previousDiameter?:number;center?:[number,number];criteria:Criteria;program?:import('../shared/cad-contracts.ts').ModelProgram;planHash:string;
@@ -12,8 +13,16 @@ export function createProgramPlan(program:unknown,identity:{documentId:string;op
  const content={version:1 as const,kind:'program' as const,...identity,baseRevision,dimensions:{length:p.criteria.bbox[0],width:p.criteria.bbox[1],height:p.criteria.bbox[2],unit:'mm' as const},criteria:p.criteria,program:p};
  return{...content,planHash:stableHash(content)};
 }
-export function createPlan(proposal:unknown,identity:{documentId:string;operationId:string;requestHash:string},snapshot:{revision:number;tree:any[]}):CadPlan{
+export function createPlan(proposal:unknown,identity:{documentId:string;operationId:string;requestHash:string},snapshot:{revision:number;tree:any[];validation?:any}):CadPlan{
  assertContract('plan',proposal);const p=proposal as any,rows=snapshot.tree;
+ if(p.kind==='operations'){
+  if(!p.goal.trim()||p.stages.some((stage:any)=>!stage.name.trim()))throw new Error('Plan goal and stage names must be nonempty');
+  if(snapshot.revision>0&&!snapshot.validation?.operationHistoryHash)throw new Error('General edits require verified operation history');
+  if(p.stages.flatMap((s:any)=>s.operations).length>256)throw new Error('Plan exceeds 256 operations');
+  for(const stage of p.stages)for(const op of stage.operations)if(!['create_body','create_sketch','add_geometry','add_constraint','pad','pocket','set_parameter'].includes(op.op))throw new Error('Operation has no verified single-part implementation');
+  const content={version:2 as const,kind:'operations' as const,...identity,baseRevision:snapshot.revision,baseHistoryHash:snapshot.validation?.operationHistoryHash??stableHash([]),goal:p.goal,stages:structuredClone(p.stages),dimensions:{length:p.criteria.bbox[0],width:p.criteria.bbox[1],height:p.criteria.bbox[2],unit:'mm' as const},criteria:structuredClone(p.criteria)};
+  return {...content,planHash:stableHash(content)};
+ }
  if(p.kind==='pin_plate_assembly'||p.kind==='edit_pin_plate_assembly'){
   const a=p.assembly,editing=p.kind==='edit_pin_plate_assembly';
   if(!editing&&(snapshot.revision!==0||rows.length))throw new Error('Assembly creation requires an empty project');
@@ -53,6 +62,7 @@ export function createPlan(proposal:unknown,identity:{documentId:string;operatio
 
 /** Finite authorization contracts. This module never executes CAD operations. */
 export function approvedStages(plan:CadPlan):{name:string;sketchId:string;operations:CadOperation[]}[]{
+ if(plan.kind==='operations')return structuredClone(plan.stages!);
  if(plan.kind==='pin_plate_assembly')return [...['plate','pin','assemble'].map((stage,index)=>({name:['底板：矩形、约束、Pad、中心孔 Pocket','圆柱销：圆草图、约束、Pad','原生固定关节装配'][index],sketchId:'',operations:[{op:'assembly_stage',stage,design:plan.assembly!}]})),{name:'实际几何干涉检查',sketchId:'',operations:[{op:'assembly_check',design:plan.assembly!}]}];
  if(plan.kind==='edit_pin_plate_assembly')return [{name:'修改圆柱销直径',sketchId:'',operations:[{op:'assembly_stage',stage:'pin_edit',design:plan.assembly!}]},{name:'实际几何干涉检查',sketchId:'',operations:[{op:'assembly_check',design:plan.assembly!}]}];
  if(plan.kind==='program')return[{name:'批准的 CAD 操作程序',sketchId:'',operations:plan.program!.operations}];
@@ -70,10 +80,15 @@ export function approvedStages(plan:CadPlan):{name:string;sketchId:string;operat
  return[{name:'矩形草图与约束',sketchId:'base',operations:ops},{name:'Pad 实体',sketchId:'base',operations:[{op:'pad',id:'pad',sketch:'base',length:h}]}];
 }
 
-export function assertPlanIntegrity(plan:CadPlan){const {planHash,...content}=plan;if(plan.version!==1)throw new Error('Unsupported approved plan version');if(stableHash(content)!==planHash)throw new Error('Approved plan content changed');}
+export function assertPlanIntegrity(plan:CadPlan){const {planHash,...content}=plan;if(plan.version!==(plan.kind==='operations'?2:1))throw new Error('Unsupported approved plan version');if(stableHash(content)!==planHash)throw new Error('Approved plan content changed');}
 /** Check actual Worker readback before allowing the next stage or displaying it. */
 export function assertCandidateSnapshot(plan:CadPlan,completed:number,snapshot:any){
  const stages=approvedStages(plan),stage=stages[completed-1];if(!stage||plan.kind==='program')throw new Error('Invalid candidate stage');
+ if(plan.kind==='operations'){
+  if(snapshot.operationPlanHash!==plan.planHash||snapshot.completedStages!==completed||snapshot.sketch?.featureId!==stage.sketchId||snapshot.sketch?.fullyConstrained!==true)throw new Error('Native operation plan verification differs from approval');
+  if(completed===stages.length&&(!snapshot.geometry||snapshot.geometry.solids!==1||snapshot.geometry.bbox.some((v:number,i:number)=>Math.abs(v-plan.criteria.bbox[i])>1e-6)||Math.abs(snapshot.geometry.volume-plan.criteria.volume)>Math.max(1e-6,plan.criteria.volume*1e-9)))throw new Error('Actual candidate geometry differs from approval');
+  return;
+ }
  const final=completed===stages.length,{length:l,width:w,height:h}=plan.dimensions,sketch=snapshot.sketch;
  const near=(value:unknown,expected:number,tolerance=1e-6)=>typeof value==='number'&&Number.isFinite(value)&&Math.abs(value-expected)<=tolerance;
  const vector=(actual:any,expected:number[])=>Array.isArray(actual)&&actual.length===expected.length&&actual.every((n:any,i:number)=>near(n,expected[i]));
@@ -117,6 +132,10 @@ export function authorizeOperations(plan:CadPlan,operations:unknown,stage:number
  if(!Array.isArray(operations)||!operations.length)throw new Error('Invalid approved operation batch');
  for(const op of operations)assertContract('operation',op);
  const expected=approvedStages(plan)[stage];if(!expected)throw new Error('Approved stages already completed');
+ if(plan.kind==='operations'){
+  if(stableHash(operations)!==stableHash(expected.operations))throw new Error('Approved operation order or parameters changed');
+  return stage;
+ }
  const normalize=(op:any)=>plan.kind!=='program'&&op.op==='add_constraint'&&!['Distance','DistanceX','DistanceY','Diameter','Radius'].includes(op.kind)?{...op,name:'constraint'}:op;
  const keys=expected.operations.map(o=>stableHash(normalize(o)));
  const names=new Set<string>();

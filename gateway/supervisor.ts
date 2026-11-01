@@ -8,6 +8,7 @@ import {readFileSync,mkdirSync,copyFileSync,unlinkSync,existsSync,rmSync,closeSy
 import {join,resolve} from 'node:path';
 import {defaultTimeouts,type TimeoutSettings} from './timeouts.ts';
 import {createPlan,createProgramPlan,authorizeOperations,approvedStages,assertPlanIntegrity,assertCandidateSnapshot,type CadPlan} from './plan.ts';
+import {PythonSession} from './python-session.ts';
 export interface Job{documentId:string;conversationId?:string;operationId:string;status:string;candidateId:string;baseRevision:number;request:any;result:any;error:string|null;agent?:any;planningAgent?:any;plan?:CadPlan;approval?:{planHash:string;decision:'approved'|'rejected';decidedAt:number};candidateSequence?:number;candidateSnapshot?:any;stage?:number}
 type Options={metadataBoundary?:(phase:string)=>void;textRunner?:TextRunner;timeouts?:()=>TimeoutSettings;operationMs?:number;taskMs?:number;observe?:(phase:string,job:Job)=>void|Promise<void>};
 const terminal=new Set(['committed','answered','rejected','failed','cancelled','interrupted']);
@@ -16,6 +17,7 @@ export class Supervisor{
  activeWorker:WorkerClient|null=null;
  private store:RevisionStore;private options:Options;private nonce=randomUUID();private closed=false;private ownerFd:number|null=null;
  private queue:Promise<void>=Promise.resolve();private running=new Map<string,Promise<void>>();private active:Job|null=null;private controller:AbortController|null=null;
+ private pythonSession:PythonSession|null=null;
  private constructor(store:RevisionStore,options:Options){this.store=store;this.options=options;}
  static async start(store:RevisionStore,options:Options={}):Promise<Supervisor>{
   const s=new Supervisor(store,options),lock=join(store.root,'supervisor.lock');
@@ -67,6 +69,7 @@ export class Supervisor{
   if(this.closed)throw new StoreError('closed','Gateway closed');
   if(!this.options.textRunner)throw new StoreError('unavailable','No explicitly configured model provider');
   if(typeof text!=='string'||!text.trim()||text.length>8000)throw new StoreError('invalid','Invalid task text (1–8000 characters)');
+  if(this.options.textRunner.mode==='live')return this.submitPython(documentId,baseRevision,operationId,{kind:'text',text},conversationId);
   assertContract('envelope',{documentId,baseRevision,operationId,candidateId:'pending'});
   const envelope={documentId,baseRevision,operationId,candidateId:''};
   const conversation=conversationId??this.store.listConversations(documentId)[0].id;this.store.conversation(documentId,conversation);
@@ -91,7 +94,7 @@ export class Supervisor{
   const snapshot=()=>this.store.snapshot(job.documentId);
   const blocked=async()=>{throw new Error('CAD writing is prohibited before user approval');};
   try{
-   const session:CadSession={mode:'planning',baseRevision:job.baseRevision,history:this.store.conversationContext(job.documentId,job.conversationId!,job.operationId),snapshot:async()=>snapshot(),inspect:async()=>({tree:snapshot().tree,revision:snapshot().revision}),apply:blocked,prepare:blocked,propose:async proposal=>{
+   const session:CadSession={mode:'planning',baseRevision:job.baseRevision,history:this.store.conversationContext(job.documentId,job.conversationId!,job.operationId),snapshot:async()=>snapshot(),inspect:async()=>({tree:snapshot().tree,revision:snapshot().revision,operationModel:snapshot().validation?.operationModel}),apply:blocked,prepare:blocked,propose:async proposal=>{
     this.check();if(job.plan)throw new Error('Only one plan per task');
     const current=snapshot();if(current.revision!==job.baseRevision)throw new Error('Revision conflict during planning');
     const identity={documentId:job.documentId,operationId:job.operationId,requestHash:stableHash({baseRevision:job.baseRevision,request:job.request})};
@@ -118,14 +121,71 @@ export class Supervisor{
    job.candidateId=randomUUID();job.approval={planHash,decision:'approved',decidedAt:Date.now()};job.status='approved';job.stage=0;
    this.persist(job);this.store.appendEvent(documentId,'plan_approved',job,operationId);this.store.db.exec('COMMIT');
   }catch(e){this.store.db.exec('ROLLBACK');throw e;}
-  this.schedule(job!,()=>this.runCandidate(job!));return job!;
+  this.schedule(job!,()=>job!.plan!.kind==='python'?this.runPythonCandidate(job!):this.runCandidate(job!));return job!;
  }
  rejectJob(documentId:string,operationId:string,planHash:string):Job{this.store.db.exec('BEGIN IMMEDIATE');try{const job=this.job(documentId,operationId);if(!job.plan||job.plan.planHash!==planHash)throw new StoreError('conflict','Plan is stale');if(job.approval?.decision==='rejected'){this.store.db.exec('COMMIT');return job;}if(job.status!=='awaiting_approval')throw new StoreError('conflict','Plan is not awaiting approval');job.status='rejected';job.approval={planHash,decision:'rejected',decidedAt:Date.now()};this.persist(job);this.store.appendEvent(documentId,'plan_rejected',job,operationId);this.store.db.exec('COMMIT');return job;}catch(e){this.store.db.exec('ROLLBACK');throw e;}}
  submit(documentId:string,baseRevision:number,operationId:string,program:unknown,conversationId?:string):Job{
   if(this.closed)throw new StoreError('closed','Gateway closed');
   assertContract('program',program);return this.enqueue(documentId,baseRevision,operationId,program,conversationId);
  }
- private enqueue(documentId:string,baseRevision:number,operationId:string,program:unknown,conversationId?:string):Job{
+ submitPython(documentId:string,baseRevision:number,operationId:string,request:any,conversationId?:string):Job{
+  if(this.closed)throw new StoreError('closed','Gateway closed');
+  assertContract('envelope',{documentId,baseRevision,operationId,candidateId:'pending'});
+  if(request.kind==='python')assertContract('pythonSubmission',request.submission);
+  const conversation=conversationId??this.store.listConversations(documentId)[0].id;this.store.conversation(documentId,conversation);
+  const requestHash=stableHash({baseRevision,request});
+  const prior:any=this.store.db.prepare('SELECT * FROM jobs WHERE document_id=? AND operation_id=?').get(documentId,operationId);
+  if(prior){if(prior.request_hash!==requestHash||prior.conversation_id!==conversation)throw new StoreError('idempotency','Python operation identity reused');return JSON.parse(prior.job);}
+  if(this.store.snapshot(documentId).revision!==baseRevision)throw new StoreError('conflict','Revision conflict');
+  const content={version:1,kind:'python',documentId,operationId,requestHash,baseRevision,goal:request.text??'执行提交的 Python 脚本'};
+  const job:Job={documentId,operationId,baseRevision,candidateId:'',conversationId:conversation,status:'awaiting_approval',request,result:null,error:null,plan:{...content,planHash:stableHash(content)} as CadPlan};
+  this.store.db.exec('BEGIN IMMEDIATE');try{
+   this.store.db.prepare('INSERT INTO jobs(document_id,operation_id,status,request_hash,job,conversation_id) VALUES(?,?,?,?,?,?)').run(documentId,operationId,job.status,requestHash,JSON.stringify(job),conversation);
+   this.store.saveTranscript(job,[]);this.store.appendEvent(documentId,'job_updated',job,operationId);this.store.db.exec('COMMIT');
+  }catch(error){this.store.db.exec('ROLLBACK');throw error;}
+  return job;
+ }
+ private async runPythonCandidate(job:Job){
+  if(this.closed||this.job(job.documentId,job.operationId).status!=='approved')return;
+  this.active=job;this.controller=new AbortController();let session:PythonSession|undefined;
+  const settings=this.options.timeouts?.()??this.options.textRunner?.timeouts?.()??defaultTimeouts;
+  const taskMs=this.options.taskMs??settings.taskSeconds*1000;
+  const timer=taskMs>0?setTimeout(()=>{this.controller?.abort(new Error('Task timeout'));void this.pythonSession?.close();},taskMs):undefined;
+  try{
+   this.assertApproval(job);this.state(job,'running');
+   session=this.pythonSession=new PythonSession(this.store,job,(type,data)=>{
+    if(terminal.has(this.job(job.documentId,job.operationId).status))return;
+    this.assertApproval(job);
+    if(type==='python_worker'){this.activeWorker=this.pythonSession!.client!;writeLeaseJson(join(this.store.root,'worker-lease.json'),{pid:data.pid,start:startTime(data.pid)},this.options.metadataBoundary);}
+    if(type==='candidate_snapshot'){job.candidateSnapshot=data;job.candidateSequence=data.sequence;this.persist(job);}
+    this.store.appendEvent(job.documentId,type,data,job.operationId,undefined,job.candidateId);
+   },this.controller.signal,settings.cadSeconds);
+   const finish=async(criteria:any)=>{this.assertApproval(job);const result=await session!.finish(criteria);this.state(job,'validating');return result;};
+   if(job.request.kind==='text'){
+    const cad:CadSession={mode:'python',baseRevision:job.baseRevision,history:this.store.conversationContext(job.documentId,job.conversationId!,job.operationId),inspect:async()=>session!.inspect(),python:input=>session!.submit(input),snapshot:async()=>this.store.snapshot(job.documentId),apply:async()=>{throw new Error('Use cad_python');},prepare:finish,progress:event=>this.progress(job,event),transcript:report=>this.saveAgent(job,report,false)};
+    const criteria=await this.options.textRunner!(job,cad,this.controller.signal);
+    if(criteria===undefined){this.state(job,'answered');return;}
+   }else{
+    const result=await session.submit(job.request.submission);
+    if(result.status!=='valid')throw new Error(JSON.stringify(result.error));
+    await finish(job.request.submission.criteria);
+   }
+   this.assertApproval(job);if(this.controller.signal.aborted)throw this.controller.signal.reason;
+   this.state(job,'committing');this.store.commitCandidate(session.envelope,job.request);
+  }catch(error){if(!terminal.has(this.job(job.documentId,job.operationId).status))this.state(job,this.closed?'interrupted':'failed',String(this.controller?.signal.aborted?this.controller.signal.reason:(error as Error).message));}
+  finally{clearTimeout(timer);await session?.close();this.pythonSession=null;this.activeWorker=null;this.active=null;this.controller=null;const lease=join(this.store.root,'worker-lease.json');if(existsSync(lease))unlinkSync(lease);this.prune();}
+ }
+ submitOperationPlan(documentId:string,baseRevision:number,operationId:string,proposal:unknown,conversationId?:string):Job{
+  if(this.closed)throw new StoreError('closed','Gateway closed');
+  assertContract('envelope',{documentId,baseRevision,operationId,candidateId:'pending'});assertContract('plan',proposal);
+  const conversation=conversationId??this.store.listConversations(documentId)[0].id;this.store.conversation(documentId,conversation);
+  const prior:any=this.store.db.prepare('SELECT * FROM jobs WHERE document_id=? AND operation_id=?').get(documentId,operationId);
+  if(prior){if(prior.request_hash!==stableHash({baseRevision,request:proposal})||prior.conversation_id!==conversation)throw new StoreError('idempotency','Operation ID reused with different content or conversation');return JSON.parse(prior.job);}
+  const plan=createPlan(proposal,{documentId,operationId,requestHash:stableHash({baseRevision,request:proposal})},this.store.snapshot(documentId));
+  if(plan.kind!=='operations')throw new StoreError('invalid','Structured plan endpoint requires operations');
+  return this.enqueue(documentId,baseRevision,operationId,proposal,conversationId,plan);
+ }
+ private enqueue(documentId:string,baseRevision:number,operationId:string,program:unknown,conversationId?:string,operationPlan?:CadPlan):Job{
   if(this.closed)throw new StoreError('closed','Gateway closed');
   assertContract('envelope',{documentId,baseRevision,operationId,candidateId:'pending'});const envelope={documentId,baseRevision,operationId,candidateId:''};
   conversationId=conversationId??this.store.listConversations(documentId)[0].id;
@@ -135,7 +195,7 @@ export class Supervisor{
   if(prior){if(prior.request_hash!==requestHash||prior.conversation_id!==conversationId)throw new StoreError('idempotency','Operation ID reused with different content or conversation');return JSON.parse(prior.job);}
   if(this.store.snapshot(documentId).revision!==baseRevision)throw new StoreError('conflict','Revision conflict');
   const queued:any=this.store.db.prepare("SELECT COUNT(*) AS n FROM jobs WHERE status='queued'").get();if(queued.n>=100)throw new StoreError('busy','Queue is full');
-  const job:Job={...envelope,conversationId,status:'awaiting_approval',request:program,result:null,error:null,plan:createProgramPlan(program,{documentId,operationId,requestHash},baseRevision)};
+  const job:Job={...envelope,conversationId,status:'awaiting_approval',request:program,result:null,error:null,plan:operationPlan??createProgramPlan(program,{documentId,operationId,requestHash},baseRevision)};
   this.store.db.exec('BEGIN IMMEDIATE');try{
    this.store.db.prepare('INSERT INTO jobs(document_id,operation_id,status,request_hash,job,conversation_id) VALUES(?,?,?,?,?,?)').run(documentId,operationId,job.status,requestHash,JSON.stringify(job),conversationId!);
    this.store.saveTranscript(job,[]);
@@ -147,7 +207,7 @@ export class Supervisor{
  cancelJob(doc:string,op:string){
   const job=this.job(doc,op);if(terminal.has(job.status))return job;
   this.state(job,'cancelled','Cancelled; no automatic resume');
-  if(this.active?.documentId===doc&&this.active.operationId===op){this.controller?.abort(new Error('Cancelled'));void this.activeWorker?.close();}
+  if(this.active?.documentId===doc&&this.active.operationId===op){this.controller?.abort(new Error('Cancelled'));void this.activeWorker?.close();void this.pythonSession?.close();}
   return this.job(doc,op);
  }
  private check(){
@@ -168,7 +228,7 @@ export class Supervisor{
    if(job.baseRevision)copyFileSync(this.store.artifactPath(job.documentId,job.baseRevision,'model.FCStd'),join(directory,'model.FCStd'));
    this.activeWorker=await WorkerClient.start({workspace:join(this.store.root,'staging'),operationMs,onProgress:event=>{if(!terminal.has(this.job(job.documentId,job.operationId).status))this.store.appendEvent(job.documentId,'cad_progress',{...event,planHash:job.plan!.planHash},job.operationId,undefined,job.candidateId);}});this.check();
    writeLeaseJson(join(this.store.root,'worker-lease.json'),{pid:this.activeWorker.process.pid,start:startTime(this.activeWorker.process.pid!)},this.options.metadataBoundary);
-   const opened=await this.activeWorker.request('begin_candidate',{envelope});
+   const opened=await this.activeWorker.request('begin_candidate',{envelope,...(job.plan!.kind==='operations'?{design:job.plan}:{})});
    if(stableHash(opened.tree)!==stableHash(this.store.snapshot(job.documentId).tree))throw new Error('Candidate base differs from the formal revision');
    await this.phase('opened',job);
    let fatal:Error|null=null;
@@ -183,7 +243,7 @@ export class Supervisor{
      const result=assemblyPlan?(assemblyOperation.op==='assembly_check'?await this.activeWorker!.request('assembly_check',{envelope,design:assemblyOperation.design}):await this.activeWorker!.request('assembly_stage',{envelope,stage:assemblyOperation.stage,design:assemblyOperation.design})):await this.activeWorker!.request('apply_operations',{envelope,stepId,operations});guard();
      this.store.appendEvent(job.documentId,'cad_operation_complete',{stepId,stage:stage.name,result,planHash:job.plan!.planHash},job.operationId,undefined,job.candidateId);
      job.stage=(job.stage??0)+1;this.persist(job);
-     if(stage.sketchId||assemblyPlan)await this.candidateSnapshot(job,stage.sketchId,job.stage===approvedStages(job.plan!).length);
+     if(stage.sketchId||assemblyPlan)await this.candidateSnapshot(job,stage.sketchId,job.plan!.kind==='operations'||job.stage===approvedStages(job.plan!).length);
      await this.phase('modified',job);return result;
     }catch(error){fatal=error as Error;this.store.appendEvent(job.documentId,'cad_operation_failed',{stepId,error:String(error),planHash:job.plan!.planHash},job.operationId,undefined,job.candidateId);throw error;}
    };
@@ -197,7 +257,7 @@ export class Supervisor{
     const session:CadSession={mode:'execution',plan:job.plan,stages:approvedStages(job.plan!),get stage(){return job.stage??0;},baseRevision:job.baseRevision,history:this.store.conversationContext(job.documentId,job.conversationId!,job.operationId),inspect:()=>this.activeWorker!.request('inspect_document',{}),apply,prepare,snapshot:async()=>this.store.snapshot(job.documentId),progress:event=>this.progress(job,event.messageIndex===undefined?event:{...event,messageIndex:event.messageIndex+offset}),transcript:report=>this.saveAgent(job,report,false)};
     const criteria=await this.options.textRunner!(job,session,this.controller.signal);guard();
     if(criteria===undefined){discardCandidate=true;this.state(job,'answered');return;}
-   }else{await apply(job.request.operations,'program');await prepare(job.request.criteria);}
+   }else{for(const [index,stage] of approvedStages(job.plan!).entries())await apply(stage.operations,`stage-${index}`);await prepare(job.plan!.criteria);}
    guard();this.state(job,'committing');this.check();this.store.commitCandidate(envelope,job.request);
   }catch(e){
    const current=this.job(job.documentId,job.operationId);
@@ -245,7 +305,7 @@ export class Supervisor{
   for(const row of jobs.slice(10)){const job:Job=JSON.parse(row.job);if(!job.candidateId)continue;const directory=this.store.candidatePath(job.candidateId);if(existsSync(directory))rmSync(directory,{recursive:true,force:true});}
  }
  async close(){
-  if(this.closed)return;this.closed=true;this.controller?.abort(new Error('Gateway shutting down'));await this.activeWorker?.close();await this.queue;
+  if(this.closed)return;this.closed=true;this.controller?.abort(new Error('Gateway shutting down'));await this.activeWorker?.close();await this.pythonSession?.close();await this.queue;
   for(const row of this.store.db.prepare("SELECT job FROM jobs WHERE status='queued'").all() as any[]){const job:Job=JSON.parse(row.job);this.state(job,'interrupted','Gateway shut down before execution');}
   const lock=join(this.store.root,'supervisor.lock');try{if(existsSync(lock)&&readLeaseJson(lock).nonce===this.nonce)unlinkSync(lock);}finally{if(this.ownerFd!==null){closeSync(this.ownerFd);this.ownerFd=null;}}
  }

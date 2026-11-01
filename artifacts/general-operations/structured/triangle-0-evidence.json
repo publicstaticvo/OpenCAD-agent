@@ -1,0 +1,3578 @@
+{
+  "job": {
+    "documentId": "operations-triangle-1793454155810",
+    "baseRevision": 0,
+    "operationId": "step-0",
+    "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+    "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7",
+    "status": "committed",
+    "request": {
+      "kind": "operations",
+      "goal": "40 × 30 × 10 mm 三角棱柱",
+      "stages": [
+        {
+          "name": "实际多边形草图与约束",
+          "sketchId": "outline",
+          "operations": [
+            {
+              "op": "create_body",
+              "id": "Body"
+            },
+            {
+              "op": "create_sketch",
+              "id": "outline",
+              "body": "Body",
+              "plane": "XY",
+              "origin": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "op": "add_geometry",
+              "sketch": "outline",
+              "geometryId": 0,
+              "geometry": {
+                "kind": "line",
+                "from": [
+                  0,
+                  0
+                ],
+                "to": [
+                  40,
+                  0
+                ]
+              }
+            },
+            {
+              "op": "add_geometry",
+              "sketch": "outline",
+              "geometryId": 1,
+              "geometry": {
+                "kind": "line",
+                "from": [
+                  40,
+                  0
+                ],
+                "to": [
+                  0,
+                  30
+                ]
+              }
+            },
+            {
+              "op": "add_geometry",
+              "sketch": "outline",
+              "geometryId": 2,
+              "geometry": {
+                "kind": "line",
+                "from": [
+                  0,
+                  30
+                ],
+                "to": [
+                  0,
+                  0
+                ]
+              }
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "outline",
+              "name": "corner0",
+              "kind": "Coincident",
+              "args": [
+                0,
+                2,
+                1,
+                1
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "outline",
+              "name": "corner1",
+              "kind": "Coincident",
+              "args": [
+                1,
+                2,
+                2,
+                1
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "outline",
+              "name": "corner2",
+              "kind": "Coincident",
+              "args": [
+                2,
+                2,
+                0,
+                1
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "outline",
+              "name": "axis0",
+              "kind": "Horizontal",
+              "args": [
+                0
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "outline",
+              "name": "axis2",
+              "kind": "Vertical",
+              "args": [
+                2
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "outline",
+              "name": "origin",
+              "kind": "Coincident",
+              "args": [
+                0,
+                1,
+                -1,
+                1
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "outline",
+              "name": "size0",
+              "kind": "Distance",
+              "args": [
+                0,
+                40
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "outline",
+              "name": "size2",
+              "kind": "Distance",
+              "args": [
+                2,
+                30
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Pad 实体",
+          "sketchId": "outline",
+          "operations": [
+            {
+              "op": "pad",
+              "id": "solid",
+              "sketch": "outline",
+              "length": 10
+            }
+          ]
+        }
+      ],
+      "criteria": {
+        "bbox": [
+          40,
+          30,
+          10
+        ],
+        "volume": 6000
+      }
+    },
+    "result": {
+      "documentId": "operations-triangle-1793454155810",
+      "revision": 1,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "operationId": "step-0",
+      "seq": 52,
+      "status": "committed"
+    },
+    "error": null,
+    "plan": {
+      "version": 2,
+      "kind": "operations",
+      "documentId": "operations-triangle-1793454155810",
+      "operationId": "step-0",
+      "requestHash": "8e57c1f6c22315b1a1c10582d6f19f3287011189ba52d298485649c8292cdd36",
+      "baseRevision": 0,
+      "baseHistoryHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "goal": "40 × 30 × 10 mm 三角棱柱",
+      "stages": [
+        {
+          "name": "实际多边形草图与约束",
+          "sketchId": "outline",
+          "operations": [
+            {
+              "op": "create_body",
+              "id": "Body"
+            },
+            {
+              "op": "create_sketch",
+              "id": "outline",
+              "body": "Body",
+              "plane": "XY",
+              "origin": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "op": "add_geometry",
+              "sketch": "outline",
+              "geometryId": 0,
+              "geometry": {
+                "kind": "line",
+                "from": [
+                  0,
+                  0
+                ],
+                "to": [
+                  40,
+                  0
+                ]
+              }
+            },
+            {
+              "op": "add_geometry",
+              "sketch": "outline",
+              "geometryId": 1,
+              "geometry": {
+                "kind": "line",
+                "from": [
+                  40,
+                  0
+                ],
+                "to": [
+                  0,
+                  30
+                ]
+              }
+            },
+            {
+              "op": "add_geometry",
+              "sketch": "outline",
+              "geometryId": 2,
+              "geometry": {
+                "kind": "line",
+                "from": [
+                  0,
+                  30
+                ],
+                "to": [
+                  0,
+                  0
+                ]
+              }
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "outline",
+              "name": "corner0",
+              "kind": "Coincident",
+              "args": [
+                0,
+                2,
+                1,
+                1
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "outline",
+              "name": "corner1",
+              "kind": "Coincident",
+              "args": [
+                1,
+                2,
+                2,
+                1
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "outline",
+              "name": "corner2",
+              "kind": "Coincident",
+              "args": [
+                2,
+                2,
+                0,
+                1
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "outline",
+              "name": "axis0",
+              "kind": "Horizontal",
+              "args": [
+                0
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "outline",
+              "name": "axis2",
+              "kind": "Vertical",
+              "args": [
+                2
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "outline",
+              "name": "origin",
+              "kind": "Coincident",
+              "args": [
+                0,
+                1,
+                -1,
+                1
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "outline",
+              "name": "size0",
+              "kind": "Distance",
+              "args": [
+                0,
+                40
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "outline",
+              "name": "size2",
+              "kind": "Distance",
+              "args": [
+                2,
+                30
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Pad 实体",
+          "sketchId": "outline",
+          "operations": [
+            {
+              "op": "pad",
+              "id": "solid",
+              "sketch": "outline",
+              "length": 10
+            }
+          ]
+        }
+      ],
+      "dimensions": {
+        "length": 40,
+        "width": 30,
+        "height": 10,
+        "unit": "mm"
+      },
+      "criteria": {
+        "bbox": [
+          40,
+          30,
+          10
+        ],
+        "volume": 6000
+      },
+      "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+    },
+    "approval": {
+      "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6",
+      "decision": "approved",
+      "decidedAt": 1793454156527
+    },
+    "stage": 2,
+    "candidateSequence": 2,
+    "candidateSnapshot": {
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "tree": [
+        {
+          "id": "Body",
+          "label": "Body",
+          "type": "PartDesign::Body",
+          "parent": null,
+          "parameters": {},
+          "constraints": {}
+        },
+        {
+          "id": "outline",
+          "label": "outline",
+          "type": "Sketcher::SketchObject",
+          "parent": "Body",
+          "parameters": {
+            "size0": 40,
+            "size2": 30
+          },
+          "constraints": {
+            "axis0": 3,
+            "axis2": 4,
+            "corner0": 0,
+            "corner1": 1,
+            "corner2": 2,
+            "origin": 5,
+            "size0": 6,
+            "size2": 7
+          }
+        },
+        {
+          "id": "solid",
+          "label": "solid",
+          "type": "PartDesign::Pad",
+          "parent": "Body",
+          "parameters": {
+            "Length": 10
+          },
+          "constraints": {}
+        }
+      ],
+      "sketch": {
+        "featureId": "outline",
+        "placement": {
+          "base": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "geometry": [
+          {
+            "index": 0,
+            "kind": "line",
+            "start": [
+              0,
+              0
+            ],
+            "end": [
+              40,
+              0
+            ]
+          },
+          {
+            "index": 1,
+            "kind": "line",
+            "start": [
+              40,
+              0
+            ],
+            "end": [
+              0,
+              30
+            ]
+          },
+          {
+            "index": 2,
+            "kind": "line",
+            "start": [
+              0,
+              30
+            ],
+            "end": [
+              0,
+              0
+            ]
+          }
+        ],
+        "constraints": [
+          {
+            "name": "corner0",
+            "kind": "Coincident",
+            "firstGeometry": 0,
+            "firstPos": 2,
+            "secondGeometry": 1,
+            "secondPos": 1,
+            "value": null
+          },
+          {
+            "name": "corner1",
+            "kind": "Coincident",
+            "firstGeometry": 1,
+            "firstPos": 2,
+            "secondGeometry": 2,
+            "secondPos": 1,
+            "value": null
+          },
+          {
+            "name": "corner2",
+            "kind": "Coincident",
+            "firstGeometry": 2,
+            "firstPos": 2,
+            "secondGeometry": 0,
+            "secondPos": 1,
+            "value": null
+          },
+          {
+            "name": "axis0",
+            "kind": "Horizontal",
+            "firstGeometry": 0,
+            "firstPos": 0,
+            "secondGeometry": -2000,
+            "secondPos": 0,
+            "value": null
+          },
+          {
+            "name": "axis2",
+            "kind": "Vertical",
+            "firstGeometry": 2,
+            "firstPos": 0,
+            "secondGeometry": -2000,
+            "secondPos": 0,
+            "value": null
+          },
+          {
+            "name": "origin",
+            "kind": "Coincident",
+            "firstGeometry": 0,
+            "firstPos": 1,
+            "secondGeometry": -1,
+            "secondPos": 1,
+            "value": null
+          },
+          {
+            "name": "size0",
+            "kind": "Distance",
+            "firstGeometry": 0,
+            "firstPos": 0,
+            "secondGeometry": -2000,
+            "secondPos": 0,
+            "value": 40
+          },
+          {
+            "name": "size2",
+            "kind": "Distance",
+            "firstGeometry": 2,
+            "firstPos": 0,
+            "secondGeometry": -2000,
+            "secondPos": 0,
+            "value": 30
+          }
+        ],
+        "fullyConstrained": true,
+        "tree": [
+          {
+            "id": "Body",
+            "label": "Body",
+            "type": "PartDesign::Body",
+            "parent": null,
+            "parameters": {},
+            "constraints": {}
+          },
+          {
+            "id": "outline",
+            "label": "outline",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "size0": 40,
+              "size2": 30
+            },
+            "constraints": {
+              "axis0": 3,
+              "axis2": 4,
+              "corner0": 0,
+              "corner1": 1,
+              "corner2": 2,
+              "origin": 5,
+              "size0": 6,
+              "size2": 7
+            }
+          },
+          {
+            "id": "solid",
+            "label": "solid",
+            "type": "PartDesign::Pad",
+            "parent": "Body",
+            "parameters": {
+              "Length": 10
+            },
+            "constraints": {}
+          }
+        ]
+      },
+      "operationPlanHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6",
+      "completedStages": 2,
+      "operationHistoryHash": "75c679f97ed4e7b2567d4279b6cfc38d77d2eae2de57043925f7eee14ad051f9",
+      "operationModel": {
+        "tree": [
+          {
+            "id": "Body",
+            "label": "Body",
+            "type": "PartDesign::Body",
+            "parent": null,
+            "parameters": {},
+            "constraints": {}
+          },
+          {
+            "id": "outline",
+            "label": "outline",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "size0": 40,
+              "size2": 30
+            },
+            "constraints": {
+              "axis0": 3,
+              "axis2": 4,
+              "corner0": 0,
+              "corner1": 1,
+              "corner2": 2,
+              "origin": 5,
+              "size0": 6,
+              "size2": 7
+            }
+          },
+          {
+            "id": "solid",
+            "label": "solid",
+            "type": "PartDesign::Pad",
+            "parent": "Body",
+            "parameters": {
+              "Length": 10
+            },
+            "constraints": {}
+          }
+        ],
+        "sketches": [
+          {
+            "featureId": "outline",
+            "placement": {
+              "base": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0,
+                1
+              ]
+            },
+            "geometry": [
+              {
+                "index": 0,
+                "kind": "line",
+                "start": [
+                  0,
+                  0
+                ],
+                "end": [
+                  40,
+                  0
+                ]
+              },
+              {
+                "index": 1,
+                "kind": "line",
+                "start": [
+                  40,
+                  0
+                ],
+                "end": [
+                  0,
+                  30
+                ]
+              },
+              {
+                "index": 2,
+                "kind": "line",
+                "start": [
+                  0,
+                  30
+                ],
+                "end": [
+                  0,
+                  0
+                ]
+              }
+            ],
+            "constraints": [
+              {
+                "name": "corner0",
+                "kind": "Coincident",
+                "firstGeometry": 0,
+                "firstPos": 2,
+                "secondGeometry": 1,
+                "secondPos": 1,
+                "value": null
+              },
+              {
+                "name": "corner1",
+                "kind": "Coincident",
+                "firstGeometry": 1,
+                "firstPos": 2,
+                "secondGeometry": 2,
+                "secondPos": 1,
+                "value": null
+              },
+              {
+                "name": "corner2",
+                "kind": "Coincident",
+                "firstGeometry": 2,
+                "firstPos": 2,
+                "secondGeometry": 0,
+                "secondPos": 1,
+                "value": null
+              },
+              {
+                "name": "axis0",
+                "kind": "Horizontal",
+                "firstGeometry": 0,
+                "firstPos": 0,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": null
+              },
+              {
+                "name": "axis2",
+                "kind": "Vertical",
+                "firstGeometry": 2,
+                "firstPos": 0,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": null
+              },
+              {
+                "name": "origin",
+                "kind": "Coincident",
+                "firstGeometry": 0,
+                "firstPos": 1,
+                "secondGeometry": -1,
+                "secondPos": 1,
+                "value": null
+              },
+              {
+                "name": "size0",
+                "kind": "Distance",
+                "firstGeometry": 0,
+                "firstPos": 0,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": 40
+              },
+              {
+                "name": "size2",
+                "kind": "Distance",
+                "firstGeometry": 2,
+                "firstPos": 0,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": 30
+              }
+            ],
+            "fullyConstrained": true
+          }
+        ],
+        "features": [
+          {
+            "id": "solid",
+            "profile": "outline",
+            "length": 10,
+            "reversed": false,
+            "midplane": false
+          }
+        ],
+        "tip": "solid"
+      },
+      "geometry": {
+        "solids": 1,
+        "volume": 5999.999999999999,
+        "bbox": [
+          40,
+          30,
+          10
+        ]
+      },
+      "preview": {
+        "file": "candidate-2.glb",
+        "bytes": 2704,
+        "sha256": "cfaa06ccc7b99e29ba293632a46fad41bdd49da8a3df02c4817699122620ee6b",
+        "url": "/api/documents/operations-triangle-1793454155810/jobs/step-0/candidate/preview?sequence=2"
+      },
+      "baseRevision": 0,
+      "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6",
+      "sequence": 2
+    }
+  },
+  "validation": {
+    "bbox": [
+      40,
+      30,
+      10
+    ],
+    "bodyId": "Body",
+    "completedStages": 2,
+    "glb": {
+      "bounds": [
+        [
+          0,
+          0,
+          -0.03
+        ],
+        [
+          0.04,
+          0.01,
+          0
+        ]
+      ],
+      "mapping": "(x,z,-y)/1000",
+      "meshes": 1,
+      "triangles": 8
+    },
+    "meshFeatureId": "Body",
+    "operationHistoryHash": "75c679f97ed4e7b2567d4279b6cfc38d77d2eae2de57043925f7eee14ad051f9",
+    "operationModel": {
+      "features": [
+        {
+          "id": "solid",
+          "length": 10,
+          "midplane": false,
+          "profile": "outline",
+          "reversed": false
+        }
+      ],
+      "sketches": [
+        {
+          "constraints": [
+            {
+              "firstGeometry": 0,
+              "firstPos": 2,
+              "kind": "Coincident",
+              "name": "corner0",
+              "secondGeometry": 1,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "firstGeometry": 1,
+              "firstPos": 2,
+              "kind": "Coincident",
+              "name": "corner1",
+              "secondGeometry": 2,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "firstGeometry": 2,
+              "firstPos": 2,
+              "kind": "Coincident",
+              "name": "corner2",
+              "secondGeometry": 0,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "firstGeometry": 0,
+              "firstPos": 0,
+              "kind": "Horizontal",
+              "name": "axis0",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": null
+            },
+            {
+              "firstGeometry": 2,
+              "firstPos": 0,
+              "kind": "Vertical",
+              "name": "axis2",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": null
+            },
+            {
+              "firstGeometry": 0,
+              "firstPos": 1,
+              "kind": "Coincident",
+              "name": "origin",
+              "secondGeometry": -1,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "firstGeometry": 0,
+              "firstPos": 0,
+              "kind": "Distance",
+              "name": "size0",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 40
+            },
+            {
+              "firstGeometry": 2,
+              "firstPos": 0,
+              "kind": "Distance",
+              "name": "size2",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 30
+            }
+          ],
+          "featureId": "outline",
+          "fullyConstrained": true,
+          "geometry": [
+            {
+              "end": [
+                40,
+                0
+              ],
+              "index": 0,
+              "kind": "line",
+              "start": [
+                0,
+                0
+              ]
+            },
+            {
+              "end": [
+                0,
+                30
+              ],
+              "index": 1,
+              "kind": "line",
+              "start": [
+                40,
+                0
+              ]
+            },
+            {
+              "end": [
+                0,
+                0
+              ],
+              "index": 2,
+              "kind": "line",
+              "start": [
+                0,
+                30
+              ]
+            }
+          ],
+          "placement": {
+            "base": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      ],
+      "tip": "solid",
+      "tree": [
+        {
+          "constraints": {},
+          "id": "Body",
+          "label": "Body",
+          "parameters": {},
+          "parent": null,
+          "type": "PartDesign::Body"
+        },
+        {
+          "constraints": {
+            "axis0": 3,
+            "axis2": 4,
+            "corner0": 0,
+            "corner1": 1,
+            "corner2": 2,
+            "origin": 5,
+            "size0": 6,
+            "size2": 7
+          },
+          "id": "outline",
+          "label": "outline",
+          "parameters": {
+            "size0": 40,
+            "size2": 30
+          },
+          "parent": "Body",
+          "type": "Sketcher::SketchObject"
+        },
+        {
+          "constraints": {},
+          "id": "solid",
+          "label": "solid",
+          "parameters": {
+            "Length": 10
+          },
+          "parent": "Body",
+          "type": "PartDesign::Pad"
+        }
+      ]
+    },
+    "operationPlanHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6",
+    "solids": 1,
+    "step": {
+      "bbox": [
+        40,
+        30,
+        10
+      ],
+      "solids": 1,
+      "volume": 5999.999999999999
+    },
+    "tipId": "solid",
+    "verifierPid": 46256,
+    "volume": 5999.999999999999
+  },
+  "events": [
+    {
+      "seq": 2,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "plan_approved",
+      "data": {
+        "documentId": "operations-triangle-1793454155810",
+        "baseRevision": 0,
+        "operationId": "step-0",
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7",
+        "status": "approved",
+        "request": {
+          "kind": "operations",
+          "goal": "40 × 30 × 10 mm 三角棱柱",
+          "stages": [
+            {
+              "name": "实际多边形草图与约束",
+              "sketchId": "outline",
+              "operations": [
+                {
+                  "op": "create_body",
+                  "id": "Body"
+                },
+                {
+                  "op": "create_sketch",
+                  "id": "outline",
+                  "body": "Body",
+                  "plane": "XY",
+                  "origin": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "op": "add_geometry",
+                  "sketch": "outline",
+                  "geometryId": 0,
+                  "geometry": {
+                    "kind": "line",
+                    "from": [
+                      0,
+                      0
+                    ],
+                    "to": [
+                      40,
+                      0
+                    ]
+                  }
+                },
+                {
+                  "op": "add_geometry",
+                  "sketch": "outline",
+                  "geometryId": 1,
+                  "geometry": {
+                    "kind": "line",
+                    "from": [
+                      40,
+                      0
+                    ],
+                    "to": [
+                      0,
+                      30
+                    ]
+                  }
+                },
+                {
+                  "op": "add_geometry",
+                  "sketch": "outline",
+                  "geometryId": 2,
+                  "geometry": {
+                    "kind": "line",
+                    "from": [
+                      0,
+                      30
+                    ],
+                    "to": [
+                      0,
+                      0
+                    ]
+                  }
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "outline",
+                  "name": "corner0",
+                  "kind": "Coincident",
+                  "args": [
+                    0,
+                    2,
+                    1,
+                    1
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "outline",
+                  "name": "corner1",
+                  "kind": "Coincident",
+                  "args": [
+                    1,
+                    2,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "outline",
+                  "name": "corner2",
+                  "kind": "Coincident",
+                  "args": [
+                    2,
+                    2,
+                    0,
+                    1
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "outline",
+                  "name": "axis0",
+                  "kind": "Horizontal",
+                  "args": [
+                    0
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "outline",
+                  "name": "axis2",
+                  "kind": "Vertical",
+                  "args": [
+                    2
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "outline",
+                  "name": "origin",
+                  "kind": "Coincident",
+                  "args": [
+                    0,
+                    1,
+                    -1,
+                    1
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "outline",
+                  "name": "size0",
+                  "kind": "Distance",
+                  "args": [
+                    0,
+                    40
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "outline",
+                  "name": "size2",
+                  "kind": "Distance",
+                  "args": [
+                    2,
+                    30
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Pad 实体",
+              "sketchId": "outline",
+              "operations": [
+                {
+                  "op": "pad",
+                  "id": "solid",
+                  "sketch": "outline",
+                  "length": 10
+                }
+              ]
+            }
+          ],
+          "criteria": {
+            "bbox": [
+              40,
+              30,
+              10
+            ],
+            "volume": 6000
+          }
+        },
+        "result": null,
+        "error": null,
+        "plan": {
+          "version": 2,
+          "kind": "operations",
+          "documentId": "operations-triangle-1793454155810",
+          "operationId": "step-0",
+          "requestHash": "8e57c1f6c22315b1a1c10582d6f19f3287011189ba52d298485649c8292cdd36",
+          "baseRevision": 0,
+          "baseHistoryHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "goal": "40 × 30 × 10 mm 三角棱柱",
+          "stages": [
+            {
+              "name": "实际多边形草图与约束",
+              "sketchId": "outline",
+              "operations": [
+                {
+                  "op": "create_body",
+                  "id": "Body"
+                },
+                {
+                  "op": "create_sketch",
+                  "id": "outline",
+                  "body": "Body",
+                  "plane": "XY",
+                  "origin": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "op": "add_geometry",
+                  "sketch": "outline",
+                  "geometryId": 0,
+                  "geometry": {
+                    "kind": "line",
+                    "from": [
+                      0,
+                      0
+                    ],
+                    "to": [
+                      40,
+                      0
+                    ]
+                  }
+                },
+                {
+                  "op": "add_geometry",
+                  "sketch": "outline",
+                  "geometryId": 1,
+                  "geometry": {
+                    "kind": "line",
+                    "from": [
+                      40,
+                      0
+                    ],
+                    "to": [
+                      0,
+                      30
+                    ]
+                  }
+                },
+                {
+                  "op": "add_geometry",
+                  "sketch": "outline",
+                  "geometryId": 2,
+                  "geometry": {
+                    "kind": "line",
+                    "from": [
+                      0,
+                      30
+                    ],
+                    "to": [
+                      0,
+                      0
+                    ]
+                  }
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "outline",
+                  "name": "corner0",
+                  "kind": "Coincident",
+                  "args": [
+                    0,
+                    2,
+                    1,
+                    1
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "outline",
+                  "name": "corner1",
+                  "kind": "Coincident",
+                  "args": [
+                    1,
+                    2,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "outline",
+                  "name": "corner2",
+                  "kind": "Coincident",
+                  "args": [
+                    2,
+                    2,
+                    0,
+                    1
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "outline",
+                  "name": "axis0",
+                  "kind": "Horizontal",
+                  "args": [
+                    0
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "outline",
+                  "name": "axis2",
+                  "kind": "Vertical",
+                  "args": [
+                    2
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "outline",
+                  "name": "origin",
+                  "kind": "Coincident",
+                  "args": [
+                    0,
+                    1,
+                    -1,
+                    1
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "outline",
+                  "name": "size0",
+                  "kind": "Distance",
+                  "args": [
+                    0,
+                    40
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "outline",
+                  "name": "size2",
+                  "kind": "Distance",
+                  "args": [
+                    2,
+                    30
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Pad 实体",
+              "sketchId": "outline",
+              "operations": [
+                {
+                  "op": "pad",
+                  "id": "solid",
+                  "sketch": "outline",
+                  "length": 10
+                }
+              ]
+            }
+          ],
+          "dimensions": {
+            "length": 40,
+            "width": 30,
+            "height": 10,
+            "unit": "mm"
+          },
+          "criteria": {
+            "bbox": [
+              40,
+              30,
+              10
+            ],
+            "volume": 6000
+          },
+          "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+        },
+        "approval": {
+          "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6",
+          "decision": "approved",
+          "decidedAt": 1793454156527
+        },
+        "stage": 0
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": null,
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 4,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_operation_start",
+      "data": {
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6",
+        "stage": "实际多边形草图与约束",
+        "operations": [
+          {
+            "op": "create_body",
+            "id": "Body"
+          },
+          {
+            "op": "create_sketch",
+            "id": "outline",
+            "body": "Body",
+            "plane": "XY",
+            "origin": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "op": "add_geometry",
+            "sketch": "outline",
+            "geometryId": 0,
+            "geometry": {
+              "kind": "line",
+              "from": [
+                0,
+                0
+              ],
+              "to": [
+                40,
+                0
+              ]
+            }
+          },
+          {
+            "op": "add_geometry",
+            "sketch": "outline",
+            "geometryId": 1,
+            "geometry": {
+              "kind": "line",
+              "from": [
+                40,
+                0
+              ],
+              "to": [
+                0,
+                30
+              ]
+            }
+          },
+          {
+            "op": "add_geometry",
+            "sketch": "outline",
+            "geometryId": 2,
+            "geometry": {
+              "kind": "line",
+              "from": [
+                0,
+                30
+              ],
+              "to": [
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "op": "add_constraint",
+            "sketch": "outline",
+            "name": "corner0",
+            "kind": "Coincident",
+            "args": [
+              0,
+              2,
+              1,
+              1
+            ]
+          },
+          {
+            "op": "add_constraint",
+            "sketch": "outline",
+            "name": "corner1",
+            "kind": "Coincident",
+            "args": [
+              1,
+              2,
+              2,
+              1
+            ]
+          },
+          {
+            "op": "add_constraint",
+            "sketch": "outline",
+            "name": "corner2",
+            "kind": "Coincident",
+            "args": [
+              2,
+              2,
+              0,
+              1
+            ]
+          },
+          {
+            "op": "add_constraint",
+            "sketch": "outline",
+            "name": "axis0",
+            "kind": "Horizontal",
+            "args": [
+              0
+            ]
+          },
+          {
+            "op": "add_constraint",
+            "sketch": "outline",
+            "name": "axis2",
+            "kind": "Vertical",
+            "args": [
+              2
+            ]
+          },
+          {
+            "op": "add_constraint",
+            "sketch": "outline",
+            "name": "origin",
+            "kind": "Coincident",
+            "args": [
+              0,
+              1,
+              -1,
+              1
+            ]
+          },
+          {
+            "op": "add_constraint",
+            "sketch": "outline",
+            "name": "size0",
+            "kind": "Distance",
+            "args": [
+              0,
+              40
+            ]
+          },
+          {
+            "op": "add_constraint",
+            "sketch": "outline",
+            "name": "size2",
+            "kind": "Distance",
+            "args": [
+              2,
+              30
+            ]
+          }
+        ]
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 5,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 1,
+        "index": 0,
+        "operation": {
+          "op": "create_body",
+          "id": "Body"
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 6,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 2,
+        "index": 0,
+        "operation": {
+          "op": "create_body",
+          "id": "Body"
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 7,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 3,
+        "index": 1,
+        "operation": {
+          "op": "create_sketch",
+          "id": "outline",
+          "body": "Body",
+          "plane": "XY",
+          "origin": [
+            0,
+            0,
+            0
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 8,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 4,
+        "index": 1,
+        "operation": {
+          "op": "create_sketch",
+          "id": "outline",
+          "body": "Body",
+          "plane": "XY",
+          "origin": [
+            0,
+            0,
+            0
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 9,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 5,
+        "index": 2,
+        "operation": {
+          "op": "add_geometry",
+          "sketch": "outline",
+          "geometryId": 0,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              0,
+              0
+            ],
+            "to": [
+              40,
+              0
+            ]
+          }
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 10,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 6,
+        "index": 2,
+        "operation": {
+          "op": "add_geometry",
+          "sketch": "outline",
+          "geometryId": 0,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              0,
+              0
+            ],
+            "to": [
+              40,
+              0
+            ]
+          }
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 11,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 7,
+        "index": 3,
+        "operation": {
+          "op": "add_geometry",
+          "sketch": "outline",
+          "geometryId": 1,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              40,
+              0
+            ],
+            "to": [
+              0,
+              30
+            ]
+          }
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 12,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 8,
+        "index": 3,
+        "operation": {
+          "op": "add_geometry",
+          "sketch": "outline",
+          "geometryId": 1,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              40,
+              0
+            ],
+            "to": [
+              0,
+              30
+            ]
+          }
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 13,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 9,
+        "index": 4,
+        "operation": {
+          "op": "add_geometry",
+          "sketch": "outline",
+          "geometryId": 2,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              0,
+              30
+            ],
+            "to": [
+              0,
+              0
+            ]
+          }
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 14,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 10,
+        "index": 4,
+        "operation": {
+          "op": "add_geometry",
+          "sketch": "outline",
+          "geometryId": 2,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              0,
+              30
+            ],
+            "to": [
+              0,
+              0
+            ]
+          }
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 15,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 11,
+        "index": 5,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "corner0",
+          "kind": "Coincident",
+          "args": [
+            0,
+            2,
+            1,
+            1
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 16,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 12,
+        "index": 5,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "corner0",
+          "kind": "Coincident",
+          "args": [
+            0,
+            2,
+            1,
+            1
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 17,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 13,
+        "index": 6,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "corner1",
+          "kind": "Coincident",
+          "args": [
+            1,
+            2,
+            2,
+            1
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 18,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 14,
+        "index": 6,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "corner1",
+          "kind": "Coincident",
+          "args": [
+            1,
+            2,
+            2,
+            1
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 19,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 15,
+        "index": 7,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "corner2",
+          "kind": "Coincident",
+          "args": [
+            2,
+            2,
+            0,
+            1
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 20,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 16,
+        "index": 7,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "corner2",
+          "kind": "Coincident",
+          "args": [
+            2,
+            2,
+            0,
+            1
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 21,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 17,
+        "index": 8,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "axis0",
+          "kind": "Horizontal",
+          "args": [
+            0
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 22,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 18,
+        "index": 8,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "axis0",
+          "kind": "Horizontal",
+          "args": [
+            0
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 23,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 19,
+        "index": 9,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "axis2",
+          "kind": "Vertical",
+          "args": [
+            2
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 24,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 20,
+        "index": 9,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "axis2",
+          "kind": "Vertical",
+          "args": [
+            2
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 25,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 21,
+        "index": 10,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "origin",
+          "kind": "Coincident",
+          "args": [
+            0,
+            1,
+            -1,
+            1
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 26,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 22,
+        "index": 10,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "origin",
+          "kind": "Coincident",
+          "args": [
+            0,
+            1,
+            -1,
+            1
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 27,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 23,
+        "index": 11,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "size0",
+          "kind": "Distance",
+          "args": [
+            0,
+            40
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 28,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 24,
+        "index": 11,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "size0",
+          "kind": "Distance",
+          "args": [
+            0,
+            40
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 29,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 25,
+        "index": 12,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "size2",
+          "kind": "Distance",
+          "args": [
+            2,
+            30
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 30,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 26,
+        "index": 12,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "size2",
+          "kind": "Distance",
+          "args": [
+            2,
+            30
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 31,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "batch_complete",
+        "sequence": 27,
+        "index": 13,
+        "operation": null,
+        "stepId": "stage-0",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 32,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_operation_complete",
+      "data": {
+        "stepId": "stage-0",
+        "stage": "实际多边形草图与约束",
+        "result": [
+          {
+            "id": "Body",
+            "label": "Body",
+            "type": "PartDesign::Body",
+            "parent": null,
+            "parameters": {},
+            "constraints": {}
+          },
+          {
+            "id": "outline",
+            "label": "outline",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "size0": 40,
+              "size2": 30
+            },
+            "constraints": {
+              "axis0": 3,
+              "axis2": 4,
+              "corner0": 0,
+              "corner1": 1,
+              "corner2": 2,
+              "origin": 5,
+              "size0": 6,
+              "size2": 7
+            }
+          }
+        ],
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 33,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "candidate_snapshot",
+      "data": {
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "tree": [
+          {
+            "id": "Body",
+            "label": "Body",
+            "type": "PartDesign::Body",
+            "parent": null,
+            "parameters": {},
+            "constraints": {}
+          },
+          {
+            "id": "outline",
+            "label": "outline",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "size0": 40,
+              "size2": 30
+            },
+            "constraints": {
+              "axis0": 3,
+              "axis2": 4,
+              "corner0": 0,
+              "corner1": 1,
+              "corner2": 2,
+              "origin": 5,
+              "size0": 6,
+              "size2": 7
+            }
+          }
+        ],
+        "sketch": {
+          "featureId": "outline",
+          "placement": {
+            "base": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          "geometry": [
+            {
+              "index": 0,
+              "kind": "line",
+              "start": [
+                0,
+                0
+              ],
+              "end": [
+                40,
+                0
+              ]
+            },
+            {
+              "index": 1,
+              "kind": "line",
+              "start": [
+                40,
+                0
+              ],
+              "end": [
+                0,
+                30
+              ]
+            },
+            {
+              "index": 2,
+              "kind": "line",
+              "start": [
+                0,
+                30
+              ],
+              "end": [
+                0,
+                0
+              ]
+            }
+          ],
+          "constraints": [
+            {
+              "name": "corner0",
+              "kind": "Coincident",
+              "firstGeometry": 0,
+              "firstPos": 2,
+              "secondGeometry": 1,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "name": "corner1",
+              "kind": "Coincident",
+              "firstGeometry": 1,
+              "firstPos": 2,
+              "secondGeometry": 2,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "name": "corner2",
+              "kind": "Coincident",
+              "firstGeometry": 2,
+              "firstPos": 2,
+              "secondGeometry": 0,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "name": "axis0",
+              "kind": "Horizontal",
+              "firstGeometry": 0,
+              "firstPos": 0,
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": null
+            },
+            {
+              "name": "axis2",
+              "kind": "Vertical",
+              "firstGeometry": 2,
+              "firstPos": 0,
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": null
+            },
+            {
+              "name": "origin",
+              "kind": "Coincident",
+              "firstGeometry": 0,
+              "firstPos": 1,
+              "secondGeometry": -1,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "name": "size0",
+              "kind": "Distance",
+              "firstGeometry": 0,
+              "firstPos": 0,
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 40
+            },
+            {
+              "name": "size2",
+              "kind": "Distance",
+              "firstGeometry": 2,
+              "firstPos": 0,
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 30
+            }
+          ],
+          "fullyConstrained": true,
+          "tree": [
+            {
+              "id": "Body",
+              "label": "Body",
+              "type": "PartDesign::Body",
+              "parent": null,
+              "parameters": {},
+              "constraints": {}
+            },
+            {
+              "id": "outline",
+              "label": "outline",
+              "type": "Sketcher::SketchObject",
+              "parent": "Body",
+              "parameters": {
+                "size0": 40,
+                "size2": 30
+              },
+              "constraints": {
+                "axis0": 3,
+                "axis2": 4,
+                "corner0": 0,
+                "corner1": 1,
+                "corner2": 2,
+                "origin": 5,
+                "size0": 6,
+                "size2": 7
+              }
+            }
+          ]
+        },
+        "operationPlanHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6",
+        "completedStages": 1,
+        "operationHistoryHash": "5b258bcc3d246919f0ddbf8c06f88898eccd06864effa3d6979f3caebe22ac18",
+        "operationModel": {
+          "tree": [
+            {
+              "id": "Body",
+              "label": "Body",
+              "type": "PartDesign::Body",
+              "parent": null,
+              "parameters": {},
+              "constraints": {}
+            },
+            {
+              "id": "outline",
+              "label": "outline",
+              "type": "Sketcher::SketchObject",
+              "parent": "Body",
+              "parameters": {
+                "size0": 40,
+                "size2": 30
+              },
+              "constraints": {
+                "axis0": 3,
+                "axis2": 4,
+                "corner0": 0,
+                "corner1": 1,
+                "corner2": 2,
+                "origin": 5,
+                "size0": 6,
+                "size2": 7
+              }
+            }
+          ],
+          "sketches": [
+            {
+              "featureId": "outline",
+              "placement": {
+                "base": [
+                  0,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0,
+                  1
+                ]
+              },
+              "geometry": [
+                {
+                  "index": 0,
+                  "kind": "line",
+                  "start": [
+                    0,
+                    0
+                  ],
+                  "end": [
+                    40,
+                    0
+                  ]
+                },
+                {
+                  "index": 1,
+                  "kind": "line",
+                  "start": [
+                    40,
+                    0
+                  ],
+                  "end": [
+                    0,
+                    30
+                  ]
+                },
+                {
+                  "index": 2,
+                  "kind": "line",
+                  "start": [
+                    0,
+                    30
+                  ],
+                  "end": [
+                    0,
+                    0
+                  ]
+                }
+              ],
+              "constraints": [
+                {
+                  "name": "corner0",
+                  "kind": "Coincident",
+                  "firstGeometry": 0,
+                  "firstPos": 2,
+                  "secondGeometry": 1,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "corner1",
+                  "kind": "Coincident",
+                  "firstGeometry": 1,
+                  "firstPos": 2,
+                  "secondGeometry": 2,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "corner2",
+                  "kind": "Coincident",
+                  "firstGeometry": 2,
+                  "firstPos": 2,
+                  "secondGeometry": 0,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "axis0",
+                  "kind": "Horizontal",
+                  "firstGeometry": 0,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": null
+                },
+                {
+                  "name": "axis2",
+                  "kind": "Vertical",
+                  "firstGeometry": 2,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": null
+                },
+                {
+                  "name": "origin",
+                  "kind": "Coincident",
+                  "firstGeometry": 0,
+                  "firstPos": 1,
+                  "secondGeometry": -1,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "size0",
+                  "kind": "Distance",
+                  "firstGeometry": 0,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 40
+                },
+                {
+                  "name": "size2",
+                  "kind": "Distance",
+                  "firstGeometry": 2,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 30
+                }
+              ],
+              "fullyConstrained": true
+            }
+          ],
+          "features": [],
+          "tip": null
+        },
+        "baseRevision": 0,
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6",
+        "sequence": 1
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 34,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_operation_start",
+      "data": {
+        "stepId": "stage-1",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6",
+        "stage": "Pad 实体",
+        "operations": [
+          {
+            "op": "pad",
+            "id": "solid",
+            "sketch": "outline",
+            "length": 10
+          }
+        ]
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 35,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 5,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 28,
+        "index": 0,
+        "operation": {
+          "op": "pad",
+          "id": "solid",
+          "sketch": "outline",
+          "length": 10
+        },
+        "stepId": "stage-1",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 36,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 5,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 29,
+        "index": 0,
+        "operation": {
+          "op": "pad",
+          "id": "solid",
+          "sketch": "outline",
+          "length": 10
+        },
+        "stepId": "stage-1",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 37,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 5,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "operation",
+        "status": "batch_complete",
+        "sequence": 30,
+        "index": 1,
+        "operation": null,
+        "stepId": "stage-1",
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 38,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_operation_complete",
+      "data": {
+        "stepId": "stage-1",
+        "stage": "Pad 实体",
+        "result": [
+          {
+            "id": "Body",
+            "label": "Body",
+            "type": "PartDesign::Body",
+            "parent": null,
+            "parameters": {},
+            "constraints": {}
+          },
+          {
+            "id": "outline",
+            "label": "outline",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "size0": 40,
+              "size2": 30
+            },
+            "constraints": {
+              "axis0": 3,
+              "axis2": 4,
+              "corner0": 0,
+              "corner1": 1,
+              "corner2": 2,
+              "origin": 5,
+              "size0": 6,
+              "size2": 7
+            }
+          },
+          {
+            "id": "solid",
+            "label": "solid",
+            "type": "PartDesign::Pad",
+            "parent": "Body",
+            "parameters": {
+              "Length": 10
+            },
+            "constraints": {}
+          }
+        ],
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 39,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "candidate_snapshot",
+      "data": {
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "tree": [
+          {
+            "id": "Body",
+            "label": "Body",
+            "type": "PartDesign::Body",
+            "parent": null,
+            "parameters": {},
+            "constraints": {}
+          },
+          {
+            "id": "outline",
+            "label": "outline",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "size0": 40,
+              "size2": 30
+            },
+            "constraints": {
+              "axis0": 3,
+              "axis2": 4,
+              "corner0": 0,
+              "corner1": 1,
+              "corner2": 2,
+              "origin": 5,
+              "size0": 6,
+              "size2": 7
+            }
+          },
+          {
+            "id": "solid",
+            "label": "solid",
+            "type": "PartDesign::Pad",
+            "parent": "Body",
+            "parameters": {
+              "Length": 10
+            },
+            "constraints": {}
+          }
+        ],
+        "sketch": {
+          "featureId": "outline",
+          "placement": {
+            "base": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          "geometry": [
+            {
+              "index": 0,
+              "kind": "line",
+              "start": [
+                0,
+                0
+              ],
+              "end": [
+                40,
+                0
+              ]
+            },
+            {
+              "index": 1,
+              "kind": "line",
+              "start": [
+                40,
+                0
+              ],
+              "end": [
+                0,
+                30
+              ]
+            },
+            {
+              "index": 2,
+              "kind": "line",
+              "start": [
+                0,
+                30
+              ],
+              "end": [
+                0,
+                0
+              ]
+            }
+          ],
+          "constraints": [
+            {
+              "name": "corner0",
+              "kind": "Coincident",
+              "firstGeometry": 0,
+              "firstPos": 2,
+              "secondGeometry": 1,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "name": "corner1",
+              "kind": "Coincident",
+              "firstGeometry": 1,
+              "firstPos": 2,
+              "secondGeometry": 2,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "name": "corner2",
+              "kind": "Coincident",
+              "firstGeometry": 2,
+              "firstPos": 2,
+              "secondGeometry": 0,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "name": "axis0",
+              "kind": "Horizontal",
+              "firstGeometry": 0,
+              "firstPos": 0,
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": null
+            },
+            {
+              "name": "axis2",
+              "kind": "Vertical",
+              "firstGeometry": 2,
+              "firstPos": 0,
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": null
+            },
+            {
+              "name": "origin",
+              "kind": "Coincident",
+              "firstGeometry": 0,
+              "firstPos": 1,
+              "secondGeometry": -1,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "name": "size0",
+              "kind": "Distance",
+              "firstGeometry": 0,
+              "firstPos": 0,
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 40
+            },
+            {
+              "name": "size2",
+              "kind": "Distance",
+              "firstGeometry": 2,
+              "firstPos": 0,
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 30
+            }
+          ],
+          "fullyConstrained": true,
+          "tree": [
+            {
+              "id": "Body",
+              "label": "Body",
+              "type": "PartDesign::Body",
+              "parent": null,
+              "parameters": {},
+              "constraints": {}
+            },
+            {
+              "id": "outline",
+              "label": "outline",
+              "type": "Sketcher::SketchObject",
+              "parent": "Body",
+              "parameters": {
+                "size0": 40,
+                "size2": 30
+              },
+              "constraints": {
+                "axis0": 3,
+                "axis2": 4,
+                "corner0": 0,
+                "corner1": 1,
+                "corner2": 2,
+                "origin": 5,
+                "size0": 6,
+                "size2": 7
+              }
+            },
+            {
+              "id": "solid",
+              "label": "solid",
+              "type": "PartDesign::Pad",
+              "parent": "Body",
+              "parameters": {
+                "Length": 10
+              },
+              "constraints": {}
+            }
+          ]
+        },
+        "operationPlanHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6",
+        "completedStages": 2,
+        "operationHistoryHash": "75c679f97ed4e7b2567d4279b6cfc38d77d2eae2de57043925f7eee14ad051f9",
+        "operationModel": {
+          "tree": [
+            {
+              "id": "Body",
+              "label": "Body",
+              "type": "PartDesign::Body",
+              "parent": null,
+              "parameters": {},
+              "constraints": {}
+            },
+            {
+              "id": "outline",
+              "label": "outline",
+              "type": "Sketcher::SketchObject",
+              "parent": "Body",
+              "parameters": {
+                "size0": 40,
+                "size2": 30
+              },
+              "constraints": {
+                "axis0": 3,
+                "axis2": 4,
+                "corner0": 0,
+                "corner1": 1,
+                "corner2": 2,
+                "origin": 5,
+                "size0": 6,
+                "size2": 7
+              }
+            },
+            {
+              "id": "solid",
+              "label": "solid",
+              "type": "PartDesign::Pad",
+              "parent": "Body",
+              "parameters": {
+                "Length": 10
+              },
+              "constraints": {}
+            }
+          ],
+          "sketches": [
+            {
+              "featureId": "outline",
+              "placement": {
+                "base": [
+                  0,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0,
+                  1
+                ]
+              },
+              "geometry": [
+                {
+                  "index": 0,
+                  "kind": "line",
+                  "start": [
+                    0,
+                    0
+                  ],
+                  "end": [
+                    40,
+                    0
+                  ]
+                },
+                {
+                  "index": 1,
+                  "kind": "line",
+                  "start": [
+                    40,
+                    0
+                  ],
+                  "end": [
+                    0,
+                    30
+                  ]
+                },
+                {
+                  "index": 2,
+                  "kind": "line",
+                  "start": [
+                    0,
+                    30
+                  ],
+                  "end": [
+                    0,
+                    0
+                  ]
+                }
+              ],
+              "constraints": [
+                {
+                  "name": "corner0",
+                  "kind": "Coincident",
+                  "firstGeometry": 0,
+                  "firstPos": 2,
+                  "secondGeometry": 1,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "corner1",
+                  "kind": "Coincident",
+                  "firstGeometry": 1,
+                  "firstPos": 2,
+                  "secondGeometry": 2,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "corner2",
+                  "kind": "Coincident",
+                  "firstGeometry": 2,
+                  "firstPos": 2,
+                  "secondGeometry": 0,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "axis0",
+                  "kind": "Horizontal",
+                  "firstGeometry": 0,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": null
+                },
+                {
+                  "name": "axis2",
+                  "kind": "Vertical",
+                  "firstGeometry": 2,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": null
+                },
+                {
+                  "name": "origin",
+                  "kind": "Coincident",
+                  "firstGeometry": 0,
+                  "firstPos": 1,
+                  "secondGeometry": -1,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "size0",
+                  "kind": "Distance",
+                  "firstGeometry": 0,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 40
+                },
+                {
+                  "name": "size2",
+                  "kind": "Distance",
+                  "firstGeometry": 2,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 30
+                }
+              ],
+              "fullyConstrained": true
+            }
+          ],
+          "features": [
+            {
+              "id": "solid",
+              "profile": "outline",
+              "length": 10,
+              "reversed": false,
+              "midplane": false
+            }
+          ],
+          "tip": "solid"
+        },
+        "geometry": {
+          "solids": 1,
+          "volume": 5999.999999999999,
+          "bbox": [
+            40,
+            30,
+            10
+          ]
+        },
+        "preview": {
+          "file": "candidate-2.glb",
+          "bytes": 2704,
+          "sha256": "cfaa06ccc7b99e29ba293632a46fad41bdd49da8a3df02c4817699122620ee6b",
+          "url": "/api/documents/operations-triangle-1793454155810/jobs/step-0/candidate/preview?sequence=2"
+        },
+        "baseRevision": 0,
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6",
+        "sequence": 2
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 41,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "geometry",
+        "status": "start",
+        "sequence": 31,
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 42,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "geometry",
+        "status": "complete",
+        "sequence": 32,
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 43,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "save",
+        "status": "start",
+        "sequence": 33,
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 44,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "save",
+        "status": "complete",
+        "sequence": 34,
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 45,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "reopen",
+        "status": "start",
+        "sequence": 35,
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 46,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "reopen",
+        "status": "complete",
+        "sequence": 36,
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 47,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "export_step",
+        "status": "start",
+        "sequence": 37,
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 48,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "export_step",
+        "status": "complete",
+        "sequence": 38,
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 49,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "export_glb",
+        "status": "start",
+        "sequence": 39,
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    },
+    {
+      "seq": 50,
+      "documentId": "operations-triangle-1793454155810",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+        "stage": "export_glb",
+        "status": "complete",
+        "sequence": 40,
+        "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+      },
+      "jobId": "step-0",
+      "revision": 0,
+      "candidateId": "9cd44423-7543-4d5d-b7f0-33aac69be531",
+      "conversationId": "7916d6fa-7ec5-463a-bb15-972d791d0db7"
+    }
+  ]
+}

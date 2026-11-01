@@ -51,7 +51,7 @@ def main():
     def dispatch(method, params):
         if method == 'hello':
             if params: raise ValueError('hello takes no arguments')
-            return dict(protocolVersion=1, workerInstanceId=instance, runtime=runtime, capabilities=['inspect_document','begin_candidate','apply_operations','prepare_candidate','discard_candidate','cad_progress'])
+            return dict(protocolVersion=1, workerInstanceId=instance, runtime=runtime, capabilities=['inspect_document','begin_candidate','apply_operations','prepare_candidate','discard_candidate','cad_progress','begin_python','execute_script','prepare_python'])
         return candidates.dispatch(method, params)
     def error(code, message, request_id=None):
         return dict(jsonrpc='2.0', id=request_id, error=dict(code=code, message=message))

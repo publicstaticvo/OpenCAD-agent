@@ -1,0 +1,194 @@
+{
+  "version": 2,
+  "kind": "operations",
+  "documentId": "operations-triangle-1793454155810",
+  "operationId": "step-0",
+  "requestHash": "8e57c1f6c22315b1a1c10582d6f19f3287011189ba52d298485649c8292cdd36",
+  "baseRevision": 0,
+  "baseHistoryHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "goal": "40 × 30 × 10 mm 三角棱柱",
+  "stages": [
+    {
+      "name": "实际多边形草图与约束",
+      "sketchId": "outline",
+      "operations": [
+        {
+          "op": "create_body",
+          "id": "Body"
+        },
+        {
+          "op": "create_sketch",
+          "id": "outline",
+          "body": "Body",
+          "plane": "XY",
+          "origin": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "outline",
+          "geometryId": 0,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              0,
+              0
+            ],
+            "to": [
+              40,
+              0
+            ]
+          }
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "outline",
+          "geometryId": 1,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              40,
+              0
+            ],
+            "to": [
+              0,
+              30
+            ]
+          }
+        },
+        {
+          "op": "add_geometry",
+          "sketch": "outline",
+          "geometryId": 2,
+          "geometry": {
+            "kind": "line",
+            "from": [
+              0,
+              30
+            ],
+            "to": [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "corner0",
+          "kind": "Coincident",
+          "args": [
+            0,
+            2,
+            1,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "corner1",
+          "kind": "Coincident",
+          "args": [
+            1,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "corner2",
+          "kind": "Coincident",
+          "args": [
+            2,
+            2,
+            0,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "axis0",
+          "kind": "Horizontal",
+          "args": [
+            0
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "axis2",
+          "kind": "Vertical",
+          "args": [
+            2
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "origin",
+          "kind": "Coincident",
+          "args": [
+            0,
+            1,
+            -1,
+            1
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "size0",
+          "kind": "Distance",
+          "args": [
+            0,
+            40
+          ]
+        },
+        {
+          "op": "add_constraint",
+          "sketch": "outline",
+          "name": "size2",
+          "kind": "Distance",
+          "args": [
+            2,
+            30
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pad 实体",
+      "sketchId": "outline",
+      "operations": [
+        {
+          "op": "pad",
+          "id": "solid",
+          "sketch": "outline",
+          "length": 10
+        }
+      ]
+    }
+  ],
+  "dimensions": {
+    "length": 40,
+    "width": 30,
+    "height": 10,
+    "unit": "mm"
+  },
+  "criteria": {
+    "bbox": [
+      40,
+      30,
+      10
+    ],
+    "volume": 6000
+  },
+  "planHash": "635292aaa3220e5c531c77e5022550b33afc2ec6c403dd266050a7ab40c83ec6"
+}

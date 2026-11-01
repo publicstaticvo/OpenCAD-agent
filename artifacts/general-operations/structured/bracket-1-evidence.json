@@ -1,0 +1,3619 @@
+{
+  "job": {
+    "documentId": "operations-bracket-1793454146047",
+    "baseRevision": 1,
+    "operationId": "step-1",
+    "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+    "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2",
+    "status": "committed",
+    "request": {
+      "kind": "operations",
+      "goal": "L 形支架底臂增加 Ø4 mm 贯穿孔，中心 [30,5]",
+      "stages": [
+        {
+          "name": "偏心孔草图与约束",
+          "sketchId": "hole",
+          "operations": [
+            {
+              "op": "create_sketch",
+              "id": "hole",
+              "body": "Body",
+              "plane": "XY",
+              "origin": [
+                0,
+                0,
+                8
+              ]
+            },
+            {
+              "op": "add_geometry",
+              "sketch": "hole",
+              "geometryId": 0,
+              "geometry": {
+                "kind": "circle",
+                "center": [
+                  30,
+                  5
+                ],
+                "radius": 2
+              }
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "hole",
+              "name": "diameter",
+              "kind": "Diameter",
+              "args": [
+                0,
+                4
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "hole",
+              "name": "center_x",
+              "kind": "DistanceX",
+              "args": [
+                0,
+                3,
+                30
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "hole",
+              "name": "center_y",
+              "kind": "DistanceY",
+              "args": [
+                0,
+                3,
+                5
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Pocket 贯穿孔",
+          "sketchId": "hole",
+          "operations": [
+            {
+              "op": "pocket",
+              "id": "cut",
+              "sketch": "hole",
+              "length": 8
+            }
+          ]
+        }
+      ],
+      "criteria": {
+        "bbox": [
+          60,
+          50,
+          8
+        ],
+        "volume": 7899.469035085127,
+        "parameters": [
+          {
+            "feature": "hole",
+            "parameter": "diameter",
+            "value": 4
+          }
+        ]
+      }
+    },
+    "result": {
+      "documentId": "operations-bracket-1793454146047",
+      "revision": 2,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "operationId": "step-1",
+      "seq": 112,
+      "status": "committed"
+    },
+    "error": null,
+    "plan": {
+      "version": 2,
+      "kind": "operations",
+      "documentId": "operations-bracket-1793454146047",
+      "operationId": "step-1",
+      "requestHash": "ab48ee1bbde512fdc7fd0e274f78477675383abae1a455cb8cb221454786624f",
+      "baseRevision": 1,
+      "baseHistoryHash": "7828ef56f324338ef3c0247e33c9f4620672fcb0d16e017d30c63b2690b3126e",
+      "goal": "L 形支架底臂增加 Ø4 mm 贯穿孔，中心 [30,5]",
+      "stages": [
+        {
+          "name": "偏心孔草图与约束",
+          "sketchId": "hole",
+          "operations": [
+            {
+              "op": "create_sketch",
+              "id": "hole",
+              "body": "Body",
+              "plane": "XY",
+              "origin": [
+                0,
+                0,
+                8
+              ]
+            },
+            {
+              "op": "add_geometry",
+              "sketch": "hole",
+              "geometryId": 0,
+              "geometry": {
+                "kind": "circle",
+                "center": [
+                  30,
+                  5
+                ],
+                "radius": 2
+              }
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "hole",
+              "name": "diameter",
+              "kind": "Diameter",
+              "args": [
+                0,
+                4
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "hole",
+              "name": "center_x",
+              "kind": "DistanceX",
+              "args": [
+                0,
+                3,
+                30
+              ]
+            },
+            {
+              "op": "add_constraint",
+              "sketch": "hole",
+              "name": "center_y",
+              "kind": "DistanceY",
+              "args": [
+                0,
+                3,
+                5
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Pocket 贯穿孔",
+          "sketchId": "hole",
+          "operations": [
+            {
+              "op": "pocket",
+              "id": "cut",
+              "sketch": "hole",
+              "length": 8
+            }
+          ]
+        }
+      ],
+      "dimensions": {
+        "length": 60,
+        "width": 50,
+        "height": 8,
+        "unit": "mm"
+      },
+      "criteria": {
+        "bbox": [
+          60,
+          50,
+          8
+        ],
+        "volume": 7899.469035085127,
+        "parameters": [
+          {
+            "feature": "hole",
+            "parameter": "diameter",
+            "value": 4
+          }
+        ]
+      },
+      "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+    },
+    "approval": {
+      "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0",
+      "decision": "approved",
+      "decidedAt": 1793454150843
+    },
+    "stage": 2,
+    "candidateSequence": 2,
+    "candidateSnapshot": {
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "tree": [
+        {
+          "id": "Body",
+          "label": "Body",
+          "type": "PartDesign::Body",
+          "parent": null,
+          "parameters": {},
+          "constraints": {}
+        },
+        {
+          "id": "outline",
+          "label": "outline",
+          "type": "Sketcher::SketchObject",
+          "parent": "Body",
+          "parameters": {
+            "size0": 60,
+            "size1": 10,
+            "size2": 50,
+            "size3": 40
+          },
+          "constraints": {
+            "axis0": 6,
+            "axis1": 7,
+            "axis2": 8,
+            "axis3": 9,
+            "axis4": 10,
+            "axis5": 11,
+            "corner0": 0,
+            "corner1": 1,
+            "corner2": 2,
+            "corner3": 3,
+            "corner4": 4,
+            "corner5": 5,
+            "origin": 12,
+            "size0": 13,
+            "size1": 14,
+            "size2": 15,
+            "size3": 16
+          }
+        },
+        {
+          "id": "solid",
+          "label": "solid",
+          "type": "PartDesign::Pad",
+          "parent": "Body",
+          "parameters": {
+            "Length": 8
+          },
+          "constraints": {}
+        },
+        {
+          "id": "hole",
+          "label": "hole",
+          "type": "Sketcher::SketchObject",
+          "parent": "Body",
+          "parameters": {
+            "center_x": 30,
+            "center_y": 5,
+            "diameter": 4
+          },
+          "constraints": {
+            "center_x": 1,
+            "center_y": 2,
+            "diameter": 0
+          }
+        },
+        {
+          "id": "cut",
+          "label": "cut",
+          "type": "PartDesign::Pocket",
+          "parent": "Body",
+          "parameters": {
+            "Length": 8
+          },
+          "constraints": {}
+        }
+      ],
+      "sketch": {
+        "featureId": "hole",
+        "placement": {
+          "base": [
+            0,
+            0,
+            8
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "geometry": [
+          {
+            "index": 0,
+            "kind": "circle",
+            "center": [
+              30,
+              5
+            ],
+            "radius": 2
+          }
+        ],
+        "constraints": [
+          {
+            "name": "diameter",
+            "kind": "Diameter",
+            "firstGeometry": 0,
+            "firstPos": 0,
+            "secondGeometry": -2000,
+            "secondPos": 0,
+            "value": 4
+          },
+          {
+            "name": "center_x",
+            "kind": "DistanceX",
+            "firstGeometry": 0,
+            "firstPos": 3,
+            "secondGeometry": -2000,
+            "secondPos": 0,
+            "value": 30
+          },
+          {
+            "name": "center_y",
+            "kind": "DistanceY",
+            "firstGeometry": 0,
+            "firstPos": 3,
+            "secondGeometry": -2000,
+            "secondPos": 0,
+            "value": 5
+          }
+        ],
+        "fullyConstrained": true,
+        "tree": [
+          {
+            "id": "Body",
+            "label": "Body",
+            "type": "PartDesign::Body",
+            "parent": null,
+            "parameters": {},
+            "constraints": {}
+          },
+          {
+            "id": "outline",
+            "label": "outline",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "size0": 60,
+              "size1": 10,
+              "size2": 50,
+              "size3": 40
+            },
+            "constraints": {
+              "axis0": 6,
+              "axis1": 7,
+              "axis2": 8,
+              "axis3": 9,
+              "axis4": 10,
+              "axis5": 11,
+              "corner0": 0,
+              "corner1": 1,
+              "corner2": 2,
+              "corner3": 3,
+              "corner4": 4,
+              "corner5": 5,
+              "origin": 12,
+              "size0": 13,
+              "size1": 14,
+              "size2": 15,
+              "size3": 16
+            }
+          },
+          {
+            "id": "solid",
+            "label": "solid",
+            "type": "PartDesign::Pad",
+            "parent": "Body",
+            "parameters": {
+              "Length": 8
+            },
+            "constraints": {}
+          },
+          {
+            "id": "hole",
+            "label": "hole",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "center_x": 30,
+              "center_y": 5,
+              "diameter": 4
+            },
+            "constraints": {
+              "center_x": 1,
+              "center_y": 2,
+              "diameter": 0
+            }
+          },
+          {
+            "id": "cut",
+            "label": "cut",
+            "type": "PartDesign::Pocket",
+            "parent": "Body",
+            "parameters": {
+              "Length": 8
+            },
+            "constraints": {}
+          }
+        ]
+      },
+      "operationPlanHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0",
+      "completedStages": 2,
+      "operationHistoryHash": "47587fd05bdce4afbfd6544e882c6d7f91ae674910e09c3c9f389575830acce8",
+      "operationModel": {
+        "tree": [
+          {
+            "id": "Body",
+            "label": "Body",
+            "type": "PartDesign::Body",
+            "parent": null,
+            "parameters": {},
+            "constraints": {}
+          },
+          {
+            "id": "outline",
+            "label": "outline",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "size0": 60,
+              "size1": 10,
+              "size2": 50,
+              "size3": 40
+            },
+            "constraints": {
+              "axis0": 6,
+              "axis1": 7,
+              "axis2": 8,
+              "axis3": 9,
+              "axis4": 10,
+              "axis5": 11,
+              "corner0": 0,
+              "corner1": 1,
+              "corner2": 2,
+              "corner3": 3,
+              "corner4": 4,
+              "corner5": 5,
+              "origin": 12,
+              "size0": 13,
+              "size1": 14,
+              "size2": 15,
+              "size3": 16
+            }
+          },
+          {
+            "id": "solid",
+            "label": "solid",
+            "type": "PartDesign::Pad",
+            "parent": "Body",
+            "parameters": {
+              "Length": 8
+            },
+            "constraints": {}
+          },
+          {
+            "id": "hole",
+            "label": "hole",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "center_x": 30,
+              "center_y": 5,
+              "diameter": 4
+            },
+            "constraints": {
+              "center_x": 1,
+              "center_y": 2,
+              "diameter": 0
+            }
+          },
+          {
+            "id": "cut",
+            "label": "cut",
+            "type": "PartDesign::Pocket",
+            "parent": "Body",
+            "parameters": {
+              "Length": 8
+            },
+            "constraints": {}
+          }
+        ],
+        "sketches": [
+          {
+            "featureId": "outline",
+            "placement": {
+              "base": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0,
+                1
+              ]
+            },
+            "geometry": [
+              {
+                "index": 0,
+                "kind": "line",
+                "start": [
+                  0,
+                  0
+                ],
+                "end": [
+                  60,
+                  0
+                ]
+              },
+              {
+                "index": 1,
+                "kind": "line",
+                "start": [
+                  60,
+                  0
+                ],
+                "end": [
+                  60,
+                  10
+                ]
+              },
+              {
+                "index": 2,
+                "kind": "line",
+                "start": [
+                  60,
+                  10
+                ],
+                "end": [
+                  10,
+                  10
+                ]
+              },
+              {
+                "index": 3,
+                "kind": "line",
+                "start": [
+                  10,
+                  10
+                ],
+                "end": [
+                  10,
+                  50
+                ]
+              },
+              {
+                "index": 4,
+                "kind": "line",
+                "start": [
+                  10,
+                  50
+                ],
+                "end": [
+                  0,
+                  50
+                ]
+              },
+              {
+                "index": 5,
+                "kind": "line",
+                "start": [
+                  0,
+                  50
+                ],
+                "end": [
+                  0,
+                  0
+                ]
+              }
+            ],
+            "constraints": [
+              {
+                "name": "corner0",
+                "kind": "Coincident",
+                "firstGeometry": 0,
+                "firstPos": 2,
+                "secondGeometry": 1,
+                "secondPos": 1,
+                "value": null
+              },
+              {
+                "name": "corner1",
+                "kind": "Coincident",
+                "firstGeometry": 1,
+                "firstPos": 2,
+                "secondGeometry": 2,
+                "secondPos": 1,
+                "value": null
+              },
+              {
+                "name": "corner2",
+                "kind": "Coincident",
+                "firstGeometry": 2,
+                "firstPos": 2,
+                "secondGeometry": 3,
+                "secondPos": 1,
+                "value": null
+              },
+              {
+                "name": "corner3",
+                "kind": "Coincident",
+                "firstGeometry": 3,
+                "firstPos": 2,
+                "secondGeometry": 4,
+                "secondPos": 1,
+                "value": null
+              },
+              {
+                "name": "corner4",
+                "kind": "Coincident",
+                "firstGeometry": 4,
+                "firstPos": 2,
+                "secondGeometry": 5,
+                "secondPos": 1,
+                "value": null
+              },
+              {
+                "name": "corner5",
+                "kind": "Coincident",
+                "firstGeometry": 5,
+                "firstPos": 2,
+                "secondGeometry": 0,
+                "secondPos": 1,
+                "value": null
+              },
+              {
+                "name": "axis0",
+                "kind": "Horizontal",
+                "firstGeometry": 0,
+                "firstPos": 0,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": null
+              },
+              {
+                "name": "axis1",
+                "kind": "Vertical",
+                "firstGeometry": 1,
+                "firstPos": 0,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": null
+              },
+              {
+                "name": "axis2",
+                "kind": "Horizontal",
+                "firstGeometry": 2,
+                "firstPos": 0,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": null
+              },
+              {
+                "name": "axis3",
+                "kind": "Vertical",
+                "firstGeometry": 3,
+                "firstPos": 0,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": null
+              },
+              {
+                "name": "axis4",
+                "kind": "Horizontal",
+                "firstGeometry": 4,
+                "firstPos": 0,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": null
+              },
+              {
+                "name": "axis5",
+                "kind": "Vertical",
+                "firstGeometry": 5,
+                "firstPos": 0,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": null
+              },
+              {
+                "name": "origin",
+                "kind": "Coincident",
+                "firstGeometry": 0,
+                "firstPos": 1,
+                "secondGeometry": -1,
+                "secondPos": 1,
+                "value": null
+              },
+              {
+                "name": "size0",
+                "kind": "Distance",
+                "firstGeometry": 0,
+                "firstPos": 0,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": 60
+              },
+              {
+                "name": "size1",
+                "kind": "Distance",
+                "firstGeometry": 1,
+                "firstPos": 0,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": 10
+              },
+              {
+                "name": "size2",
+                "kind": "Distance",
+                "firstGeometry": 2,
+                "firstPos": 0,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": 50
+              },
+              {
+                "name": "size3",
+                "kind": "Distance",
+                "firstGeometry": 3,
+                "firstPos": 0,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": 40
+              }
+            ],
+            "fullyConstrained": true
+          },
+          {
+            "featureId": "hole",
+            "placement": {
+              "base": [
+                0,
+                0,
+                8
+              ],
+              "rotation": [
+                0,
+                0,
+                0,
+                1
+              ]
+            },
+            "geometry": [
+              {
+                "index": 0,
+                "kind": "circle",
+                "center": [
+                  30,
+                  5
+                ],
+                "radius": 2
+              }
+            ],
+            "constraints": [
+              {
+                "name": "diameter",
+                "kind": "Diameter",
+                "firstGeometry": 0,
+                "firstPos": 0,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": 4
+              },
+              {
+                "name": "center_x",
+                "kind": "DistanceX",
+                "firstGeometry": 0,
+                "firstPos": 3,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": 30
+              },
+              {
+                "name": "center_y",
+                "kind": "DistanceY",
+                "firstGeometry": 0,
+                "firstPos": 3,
+                "secondGeometry": -2000,
+                "secondPos": 0,
+                "value": 5
+              }
+            ],
+            "fullyConstrained": true
+          }
+        ],
+        "features": [
+          {
+            "id": "solid",
+            "profile": "outline",
+            "length": 8,
+            "reversed": false,
+            "midplane": false
+          },
+          {
+            "id": "cut",
+            "profile": "hole",
+            "length": 8,
+            "reversed": false,
+            "midplane": false
+          }
+        ],
+        "tip": "cut"
+      },
+      "geometry": {
+        "solids": 1,
+        "volume": 7899.469035085125,
+        "bbox": [
+          60,
+          50,
+          8
+        ]
+      },
+      "preview": {
+        "file": "candidate-2.glb",
+        "bytes": 19888,
+        "sha256": "785e6a1c2d7116e877084274f55913896da794a945bb3ef19303c3e8efe7b42c",
+        "url": "/api/documents/operations-bracket-1793454146047/jobs/step-1/candidate/preview?sequence=2"
+      },
+      "baseRevision": 1,
+      "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0",
+      "sequence": 2
+    }
+  },
+  "validation": {
+    "bbox": [
+      60,
+      50,
+      8
+    ],
+    "bodyId": "Body",
+    "completedStages": 2,
+    "glb": {
+      "bounds": [
+        [
+          0,
+          0,
+          -0.05
+        ],
+        [
+          0.06,
+          0.008,
+          0
+        ]
+      ],
+      "mapping": "(x,z,-y)/1000",
+      "meshes": 1,
+      "triangles": 528
+    },
+    "meshFeatureId": "Body",
+    "operationHistoryHash": "47587fd05bdce4afbfd6544e882c6d7f91ae674910e09c3c9f389575830acce8",
+    "operationModel": {
+      "features": [
+        {
+          "id": "solid",
+          "length": 8,
+          "midplane": false,
+          "profile": "outline",
+          "reversed": false
+        },
+        {
+          "id": "cut",
+          "length": 8,
+          "midplane": false,
+          "profile": "hole",
+          "reversed": false
+        }
+      ],
+      "sketches": [
+        {
+          "constraints": [
+            {
+              "firstGeometry": 0,
+              "firstPos": 2,
+              "kind": "Coincident",
+              "name": "corner0",
+              "secondGeometry": 1,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "firstGeometry": 1,
+              "firstPos": 2,
+              "kind": "Coincident",
+              "name": "corner1",
+              "secondGeometry": 2,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "firstGeometry": 2,
+              "firstPos": 2,
+              "kind": "Coincident",
+              "name": "corner2",
+              "secondGeometry": 3,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "firstGeometry": 3,
+              "firstPos": 2,
+              "kind": "Coincident",
+              "name": "corner3",
+              "secondGeometry": 4,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "firstGeometry": 4,
+              "firstPos": 2,
+              "kind": "Coincident",
+              "name": "corner4",
+              "secondGeometry": 5,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "firstGeometry": 5,
+              "firstPos": 2,
+              "kind": "Coincident",
+              "name": "corner5",
+              "secondGeometry": 0,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "firstGeometry": 0,
+              "firstPos": 0,
+              "kind": "Horizontal",
+              "name": "axis0",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": null
+            },
+            {
+              "firstGeometry": 1,
+              "firstPos": 0,
+              "kind": "Vertical",
+              "name": "axis1",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": null
+            },
+            {
+              "firstGeometry": 2,
+              "firstPos": 0,
+              "kind": "Horizontal",
+              "name": "axis2",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": null
+            },
+            {
+              "firstGeometry": 3,
+              "firstPos": 0,
+              "kind": "Vertical",
+              "name": "axis3",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": null
+            },
+            {
+              "firstGeometry": 4,
+              "firstPos": 0,
+              "kind": "Horizontal",
+              "name": "axis4",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": null
+            },
+            {
+              "firstGeometry": 5,
+              "firstPos": 0,
+              "kind": "Vertical",
+              "name": "axis5",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": null
+            },
+            {
+              "firstGeometry": 0,
+              "firstPos": 1,
+              "kind": "Coincident",
+              "name": "origin",
+              "secondGeometry": -1,
+              "secondPos": 1,
+              "value": null
+            },
+            {
+              "firstGeometry": 0,
+              "firstPos": 0,
+              "kind": "Distance",
+              "name": "size0",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 60
+            },
+            {
+              "firstGeometry": 1,
+              "firstPos": 0,
+              "kind": "Distance",
+              "name": "size1",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 10
+            },
+            {
+              "firstGeometry": 2,
+              "firstPos": 0,
+              "kind": "Distance",
+              "name": "size2",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 50
+            },
+            {
+              "firstGeometry": 3,
+              "firstPos": 0,
+              "kind": "Distance",
+              "name": "size3",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 40
+            }
+          ],
+          "featureId": "outline",
+          "fullyConstrained": true,
+          "geometry": [
+            {
+              "end": [
+                60,
+                0
+              ],
+              "index": 0,
+              "kind": "line",
+              "start": [
+                0,
+                0
+              ]
+            },
+            {
+              "end": [
+                60,
+                10
+              ],
+              "index": 1,
+              "kind": "line",
+              "start": [
+                60,
+                0
+              ]
+            },
+            {
+              "end": [
+                10,
+                10
+              ],
+              "index": 2,
+              "kind": "line",
+              "start": [
+                60,
+                10
+              ]
+            },
+            {
+              "end": [
+                10,
+                50
+              ],
+              "index": 3,
+              "kind": "line",
+              "start": [
+                10,
+                10
+              ]
+            },
+            {
+              "end": [
+                0,
+                50
+              ],
+              "index": 4,
+              "kind": "line",
+              "start": [
+                10,
+                50
+              ]
+            },
+            {
+              "end": [
+                0,
+                0
+              ],
+              "index": 5,
+              "kind": "line",
+              "start": [
+                0,
+                50
+              ]
+            }
+          ],
+          "placement": {
+            "base": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        },
+        {
+          "constraints": [
+            {
+              "firstGeometry": 0,
+              "firstPos": 0,
+              "kind": "Diameter",
+              "name": "diameter",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 4
+            },
+            {
+              "firstGeometry": 0,
+              "firstPos": 3,
+              "kind": "DistanceX",
+              "name": "center_x",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 30
+            },
+            {
+              "firstGeometry": 0,
+              "firstPos": 3,
+              "kind": "DistanceY",
+              "name": "center_y",
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 5
+            }
+          ],
+          "featureId": "hole",
+          "fullyConstrained": true,
+          "geometry": [
+            {
+              "center": [
+                30,
+                5
+              ],
+              "index": 0,
+              "kind": "circle",
+              "radius": 2
+            }
+          ],
+          "placement": {
+            "base": [
+              0,
+              0,
+              8
+            ],
+            "rotation": [
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      ],
+      "tip": "cut",
+      "tree": [
+        {
+          "constraints": {},
+          "id": "Body",
+          "label": "Body",
+          "parameters": {},
+          "parent": null,
+          "type": "PartDesign::Body"
+        },
+        {
+          "constraints": {
+            "axis0": 6,
+            "axis1": 7,
+            "axis2": 8,
+            "axis3": 9,
+            "axis4": 10,
+            "axis5": 11,
+            "corner0": 0,
+            "corner1": 1,
+            "corner2": 2,
+            "corner3": 3,
+            "corner4": 4,
+            "corner5": 5,
+            "origin": 12,
+            "size0": 13,
+            "size1": 14,
+            "size2": 15,
+            "size3": 16
+          },
+          "id": "outline",
+          "label": "outline",
+          "parameters": {
+            "size0": 60,
+            "size1": 10,
+            "size2": 50,
+            "size3": 40
+          },
+          "parent": "Body",
+          "type": "Sketcher::SketchObject"
+        },
+        {
+          "constraints": {},
+          "id": "solid",
+          "label": "solid",
+          "parameters": {
+            "Length": 8
+          },
+          "parent": "Body",
+          "type": "PartDesign::Pad"
+        },
+        {
+          "constraints": {
+            "center_x": 1,
+            "center_y": 2,
+            "diameter": 0
+          },
+          "id": "hole",
+          "label": "hole",
+          "parameters": {
+            "center_x": 30,
+            "center_y": 5,
+            "diameter": 4
+          },
+          "parent": "Body",
+          "type": "Sketcher::SketchObject"
+        },
+        {
+          "constraints": {},
+          "id": "cut",
+          "label": "cut",
+          "parameters": {
+            "Length": 8
+          },
+          "parent": "Body",
+          "type": "PartDesign::Pocket"
+        }
+      ]
+    },
+    "operationPlanHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0",
+    "solids": 1,
+    "step": {
+      "bbox": [
+        60,
+        50,
+        8
+      ],
+      "solids": 1,
+      "volume": 7899.469035085125
+    },
+    "tipId": "cut",
+    "verifierPid": 45699,
+    "volume": 7899.469035085125
+  },
+  "events": [
+    {
+      "seq": 78,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "plan_approved",
+      "data": {
+        "documentId": "operations-bracket-1793454146047",
+        "baseRevision": 1,
+        "operationId": "step-1",
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2",
+        "status": "approved",
+        "request": {
+          "kind": "operations",
+          "goal": "L 形支架底臂增加 Ø4 mm 贯穿孔，中心 [30,5]",
+          "stages": [
+            {
+              "name": "偏心孔草图与约束",
+              "sketchId": "hole",
+              "operations": [
+                {
+                  "op": "create_sketch",
+                  "id": "hole",
+                  "body": "Body",
+                  "plane": "XY",
+                  "origin": [
+                    0,
+                    0,
+                    8
+                  ]
+                },
+                {
+                  "op": "add_geometry",
+                  "sketch": "hole",
+                  "geometryId": 0,
+                  "geometry": {
+                    "kind": "circle",
+                    "center": [
+                      30,
+                      5
+                    ],
+                    "radius": 2
+                  }
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "hole",
+                  "name": "diameter",
+                  "kind": "Diameter",
+                  "args": [
+                    0,
+                    4
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "hole",
+                  "name": "center_x",
+                  "kind": "DistanceX",
+                  "args": [
+                    0,
+                    3,
+                    30
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "hole",
+                  "name": "center_y",
+                  "kind": "DistanceY",
+                  "args": [
+                    0,
+                    3,
+                    5
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Pocket 贯穿孔",
+              "sketchId": "hole",
+              "operations": [
+                {
+                  "op": "pocket",
+                  "id": "cut",
+                  "sketch": "hole",
+                  "length": 8
+                }
+              ]
+            }
+          ],
+          "criteria": {
+            "bbox": [
+              60,
+              50,
+              8
+            ],
+            "volume": 7899.469035085127,
+            "parameters": [
+              {
+                "feature": "hole",
+                "parameter": "diameter",
+                "value": 4
+              }
+            ]
+          }
+        },
+        "result": null,
+        "error": null,
+        "plan": {
+          "version": 2,
+          "kind": "operations",
+          "documentId": "operations-bracket-1793454146047",
+          "operationId": "step-1",
+          "requestHash": "ab48ee1bbde512fdc7fd0e274f78477675383abae1a455cb8cb221454786624f",
+          "baseRevision": 1,
+          "baseHistoryHash": "7828ef56f324338ef3c0247e33c9f4620672fcb0d16e017d30c63b2690b3126e",
+          "goal": "L 形支架底臂增加 Ø4 mm 贯穿孔，中心 [30,5]",
+          "stages": [
+            {
+              "name": "偏心孔草图与约束",
+              "sketchId": "hole",
+              "operations": [
+                {
+                  "op": "create_sketch",
+                  "id": "hole",
+                  "body": "Body",
+                  "plane": "XY",
+                  "origin": [
+                    0,
+                    0,
+                    8
+                  ]
+                },
+                {
+                  "op": "add_geometry",
+                  "sketch": "hole",
+                  "geometryId": 0,
+                  "geometry": {
+                    "kind": "circle",
+                    "center": [
+                      30,
+                      5
+                    ],
+                    "radius": 2
+                  }
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "hole",
+                  "name": "diameter",
+                  "kind": "Diameter",
+                  "args": [
+                    0,
+                    4
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "hole",
+                  "name": "center_x",
+                  "kind": "DistanceX",
+                  "args": [
+                    0,
+                    3,
+                    30
+                  ]
+                },
+                {
+                  "op": "add_constraint",
+                  "sketch": "hole",
+                  "name": "center_y",
+                  "kind": "DistanceY",
+                  "args": [
+                    0,
+                    3,
+                    5
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Pocket 贯穿孔",
+              "sketchId": "hole",
+              "operations": [
+                {
+                  "op": "pocket",
+                  "id": "cut",
+                  "sketch": "hole",
+                  "length": 8
+                }
+              ]
+            }
+          ],
+          "dimensions": {
+            "length": 60,
+            "width": 50,
+            "height": 8,
+            "unit": "mm"
+          },
+          "criteria": {
+            "bbox": [
+              60,
+              50,
+              8
+            ],
+            "volume": 7899.469035085127,
+            "parameters": [
+              {
+                "feature": "hole",
+                "parameter": "diameter",
+                "value": 4
+              }
+            ]
+          },
+          "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+        },
+        "approval": {
+          "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0",
+          "decision": "approved",
+          "decidedAt": 1793454150843
+        },
+        "stage": 0
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": null,
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 80,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_operation_start",
+      "data": {
+        "stepId": "stage-0",
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0",
+        "stage": "偏心孔草图与约束",
+        "operations": [
+          {
+            "op": "create_sketch",
+            "id": "hole",
+            "body": "Body",
+            "plane": "XY",
+            "origin": [
+              0,
+              0,
+              8
+            ]
+          },
+          {
+            "op": "add_geometry",
+            "sketch": "hole",
+            "geometryId": 0,
+            "geometry": {
+              "kind": "circle",
+              "center": [
+                30,
+                5
+              ],
+              "radius": 2
+            }
+          },
+          {
+            "op": "add_constraint",
+            "sketch": "hole",
+            "name": "diameter",
+            "kind": "Diameter",
+            "args": [
+              0,
+              4
+            ]
+          },
+          {
+            "op": "add_constraint",
+            "sketch": "hole",
+            "name": "center_x",
+            "kind": "DistanceX",
+            "args": [
+              0,
+              3,
+              30
+            ]
+          },
+          {
+            "op": "add_constraint",
+            "sketch": "hole",
+            "name": "center_y",
+            "kind": "DistanceY",
+            "args": [
+              0,
+              3,
+              5
+            ]
+          }
+        ]
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 81,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 1,
+        "index": 0,
+        "operation": {
+          "op": "create_sketch",
+          "id": "hole",
+          "body": "Body",
+          "plane": "XY",
+          "origin": [
+            0,
+            0,
+            8
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 82,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 2,
+        "index": 0,
+        "operation": {
+          "op": "create_sketch",
+          "id": "hole",
+          "body": "Body",
+          "plane": "XY",
+          "origin": [
+            0,
+            0,
+            8
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 83,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 3,
+        "index": 1,
+        "operation": {
+          "op": "add_geometry",
+          "sketch": "hole",
+          "geometryId": 0,
+          "geometry": {
+            "kind": "circle",
+            "center": [
+              30,
+              5
+            ],
+            "radius": 2
+          }
+        },
+        "stepId": "stage-0",
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 84,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 4,
+        "index": 1,
+        "operation": {
+          "op": "add_geometry",
+          "sketch": "hole",
+          "geometryId": 0,
+          "geometry": {
+            "kind": "circle",
+            "center": [
+              30,
+              5
+            ],
+            "radius": 2
+          }
+        },
+        "stepId": "stage-0",
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 85,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 5,
+        "index": 2,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "hole",
+          "name": "diameter",
+          "kind": "Diameter",
+          "args": [
+            0,
+            4
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 86,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 6,
+        "index": 2,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "hole",
+          "name": "diameter",
+          "kind": "Diameter",
+          "args": [
+            0,
+            4
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 87,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 7,
+        "index": 3,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "hole",
+          "name": "center_x",
+          "kind": "DistanceX",
+          "args": [
+            0,
+            3,
+            30
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 88,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 8,
+        "index": 3,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "hole",
+          "name": "center_x",
+          "kind": "DistanceX",
+          "args": [
+            0,
+            3,
+            30
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 89,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 9,
+        "index": 4,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "hole",
+          "name": "center_y",
+          "kind": "DistanceY",
+          "args": [
+            0,
+            3,
+            5
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 90,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 10,
+        "index": 4,
+        "operation": {
+          "op": "add_constraint",
+          "sketch": "hole",
+          "name": "center_y",
+          "kind": "DistanceY",
+          "args": [
+            0,
+            3,
+            5
+          ]
+        },
+        "stepId": "stage-0",
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 91,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 3,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "operation",
+        "status": "batch_complete",
+        "sequence": 11,
+        "index": 5,
+        "operation": null,
+        "stepId": "stage-0",
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 92,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_operation_complete",
+      "data": {
+        "stepId": "stage-0",
+        "stage": "偏心孔草图与约束",
+        "result": [
+          {
+            "id": "Body",
+            "label": "Body",
+            "type": "PartDesign::Body",
+            "parent": null,
+            "parameters": {},
+            "constraints": {}
+          },
+          {
+            "id": "outline",
+            "label": "outline",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "size0": 60,
+              "size1": 10,
+              "size2": 50,
+              "size3": 40
+            },
+            "constraints": {
+              "axis0": 6,
+              "axis1": 7,
+              "axis2": 8,
+              "axis3": 9,
+              "axis4": 10,
+              "axis5": 11,
+              "corner0": 0,
+              "corner1": 1,
+              "corner2": 2,
+              "corner3": 3,
+              "corner4": 4,
+              "corner5": 5,
+              "origin": 12,
+              "size0": 13,
+              "size1": 14,
+              "size2": 15,
+              "size3": 16
+            }
+          },
+          {
+            "id": "solid",
+            "label": "solid",
+            "type": "PartDesign::Pad",
+            "parent": "Body",
+            "parameters": {
+              "Length": 8
+            },
+            "constraints": {}
+          },
+          {
+            "id": "hole",
+            "label": "hole",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "center_x": 30,
+              "center_y": 5,
+              "diameter": 4
+            },
+            "constraints": {
+              "center_x": 1,
+              "center_y": 2,
+              "diameter": 0
+            }
+          }
+        ],
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 93,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "candidate_snapshot",
+      "data": {
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "tree": [
+          {
+            "id": "Body",
+            "label": "Body",
+            "type": "PartDesign::Body",
+            "parent": null,
+            "parameters": {},
+            "constraints": {}
+          },
+          {
+            "id": "outline",
+            "label": "outline",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "size0": 60,
+              "size1": 10,
+              "size2": 50,
+              "size3": 40
+            },
+            "constraints": {
+              "axis0": 6,
+              "axis1": 7,
+              "axis2": 8,
+              "axis3": 9,
+              "axis4": 10,
+              "axis5": 11,
+              "corner0": 0,
+              "corner1": 1,
+              "corner2": 2,
+              "corner3": 3,
+              "corner4": 4,
+              "corner5": 5,
+              "origin": 12,
+              "size0": 13,
+              "size1": 14,
+              "size2": 15,
+              "size3": 16
+            }
+          },
+          {
+            "id": "solid",
+            "label": "solid",
+            "type": "PartDesign::Pad",
+            "parent": "Body",
+            "parameters": {
+              "Length": 8
+            },
+            "constraints": {}
+          },
+          {
+            "id": "hole",
+            "label": "hole",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "center_x": 30,
+              "center_y": 5,
+              "diameter": 4
+            },
+            "constraints": {
+              "center_x": 1,
+              "center_y": 2,
+              "diameter": 0
+            }
+          }
+        ],
+        "sketch": {
+          "featureId": "hole",
+          "placement": {
+            "base": [
+              0,
+              0,
+              8
+            ],
+            "rotation": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          "geometry": [
+            {
+              "index": 0,
+              "kind": "circle",
+              "center": [
+                30,
+                5
+              ],
+              "radius": 2
+            }
+          ],
+          "constraints": [
+            {
+              "name": "diameter",
+              "kind": "Diameter",
+              "firstGeometry": 0,
+              "firstPos": 0,
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 4
+            },
+            {
+              "name": "center_x",
+              "kind": "DistanceX",
+              "firstGeometry": 0,
+              "firstPos": 3,
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 30
+            },
+            {
+              "name": "center_y",
+              "kind": "DistanceY",
+              "firstGeometry": 0,
+              "firstPos": 3,
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 5
+            }
+          ],
+          "fullyConstrained": true,
+          "tree": [
+            {
+              "id": "Body",
+              "label": "Body",
+              "type": "PartDesign::Body",
+              "parent": null,
+              "parameters": {},
+              "constraints": {}
+            },
+            {
+              "id": "outline",
+              "label": "outline",
+              "type": "Sketcher::SketchObject",
+              "parent": "Body",
+              "parameters": {
+                "size0": 60,
+                "size1": 10,
+                "size2": 50,
+                "size3": 40
+              },
+              "constraints": {
+                "axis0": 6,
+                "axis1": 7,
+                "axis2": 8,
+                "axis3": 9,
+                "axis4": 10,
+                "axis5": 11,
+                "corner0": 0,
+                "corner1": 1,
+                "corner2": 2,
+                "corner3": 3,
+                "corner4": 4,
+                "corner5": 5,
+                "origin": 12,
+                "size0": 13,
+                "size1": 14,
+                "size2": 15,
+                "size3": 16
+              }
+            },
+            {
+              "id": "solid",
+              "label": "solid",
+              "type": "PartDesign::Pad",
+              "parent": "Body",
+              "parameters": {
+                "Length": 8
+              },
+              "constraints": {}
+            },
+            {
+              "id": "hole",
+              "label": "hole",
+              "type": "Sketcher::SketchObject",
+              "parent": "Body",
+              "parameters": {
+                "center_x": 30,
+                "center_y": 5,
+                "diameter": 4
+              },
+              "constraints": {
+                "center_x": 1,
+                "center_y": 2,
+                "diameter": 0
+              }
+            }
+          ]
+        },
+        "operationPlanHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0",
+        "completedStages": 1,
+        "operationHistoryHash": "96b4bbb4c8fe9b300308b225c9cab4943091eac07d806b2f8052cda3c14fa828",
+        "operationModel": {
+          "tree": [
+            {
+              "id": "Body",
+              "label": "Body",
+              "type": "PartDesign::Body",
+              "parent": null,
+              "parameters": {},
+              "constraints": {}
+            },
+            {
+              "id": "outline",
+              "label": "outline",
+              "type": "Sketcher::SketchObject",
+              "parent": "Body",
+              "parameters": {
+                "size0": 60,
+                "size1": 10,
+                "size2": 50,
+                "size3": 40
+              },
+              "constraints": {
+                "axis0": 6,
+                "axis1": 7,
+                "axis2": 8,
+                "axis3": 9,
+                "axis4": 10,
+                "axis5": 11,
+                "corner0": 0,
+                "corner1": 1,
+                "corner2": 2,
+                "corner3": 3,
+                "corner4": 4,
+                "corner5": 5,
+                "origin": 12,
+                "size0": 13,
+                "size1": 14,
+                "size2": 15,
+                "size3": 16
+              }
+            },
+            {
+              "id": "solid",
+              "label": "solid",
+              "type": "PartDesign::Pad",
+              "parent": "Body",
+              "parameters": {
+                "Length": 8
+              },
+              "constraints": {}
+            },
+            {
+              "id": "hole",
+              "label": "hole",
+              "type": "Sketcher::SketchObject",
+              "parent": "Body",
+              "parameters": {
+                "center_x": 30,
+                "center_y": 5,
+                "diameter": 4
+              },
+              "constraints": {
+                "center_x": 1,
+                "center_y": 2,
+                "diameter": 0
+              }
+            }
+          ],
+          "sketches": [
+            {
+              "featureId": "outline",
+              "placement": {
+                "base": [
+                  0,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0,
+                  1
+                ]
+              },
+              "geometry": [
+                {
+                  "index": 0,
+                  "kind": "line",
+                  "start": [
+                    0,
+                    0
+                  ],
+                  "end": [
+                    60,
+                    0
+                  ]
+                },
+                {
+                  "index": 1,
+                  "kind": "line",
+                  "start": [
+                    60,
+                    0
+                  ],
+                  "end": [
+                    60,
+                    10
+                  ]
+                },
+                {
+                  "index": 2,
+                  "kind": "line",
+                  "start": [
+                    60,
+                    10
+                  ],
+                  "end": [
+                    10,
+                    10
+                  ]
+                },
+                {
+                  "index": 3,
+                  "kind": "line",
+                  "start": [
+                    10,
+                    10
+                  ],
+                  "end": [
+                    10,
+                    50
+                  ]
+                },
+                {
+                  "index": 4,
+                  "kind": "line",
+                  "start": [
+                    10,
+                    50
+                  ],
+                  "end": [
+                    0,
+                    50
+                  ]
+                },
+                {
+                  "index": 5,
+                  "kind": "line",
+                  "start": [
+                    0,
+                    50
+                  ],
+                  "end": [
+                    0,
+                    0
+                  ]
+                }
+              ],
+              "constraints": [
+                {
+                  "name": "corner0",
+                  "kind": "Coincident",
+                  "firstGeometry": 0,
+                  "firstPos": 2,
+                  "secondGeometry": 1,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "corner1",
+                  "kind": "Coincident",
+                  "firstGeometry": 1,
+                  "firstPos": 2,
+                  "secondGeometry": 2,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "corner2",
+                  "kind": "Coincident",
+                  "firstGeometry": 2,
+                  "firstPos": 2,
+                  "secondGeometry": 3,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "corner3",
+                  "kind": "Coincident",
+                  "firstGeometry": 3,
+                  "firstPos": 2,
+                  "secondGeometry": 4,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "corner4",
+                  "kind": "Coincident",
+                  "firstGeometry": 4,
+                  "firstPos": 2,
+                  "secondGeometry": 5,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "corner5",
+                  "kind": "Coincident",
+                  "firstGeometry": 5,
+                  "firstPos": 2,
+                  "secondGeometry": 0,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "axis0",
+                  "kind": "Horizontal",
+                  "firstGeometry": 0,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": null
+                },
+                {
+                  "name": "axis1",
+                  "kind": "Vertical",
+                  "firstGeometry": 1,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": null
+                },
+                {
+                  "name": "axis2",
+                  "kind": "Horizontal",
+                  "firstGeometry": 2,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": null
+                },
+                {
+                  "name": "axis3",
+                  "kind": "Vertical",
+                  "firstGeometry": 3,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": null
+                },
+                {
+                  "name": "axis4",
+                  "kind": "Horizontal",
+                  "firstGeometry": 4,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": null
+                },
+                {
+                  "name": "axis5",
+                  "kind": "Vertical",
+                  "firstGeometry": 5,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": null
+                },
+                {
+                  "name": "origin",
+                  "kind": "Coincident",
+                  "firstGeometry": 0,
+                  "firstPos": 1,
+                  "secondGeometry": -1,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "size0",
+                  "kind": "Distance",
+                  "firstGeometry": 0,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 60
+                },
+                {
+                  "name": "size1",
+                  "kind": "Distance",
+                  "firstGeometry": 1,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 10
+                },
+                {
+                  "name": "size2",
+                  "kind": "Distance",
+                  "firstGeometry": 2,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 50
+                },
+                {
+                  "name": "size3",
+                  "kind": "Distance",
+                  "firstGeometry": 3,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 40
+                }
+              ],
+              "fullyConstrained": true
+            },
+            {
+              "featureId": "hole",
+              "placement": {
+                "base": [
+                  0,
+                  0,
+                  8
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0,
+                  1
+                ]
+              },
+              "geometry": [
+                {
+                  "index": 0,
+                  "kind": "circle",
+                  "center": [
+                    30,
+                    5
+                  ],
+                  "radius": 2
+                }
+              ],
+              "constraints": [
+                {
+                  "name": "diameter",
+                  "kind": "Diameter",
+                  "firstGeometry": 0,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 4
+                },
+                {
+                  "name": "center_x",
+                  "kind": "DistanceX",
+                  "firstGeometry": 0,
+                  "firstPos": 3,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 30
+                },
+                {
+                  "name": "center_y",
+                  "kind": "DistanceY",
+                  "firstGeometry": 0,
+                  "firstPos": 3,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 5
+                }
+              ],
+              "fullyConstrained": true
+            }
+          ],
+          "features": [
+            {
+              "id": "solid",
+              "profile": "outline",
+              "length": 8,
+              "reversed": false,
+              "midplane": false
+            }
+          ],
+          "tip": "solid"
+        },
+        "geometry": {
+          "solids": 1,
+          "volume": 8000,
+          "bbox": [
+            60,
+            50,
+            8
+          ]
+        },
+        "preview": {
+          "file": "candidate-1.glb",
+          "bytes": 4268,
+          "sha256": "50f9d2affbf67befe6055352999d35affd9ca11a65eea8c8401a0e32fec7d42a",
+          "url": "/api/documents/operations-bracket-1793454146047/jobs/step-1/candidate/preview?sequence=1"
+        },
+        "baseRevision": 1,
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0",
+        "sequence": 1
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 94,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_operation_start",
+      "data": {
+        "stepId": "stage-1",
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0",
+        "stage": "Pocket 贯穿孔",
+        "operations": [
+          {
+            "op": "pocket",
+            "id": "cut",
+            "sketch": "hole",
+            "length": 8
+          }
+        ]
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 95,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 5,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "operation",
+        "status": "start",
+        "sequence": 12,
+        "index": 0,
+        "operation": {
+          "op": "pocket",
+          "id": "cut",
+          "sketch": "hole",
+          "length": 8
+        },
+        "stepId": "stage-1",
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 96,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 5,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "operation",
+        "status": "returned",
+        "sequence": 13,
+        "index": 0,
+        "operation": {
+          "op": "pocket",
+          "id": "cut",
+          "sketch": "hole",
+          "length": 8
+        },
+        "stepId": "stage-1",
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 97,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 5,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "operation",
+        "status": "batch_complete",
+        "sequence": 14,
+        "index": 1,
+        "operation": null,
+        "stepId": "stage-1",
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 98,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_operation_complete",
+      "data": {
+        "stepId": "stage-1",
+        "stage": "Pocket 贯穿孔",
+        "result": [
+          {
+            "id": "Body",
+            "label": "Body",
+            "type": "PartDesign::Body",
+            "parent": null,
+            "parameters": {},
+            "constraints": {}
+          },
+          {
+            "id": "outline",
+            "label": "outline",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "size0": 60,
+              "size1": 10,
+              "size2": 50,
+              "size3": 40
+            },
+            "constraints": {
+              "axis0": 6,
+              "axis1": 7,
+              "axis2": 8,
+              "axis3": 9,
+              "axis4": 10,
+              "axis5": 11,
+              "corner0": 0,
+              "corner1": 1,
+              "corner2": 2,
+              "corner3": 3,
+              "corner4": 4,
+              "corner5": 5,
+              "origin": 12,
+              "size0": 13,
+              "size1": 14,
+              "size2": 15,
+              "size3": 16
+            }
+          },
+          {
+            "id": "solid",
+            "label": "solid",
+            "type": "PartDesign::Pad",
+            "parent": "Body",
+            "parameters": {
+              "Length": 8
+            },
+            "constraints": {}
+          },
+          {
+            "id": "hole",
+            "label": "hole",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "center_x": 30,
+              "center_y": 5,
+              "diameter": 4
+            },
+            "constraints": {
+              "center_x": 1,
+              "center_y": 2,
+              "diameter": 0
+            }
+          },
+          {
+            "id": "cut",
+            "label": "cut",
+            "type": "PartDesign::Pocket",
+            "parent": "Body",
+            "parameters": {
+              "Length": 8
+            },
+            "constraints": {}
+          }
+        ],
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 99,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "candidate_snapshot",
+      "data": {
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "tree": [
+          {
+            "id": "Body",
+            "label": "Body",
+            "type": "PartDesign::Body",
+            "parent": null,
+            "parameters": {},
+            "constraints": {}
+          },
+          {
+            "id": "outline",
+            "label": "outline",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "size0": 60,
+              "size1": 10,
+              "size2": 50,
+              "size3": 40
+            },
+            "constraints": {
+              "axis0": 6,
+              "axis1": 7,
+              "axis2": 8,
+              "axis3": 9,
+              "axis4": 10,
+              "axis5": 11,
+              "corner0": 0,
+              "corner1": 1,
+              "corner2": 2,
+              "corner3": 3,
+              "corner4": 4,
+              "corner5": 5,
+              "origin": 12,
+              "size0": 13,
+              "size1": 14,
+              "size2": 15,
+              "size3": 16
+            }
+          },
+          {
+            "id": "solid",
+            "label": "solid",
+            "type": "PartDesign::Pad",
+            "parent": "Body",
+            "parameters": {
+              "Length": 8
+            },
+            "constraints": {}
+          },
+          {
+            "id": "hole",
+            "label": "hole",
+            "type": "Sketcher::SketchObject",
+            "parent": "Body",
+            "parameters": {
+              "center_x": 30,
+              "center_y": 5,
+              "diameter": 4
+            },
+            "constraints": {
+              "center_x": 1,
+              "center_y": 2,
+              "diameter": 0
+            }
+          },
+          {
+            "id": "cut",
+            "label": "cut",
+            "type": "PartDesign::Pocket",
+            "parent": "Body",
+            "parameters": {
+              "Length": 8
+            },
+            "constraints": {}
+          }
+        ],
+        "sketch": {
+          "featureId": "hole",
+          "placement": {
+            "base": [
+              0,
+              0,
+              8
+            ],
+            "rotation": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          "geometry": [
+            {
+              "index": 0,
+              "kind": "circle",
+              "center": [
+                30,
+                5
+              ],
+              "radius": 2
+            }
+          ],
+          "constraints": [
+            {
+              "name": "diameter",
+              "kind": "Diameter",
+              "firstGeometry": 0,
+              "firstPos": 0,
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 4
+            },
+            {
+              "name": "center_x",
+              "kind": "DistanceX",
+              "firstGeometry": 0,
+              "firstPos": 3,
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 30
+            },
+            {
+              "name": "center_y",
+              "kind": "DistanceY",
+              "firstGeometry": 0,
+              "firstPos": 3,
+              "secondGeometry": -2000,
+              "secondPos": 0,
+              "value": 5
+            }
+          ],
+          "fullyConstrained": true,
+          "tree": [
+            {
+              "id": "Body",
+              "label": "Body",
+              "type": "PartDesign::Body",
+              "parent": null,
+              "parameters": {},
+              "constraints": {}
+            },
+            {
+              "id": "outline",
+              "label": "outline",
+              "type": "Sketcher::SketchObject",
+              "parent": "Body",
+              "parameters": {
+                "size0": 60,
+                "size1": 10,
+                "size2": 50,
+                "size3": 40
+              },
+              "constraints": {
+                "axis0": 6,
+                "axis1": 7,
+                "axis2": 8,
+                "axis3": 9,
+                "axis4": 10,
+                "axis5": 11,
+                "corner0": 0,
+                "corner1": 1,
+                "corner2": 2,
+                "corner3": 3,
+                "corner4": 4,
+                "corner5": 5,
+                "origin": 12,
+                "size0": 13,
+                "size1": 14,
+                "size2": 15,
+                "size3": 16
+              }
+            },
+            {
+              "id": "solid",
+              "label": "solid",
+              "type": "PartDesign::Pad",
+              "parent": "Body",
+              "parameters": {
+                "Length": 8
+              },
+              "constraints": {}
+            },
+            {
+              "id": "hole",
+              "label": "hole",
+              "type": "Sketcher::SketchObject",
+              "parent": "Body",
+              "parameters": {
+                "center_x": 30,
+                "center_y": 5,
+                "diameter": 4
+              },
+              "constraints": {
+                "center_x": 1,
+                "center_y": 2,
+                "diameter": 0
+              }
+            },
+            {
+              "id": "cut",
+              "label": "cut",
+              "type": "PartDesign::Pocket",
+              "parent": "Body",
+              "parameters": {
+                "Length": 8
+              },
+              "constraints": {}
+            }
+          ]
+        },
+        "operationPlanHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0",
+        "completedStages": 2,
+        "operationHistoryHash": "47587fd05bdce4afbfd6544e882c6d7f91ae674910e09c3c9f389575830acce8",
+        "operationModel": {
+          "tree": [
+            {
+              "id": "Body",
+              "label": "Body",
+              "type": "PartDesign::Body",
+              "parent": null,
+              "parameters": {},
+              "constraints": {}
+            },
+            {
+              "id": "outline",
+              "label": "outline",
+              "type": "Sketcher::SketchObject",
+              "parent": "Body",
+              "parameters": {
+                "size0": 60,
+                "size1": 10,
+                "size2": 50,
+                "size3": 40
+              },
+              "constraints": {
+                "axis0": 6,
+                "axis1": 7,
+                "axis2": 8,
+                "axis3": 9,
+                "axis4": 10,
+                "axis5": 11,
+                "corner0": 0,
+                "corner1": 1,
+                "corner2": 2,
+                "corner3": 3,
+                "corner4": 4,
+                "corner5": 5,
+                "origin": 12,
+                "size0": 13,
+                "size1": 14,
+                "size2": 15,
+                "size3": 16
+              }
+            },
+            {
+              "id": "solid",
+              "label": "solid",
+              "type": "PartDesign::Pad",
+              "parent": "Body",
+              "parameters": {
+                "Length": 8
+              },
+              "constraints": {}
+            },
+            {
+              "id": "hole",
+              "label": "hole",
+              "type": "Sketcher::SketchObject",
+              "parent": "Body",
+              "parameters": {
+                "center_x": 30,
+                "center_y": 5,
+                "diameter": 4
+              },
+              "constraints": {
+                "center_x": 1,
+                "center_y": 2,
+                "diameter": 0
+              }
+            },
+            {
+              "id": "cut",
+              "label": "cut",
+              "type": "PartDesign::Pocket",
+              "parent": "Body",
+              "parameters": {
+                "Length": 8
+              },
+              "constraints": {}
+            }
+          ],
+          "sketches": [
+            {
+              "featureId": "outline",
+              "placement": {
+                "base": [
+                  0,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0,
+                  1
+                ]
+              },
+              "geometry": [
+                {
+                  "index": 0,
+                  "kind": "line",
+                  "start": [
+                    0,
+                    0
+                  ],
+                  "end": [
+                    60,
+                    0
+                  ]
+                },
+                {
+                  "index": 1,
+                  "kind": "line",
+                  "start": [
+                    60,
+                    0
+                  ],
+                  "end": [
+                    60,
+                    10
+                  ]
+                },
+                {
+                  "index": 2,
+                  "kind": "line",
+                  "start": [
+                    60,
+                    10
+                  ],
+                  "end": [
+                    10,
+                    10
+                  ]
+                },
+                {
+                  "index": 3,
+                  "kind": "line",
+                  "start": [
+                    10,
+                    10
+                  ],
+                  "end": [
+                    10,
+                    50
+                  ]
+                },
+                {
+                  "index": 4,
+                  "kind": "line",
+                  "start": [
+                    10,
+                    50
+                  ],
+                  "end": [
+                    0,
+                    50
+                  ]
+                },
+                {
+                  "index": 5,
+                  "kind": "line",
+                  "start": [
+                    0,
+                    50
+                  ],
+                  "end": [
+                    0,
+                    0
+                  ]
+                }
+              ],
+              "constraints": [
+                {
+                  "name": "corner0",
+                  "kind": "Coincident",
+                  "firstGeometry": 0,
+                  "firstPos": 2,
+                  "secondGeometry": 1,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "corner1",
+                  "kind": "Coincident",
+                  "firstGeometry": 1,
+                  "firstPos": 2,
+                  "secondGeometry": 2,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "corner2",
+                  "kind": "Coincident",
+                  "firstGeometry": 2,
+                  "firstPos": 2,
+                  "secondGeometry": 3,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "corner3",
+                  "kind": "Coincident",
+                  "firstGeometry": 3,
+                  "firstPos": 2,
+                  "secondGeometry": 4,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "corner4",
+                  "kind": "Coincident",
+                  "firstGeometry": 4,
+                  "firstPos": 2,
+                  "secondGeometry": 5,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "corner5",
+                  "kind": "Coincident",
+                  "firstGeometry": 5,
+                  "firstPos": 2,
+                  "secondGeometry": 0,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "axis0",
+                  "kind": "Horizontal",
+                  "firstGeometry": 0,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": null
+                },
+                {
+                  "name": "axis1",
+                  "kind": "Vertical",
+                  "firstGeometry": 1,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": null
+                },
+                {
+                  "name": "axis2",
+                  "kind": "Horizontal",
+                  "firstGeometry": 2,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": null
+                },
+                {
+                  "name": "axis3",
+                  "kind": "Vertical",
+                  "firstGeometry": 3,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": null
+                },
+                {
+                  "name": "axis4",
+                  "kind": "Horizontal",
+                  "firstGeometry": 4,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": null
+                },
+                {
+                  "name": "axis5",
+                  "kind": "Vertical",
+                  "firstGeometry": 5,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": null
+                },
+                {
+                  "name": "origin",
+                  "kind": "Coincident",
+                  "firstGeometry": 0,
+                  "firstPos": 1,
+                  "secondGeometry": -1,
+                  "secondPos": 1,
+                  "value": null
+                },
+                {
+                  "name": "size0",
+                  "kind": "Distance",
+                  "firstGeometry": 0,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 60
+                },
+                {
+                  "name": "size1",
+                  "kind": "Distance",
+                  "firstGeometry": 1,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 10
+                },
+                {
+                  "name": "size2",
+                  "kind": "Distance",
+                  "firstGeometry": 2,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 50
+                },
+                {
+                  "name": "size3",
+                  "kind": "Distance",
+                  "firstGeometry": 3,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 40
+                }
+              ],
+              "fullyConstrained": true
+            },
+            {
+              "featureId": "hole",
+              "placement": {
+                "base": [
+                  0,
+                  0,
+                  8
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0,
+                  1
+                ]
+              },
+              "geometry": [
+                {
+                  "index": 0,
+                  "kind": "circle",
+                  "center": [
+                    30,
+                    5
+                  ],
+                  "radius": 2
+                }
+              ],
+              "constraints": [
+                {
+                  "name": "diameter",
+                  "kind": "Diameter",
+                  "firstGeometry": 0,
+                  "firstPos": 0,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 4
+                },
+                {
+                  "name": "center_x",
+                  "kind": "DistanceX",
+                  "firstGeometry": 0,
+                  "firstPos": 3,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 30
+                },
+                {
+                  "name": "center_y",
+                  "kind": "DistanceY",
+                  "firstGeometry": 0,
+                  "firstPos": 3,
+                  "secondGeometry": -2000,
+                  "secondPos": 0,
+                  "value": 5
+                }
+              ],
+              "fullyConstrained": true
+            }
+          ],
+          "features": [
+            {
+              "id": "solid",
+              "profile": "outline",
+              "length": 8,
+              "reversed": false,
+              "midplane": false
+            },
+            {
+              "id": "cut",
+              "profile": "hole",
+              "length": 8,
+              "reversed": false,
+              "midplane": false
+            }
+          ],
+          "tip": "cut"
+        },
+        "geometry": {
+          "solids": 1,
+          "volume": 7899.469035085125,
+          "bbox": [
+            60,
+            50,
+            8
+          ]
+        },
+        "preview": {
+          "file": "candidate-2.glb",
+          "bytes": 19888,
+          "sha256": "785e6a1c2d7116e877084274f55913896da794a945bb3ef19303c3e8efe7b42c",
+          "url": "/api/documents/operations-bracket-1793454146047/jobs/step-1/candidate/preview?sequence=2"
+        },
+        "baseRevision": 1,
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0",
+        "sequence": 2
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 101,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "geometry",
+        "status": "start",
+        "sequence": 15,
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 102,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "geometry",
+        "status": "complete",
+        "sequence": 16,
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 103,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "save",
+        "status": "start",
+        "sequence": 17,
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 104,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "save",
+        "status": "complete",
+        "sequence": 18,
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 105,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "reopen",
+        "status": "start",
+        "sequence": 19,
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 106,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "reopen",
+        "status": "complete",
+        "sequence": 20,
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 107,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "export_step",
+        "status": "start",
+        "sequence": 21,
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 108,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "export_step",
+        "status": "complete",
+        "sequence": 22,
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 109,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "export_glb",
+        "status": "start",
+        "sequence": 23,
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    },
+    {
+      "seq": 110,
+      "documentId": "operations-bracket-1793454146047",
+      "type": "cad_progress",
+      "data": {
+        "requestId": 7,
+        "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+        "stage": "export_glb",
+        "status": "complete",
+        "sequence": 24,
+        "planHash": "92d428ec98998309f170030a6d39ec5cf25f128b65b1f0abe8320fdc852eebb0"
+      },
+      "jobId": "step-1",
+      "revision": 1,
+      "candidateId": "cafb64c8-0da6-4808-95f8-f6280d059bfe",
+      "conversationId": "9d2aad6a-1396-4281-bfeb-8d5dcd4f6dc2"
+    }
+  ]
+}

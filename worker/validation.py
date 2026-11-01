@@ -48,6 +48,9 @@ def validate_constraints(doc,sketch_id,expected):
         remaining.pop(matches[0])
 
 def validate_design(doc,design):
+    if design['kind']=='operations':
+        from worker.operation_plan import verify_plan
+        return verify_plan(doc,design,len(design['stages']))
     if design['kind']=='program':return {}
     rows=inspect_document(doc)
     expected={'Body':'PartDesign::Body','base':'Sketcher::SketchObject','pad':'PartDesign::Pad'}

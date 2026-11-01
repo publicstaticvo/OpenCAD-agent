@@ -1,0 +1,56 @@
+{
+  "version": 2,
+  "kind": "operations",
+  "documentId": "live-general-triangle-1793454202187",
+  "operationId": "306303c8-4a2f-4068-8931-f42631a0a54b",
+  "requestHash": "e14629308652b704890972dfcb96708ba6215bf89c4519d2c89531063a4a24df",
+  "baseRevision": 1,
+  "baseHistoryHash": "0c266e6df6c777b43459574d11dc16f2782204a27a9b339f465bd796ae1f7635",
+  "goal": "将现有直角三角棱柱的 Pad 长度从 10 mm 修改为 12 mm；使用稳定特征 ID TrianglePad，仅编辑其 Length 参数，保持 TriangleSketch 的顶点、40 mm 底边、30 mm 高度及全部现有约束不变。",
+  "stages": [
+    {
+      "name": "修改现有 Pad 长度",
+      "sketchId": "TriangleSketch",
+      "operations": [
+        {
+          "op": "set_parameter",
+          "feature": "TrianglePad",
+          "parameter": "Length",
+          "value": 12
+        }
+      ]
+    }
+  ],
+  "dimensions": {
+    "length": 40,
+    "width": 30,
+    "height": 12,
+    "unit": "mm"
+  },
+  "criteria": {
+    "bbox": [
+      40,
+      30,
+      12
+    ],
+    "volume": 7200,
+    "parameters": [
+      {
+        "feature": "TriangleSketch",
+        "parameter": "base_length",
+        "value": 40
+      },
+      {
+        "feature": "TriangleSketch",
+        "parameter": "height_length",
+        "value": 30
+      },
+      {
+        "feature": "TrianglePad",
+        "parameter": "Length",
+        "value": 12
+      }
+    ]
+  },
+  "planHash": "6bfb05031fd366ef8ea77071ae3cb77f02d4992a047e6c2db3103750e24c7a2e"
+}

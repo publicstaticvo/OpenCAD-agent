@@ -1,10 +1,10 @@
 # OpenCAD Agent
 
-本地单用户 Text-to-CAD 工作区：React/Three.js → HTTP/WS Gateway/Pi → 独立原生 FreeCAD Worker。正式模型必须经过候选隔离、独立文件/几何验收和 SQLite Revision CAS 提交。单零件功能支持单 Body/单实体、平面 line/circle 草图、命名约束、Pad/Pocket 与白名单参数修改。受限双零件能力支持带中心贯穿孔的矩形底板、圆柱销、FreeCAD 原生固定关节、BOM、实际干涉检查及装配导出，也支持在现有装配中修改销直径。`advanced-model.yaml` 已通过 60×40×8 mm 底板、Ø8 mm 孔、Ø7×20 mm 销的在线装配验收，以及将销修改至 Ø10 mm 后检测碰撞并保护正式版本的验收。其余范围不包含通用多零件设计、STEP 编辑、图像、工程图或 Python 执行入口。
+本地单用户 Text-to-CAD 工作区：React/Three.js → HTTP/WS Gateway/Pi → FreeCAD Worker → Linux 隔离进程。在线 Agent 通过 `cad_python` 提交完整 FreeCAD Python 源码或精确补丁，每次提交自动执行、独立重开、检查几何并生成 STEP、GLB 和真实几何图像。正式模型经过文件校验和 SQLite 修订提交后生效。源码、执行身份和交付文件保存在同一修订中。执行方式、隔离要求及验证边界见 [Python 建模流程](docs/python-modeling.md)。本次迁移的真实 FreeCAD 与浏览器测试使用直接脚本提交，未调用真实模型服务。
 
 ## 本机启动
 
-要求 Linux（UDS、进程组、/proc、util-linux 的 `/usr/bin/flock`）、锁定 Node24.22.1、实际 FreeCAD1.1.3/Python3.11.14/OCCT7.8.1 运行时和 Chrome/Chromium。`npm ci` 使用根锁文件安装应用依赖；不安装 Pi 上游工作区依赖。Pi 源码通过本地 source alias 复用，必须另行准备与 `docs/pi-source-sha256.json` 一致的 `pi/`。应用维护的 `openai-client.ts`、`openai-completions.ts` 和 `openai-responses.ts` 三个文件包含关闭 SDK 默认超时的适配，由应用 Git 管理；准备其余 Pi 源码时保留这些文件，再运行指纹检查。其余 Pi 源码未复制进应用 Git 历史。当前来源/调查及缺失时的处理见[准备审查](docs/implementation-readiness.md)。不要将个人 Pi 安装目录/登录信息作为应用运行依赖。
+要求 Linux（UDS、进程组、/proc、util-linux 的 `/usr/bin/flock`）、Bubblewrap、libseccomp、允许的用户命名空间、锁定 Node24.22.1、实际 FreeCAD1.1.3/Python3.11.14/OCCT7.8.1 运行时及其 Pillow，以及 Chrome/Chromium。`npm ci` 使用根锁文件安装应用依赖；不安装 Pi 上游工作区依赖。Pi 源码通过本地 source alias 复用，必须另行准备与 `docs/pi-source-sha256.json` 一致的 `pi/`。应用维护的 `openai-client.ts`、`openai-completions.ts` 和 `openai-responses.ts` 三个文件包含关闭 SDK 默认超时的适配，由应用 Git 管理；准备其余 Pi 源码时保留这些文件，再运行指纹检查。其余 Pi 源码未复制进应用 Git 历史。当前来源/调查及缺失时的处理见[准备审查](docs/implementation-readiness.md)。不要将个人 Pi 安装目录/登录信息作为应用运行依赖。
 
 ```bash
 npm ci
@@ -27,13 +27,30 @@ npm run dev
 ### 获批后的真实建模
 
 1. 创建空白项目，输入 `创建一个长40 mm、宽30 mm、高10 mm的长方体。只需要一个实体，不添加其他特征。`。
-2. 检查计划卡的尺寸、草图/Pad 步骤与验收体积，点击“批准并开始建模”。待批准阶段不创建候选、不启动可写 Worker；拒绝计划不改变模型。
-3. 查看实际 FreeCAD 草图和约束、操作记录及候选实体。候选明确标记为未提交，正式特征树与下载继续对应原修订。验证、保存、独立重开和导出通过后显示正式版本 1。
+2. 检查任务卡的用户需求及基础正式版本，点击“批准并开始建模”。批准允许 Agent 在本任务中提交和修正 Python；具体源码及执行结果保存为版本记录。待批准阶段不创建候选、不启动可写 Worker；拒绝任务不改变模型。
+3. 查看实际 Python 执行记录、FreeCAD 特征与候选实体。每次提交自动生成观察结果。候选明确标记为未提交，正式特征树与下载继续对应原修订。验证、保存、独立重开和导出通过后显示正式版本 1。
 4. 输入 `在当前长方体上增加一个直径6 mm的中心贯穿孔，保留其他尺寸。`，检查并批准新计划；真实圆草图和 Pocket 通过验证后成为正式版本 2。
 5. 输入 `把已有中心贯穿孔的孔径从6 mm修改为8 mm，保留其他尺寸和特征。`，检查计划中的 6→8 修改并批准；通过验证后成为正式版本 3。
 6. 使用“查看修订”选择历史版本，检查对应参数并下载该修订的 FCStd、STEP 或 GLB。历史版本只读；选择“当前正式版本”后可提交后续请求。活动记录中的“查看实际草图检查点”保留本任务真实草图与约束。
 
-长方体尺寸从模型计划取得；当前自然语言审批支持长方体、该长方体的单个中心贯穿孔及孔径修改。每个修改任务都需要新批准，服务端检查对象、尺寸、约束和阶段；没有自动 CAD 写入修复。失败或取消保留对话和原正式模型。已有属性修改入口同样生成待批准任务，不直接改写正式文件。
+尺寸、体积和命名参数由任务验收条件进行实际检查；这些条件由 Agent 根据用户需求提出。通用健康检查验证几何及文件完整性，对复杂设计的全部语义要求仍需要额外验收。每个修改任务需要新批准。失败或取消保留对话和原正式模型。已有属性修改入口同样生成待批准任务。已有 Python 修订提供完整源码和父版本哈希；补丁必须精确匹配父版本。
+
+### Python 在线建模与离线操作测试
+
+在线模式使用网页模型配置，或启动时显式指定本地 YAML：
+
+```bash
+mkdir -p .work/tmp
+export TMPDIR="$PWD/.work/tmp"
+npm run build
+CAD_PROVIDER=live CAD_MODEL_CONFIG=advanced-model.yaml npm run dev
+```
+
+在空白项目输入：`创建一个直角三角棱柱，XY 顶点为 (0,0)、(40,0)、(0,30) mm，沿 +Z 拉伸10 mm。使用真实参数化草图和 Pad。` 批准任务后，Agent 使用 Python 建模；独立重开与导出验证通过后切换正式版本。后续输入 `将当前三角棱柱 Pad 长度改为12 mm，保持其他尺寸。` 并批准修改任务。本轮没有重新执行这些自然语言在线样例。
+
+另一项任务可在新项目输入：`创建 L 形平板支架，XY 轮廓依次为 (0,0)、(60,0)、(60,10)、(10,10)、(10,50)、(0,50) mm，闭合后沿 +Z 拉伸8 mm。各边水平或垂直，草图完全约束，先提交操作计划。` 后续可要求在 (30,5) mm 增加 Ø4 mm 贯穿孔。每个任务分别审批。
+
+旧结构化计划测试及其历史证据见[通用操作计划验收](docs/general-operations-slice.md)。这些入口继续服务离线样例和已有测试；在线 Agent 只获得 Python 建模、状态查询和最终验收工具。旧在线测试文件属于迁移前接口的验收记录，不能用于证明当前 Python Agent 链路通过在线验收。
 
 离线启动使用 `CAD_PROVIDER=fake npm run dev`，支持明确尺寸的孔板、垫套、台阶块和指定命名参数修改；它使用固定规则选择 CAD 操作，仍需批准并执行真实 FreeCAD。`CAD_PROVIDER=none npm run dev` 禁用模型建模。离线结果不能证明真实模型能力。
 

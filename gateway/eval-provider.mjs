@@ -8,13 +8,13 @@ export function evaluationProvider(authorization,apiKey,budget,{transport=modelF
  if(!['openai-completions','openai-responses'].includes(protocol))throw new Error('Unsupported model protocol');
  const endpoint=p.baseUrl.replace(/\/$/,'')+(protocol==='openai-responses'?'/responses':'/chat/completions');
  // Pi requires numeric cost fields; these zero placeholders are never reported as a price.
- const model={id:p.model,name:p.model,provider:'cad-configured',api:protocol,baseUrl:p.baseUrl,reasoning:false,input:['text'],contextWindow:p.contextWindow,maxTokens:p.maxTokens,cost:{input:0,output:0,...p.ratesUsdPerMillion,cacheRead:0,cacheWrite:0},compat:{supportsDeveloperRole:false,supportsReasoningEffort:false,supportsStore:false,maxTokensField:'max_tokens'}};
+ const model={id:p.model,name:p.model,provider:'cad-configured',api:protocol,baseUrl:p.baseUrl,reasoning:false,input:p.imageInput?['text','image']:['text'],contextWindow:p.contextWindow,maxTokens:p.maxTokens,cost:{input:0,output:0,...p.ratesUsdPerMillion,cacheRead:0,cacheWrite:0},compat:{supportsDeveloperRole:false,supportsReasoningEffort:false,supportsStore:false,maxTokensField:'max_tokens'}};
  const boundedFetch=async(input,init)=>{
   const request=new Request(input,init);
   if(request.url!==endpoint||request.method!=='POST')throw new Error('Unapproved provider endpoint');
   const body=await request.clone().json();
-  if(protocol==='openai-completions'&&(!Array.isArray(body.messages)||body.messages.some(m=>Array.isArray(m.content)&&m.content.some(c=>c.type!=='text'))))throw new Error('Evaluation allows text and structured summaries only');
-  if(protocol==='openai-responses'&&(!Array.isArray(body.input)||body.input.some(m=>Array.isArray(m.content)&&m.content.some(c=>!['input_text','output_text'].includes(c.type)))))throw new Error('Evaluation allows text and structured summaries only');
+  if(protocol==='openai-completions'&&(!Array.isArray(body.messages)||body.messages.some(m=>Array.isArray(m.content)&&m.content.some(c=>!['text',...(p.imageInput?['image_url']:[])].includes(c.type)))))throw new Error('Unsupported model input content');
+  if(protocol==='openai-responses'&&(!Array.isArray(body.input)||body.input.some(m=>Array.isArray(m.content)&&m.content.some(c=>!['input_text','output_text',...(p.imageInput?['input_image']:[])].includes(c.type)))))throw new Error('Unsupported model input content');
   const limit=body.max_output_tokens??body.max_tokens??body.max_completion_tokens;
   if(!Number.isSafeInteger(limit)||limit<1||limit>p.maxTokens)throw new Error('Missing bounded output tokens');
   if(budget)budget.sentRequests++;
