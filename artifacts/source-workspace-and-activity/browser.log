@@ -1,0 +1,237 @@
+
+> cad-agent-workspace@0.1.0 test:e2e
+> playwright test
+
+[WebServer] (node:169754) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] [plugin builtin:vite-reporter] 
+[WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[WebServer] (node:169912) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:169923) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 21 tests using 1 worker
+
+(node:170240) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:170399) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:170412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/e2e/approval-preview.spec.ts:6:1 › approved native candidate remains observable after commit and browser refresh (8.0s)
+  ✘   2 tests/e2e/assembly.spec.ts:5:1 › two real parametric components, approval, BOM, native interference and exports (11.2s)
+(node:170820) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   3 tests/e2e/assembly.spec.ts:26:1 › collision assembly reports actual overlap and preserves the formal revision (3.6s)
+  ✘   4 tests/e2e/operation-plans.spec.ts:8:1 › real general operation plans approve, cut, edit, download and restore nonrectangular parts (46.4s)
+(node:171814) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   5 tests/e2e/projects.spec.ts:6:1 › project switch discards an actual delayed GLB and restores independent model and conversations (7.0s)
+  ✓   6 tests/e2e/projects.spec.ts:28:1 › separate conversations can hold read-only pending plans and stale approval cannot modify the shared model (2.9s)
+  ✘   7 tests/e2e/python-workflow.spec.ts:6:1 › Python task approval, actual native preview, exact patch, downloads and failure protection (46.4s)
+(node:173682) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   8 tests/e2e/source-execution.spec.ts:7:1 › source saves stay idle; approved explicit version runs preview, deliver and preserve formal on errors (9.8s)
+  ✓   9 tests/e2e/source-execution.spec.ts:37:1 › Python workspace opens the project source and displays each saved parent diff (2.2s)
+  ✓  10 tests/e2e/source-execution.spec.ts:54:1 › saving conflicts preserve the editor and viewing historical diffs leaves the draft unchanged (1.6s)
+  ✓  11 tests/e2e/source-execution.spec.ts:65:1 › export menu has only formal model formats and cannot export revision zero (1.0s)
+  ✓  12 tests/e2e/source-execution.spec.ts:72:1 › a new project can import and save its initial Python source version (1.2s)
+  ✓  13 tests/e2e/source-execution.spec.ts:83:1 › CodeMirror supports undo redo search and layout changes preserve the work copy (2.0s)
+  ✘  14 tests/e2e/text-to-cad.spec.ts:5:1 › chat creates editable plate, property edit commits, failed candidate protects official model, downloads reopen (13.1s)
+(node:175470) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  15 tests/e2e/text-to-cad.spec.ts:20:1 › cancel uses persisted job state and stale/history views cannot edit (3.5s)
+  ✓  16 tests/e2e/text-to-cad.spec.ts:26:1 › a real stale submit returns 409 and refreshes without overwriting the newer revision (5.0s)
+  ✓  17 tests/e2e/viewer.spec.ts:2:1 › real browser renders GLB geometry, correct top-view hole and synchronized tree/parameters (3.7s)
+  ✓  18 tests/e2e/viewer.spec.ts:21:1 › late GLB cannot replace a newer complete revision; before/after uses complete versions (6.4s)
+  ✓  19 tests/e2e/viewer.spec.ts:31:1 › actual socket disconnect, duplicate/out-of-order events and reconnect recover authoritative snapshot (6.2s)
+  ✓  20 tests/e2e/viewer.spec.ts:39:1 › missing preview is an explicit failure and keeps the last complete version until retry (4.3s)
+  ✓  21 tests/e2e/workspace-layout.spec.ts:6:1 › workspace keeps chronological conversation, bottom composer and real model inspection (9.4s)
+
+
+  1) tests/e2e/assembly.spec.ts:5:1 › two real parametric components, approval, BOM, native interference and exports 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.job-list')
+    Expected substring: "已生成离线装配计划；未调用真实模型。"
+    Received string:    "用户请求装配：80×60×10 mm 底板，中心孔8 mm，圆柱销直径7 mm，长20 mm等待批准 · 基于正式版本 0取消任务双零件装配计划基于正式版本 0 · mmPlate / 底板 × 1：80 × 60 × 10 mm，中心贯穿孔 Ø8 mm。Pin / 圆柱销 × 1：Ø7 × 20 mm。底板接地；圆柱销固定于 [40, 30, 0]，不旋转。底板草图、约束、Pad、Pocket 和单体验证圆柱销草图、约束、Pad 和单体验证创建两个组件链接及原生固定关节真实几何交集检查，交叠时拒绝提交保存、独立重开和 STEP / GLB 验证后提交批准并开始建模拒绝计划"
+    Timeout: 10000ms
+
+    Call log:
+      - Expect "toContainText" locator('.job-list') with timeout 10000ms
+      - waiting for locator('.job-list')
+        24 × locator resolved to <div class="job-list" aria-label="对话历史">…</div>
+           - unexpected value "用户请求装配：80×60×10 mm 底板，中心孔8 mm，圆柱销直径7 mm，长20 mm等待批准 · 基于正式版本 0取消任务双零件装配计划基于正式版本 0 · mmPlate / 底板 × 1：80 × 60 × 10 mm，中心贯穿孔 Ø8 mm。Pin / 圆柱销 × 1：Ø7 × 20 mm。底板接地；圆柱销固定于 [40, 30, 0]，不旋转。底板草图、约束、Pad、Pocket 和单体验证圆柱销草图、约束、Pad 和单体验证创建两个组件链接及原生固定关节真实几何交集检查，交叠时拒绝提交保存、独立重开和 STEP / GLB 验证后提交批准并开始建模拒绝计划"
+
+
+       7 |  await page.getByLabel('建模指令').fill('装配：80×60×10 mm 底板，中心孔8 mm，圆柱销直径7 mm，长20 mm');
+       8 |  await page.getByRole('button',{name:'发送任务',exact:true}).click();await expect(page.getByTestId('approval-plan')).toContainText('双零件装配计划');
+    >  9 |  await expect(page.locator('.job-list')).toContainText('已生成离线装配计划；未调用真实模型。');
+         |                                          ^
+      10 |  await expect(page.getByTestId('display-revision')).toHaveText('正式版本 0');
+      11 |  await page.getByRole('button',{name:'批准并开始建模'}).click();
+      12 |  await expect(page.getByTestId('display-revision')).toHaveText('正式版本 1');
+        at /home/lenovo/ai4s/cad-web/tests/e2e/assembly.spec.ts:9:42
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/assembly-two-real-parametr-85c3c-ve-interference-and-exports/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/assembly-two-real-parametr-85c3c-ve-interference-and-exports/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/assembly-two-real-parametr-85c3c-ve-interference-and-exports/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/assembly-two-real-parametr-85c3c-ve-interference-and-exports/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/e2e/operation-plans.spec.ts:8:1 › real general operation plans approve, cut, edit, download and restore nonrectangular parts 
+
+    Test timeout of 45000ms exceeded.
+
+    Error: page.waitForEvent: Test timeout of 45000ms exceeded.
+    =========================== logs ===========================
+    waiting for event "download"
+    ============================================================
+
+       at helpers.ts:9
+
+       7 |  const menu=page.locator('.export-menu');if(!await menu.getAttribute('open'))await menu.locator('summary').click();
+       8 |  const labels:Record<string,string>={FCStd:'导出 FreeCAD 文档（.FCStd）',STEP:'导出 STEP（.step）',GLB:'导出 GLB（.glb）'};
+    >  9 |  const pending=page.waitForEvent('download');await page.getByRole('menuitem',{name:labels[format],exact:true}).click();return pending;
+         |                     ^
+      10 | }
+      11 |
+        at exportModel (/home/lenovo/ai4s/cad-web/tests/e2e/helpers.ts:9:21)
+        at /home/lenovo/ai4s/cad-web/tests/e2e/operation-plans.spec.ts:30:66
+
+    Error: locator.click: Test timeout of 45000ms exceeded.
+    Call log:
+      - waiting for getByRole('menuitem', { name: '导出 STEP（.step）', exact: true })
+
+
+       at helpers.ts:9
+
+       7 |  const menu=page.locator('.export-menu');if(!await menu.getAttribute('open'))await menu.locator('summary').click();
+       8 |  const labels:Record<string,string>={FCStd:'导出 FreeCAD 文档（.FCStd）',STEP:'导出 STEP（.step）',GLB:'导出 GLB（.glb）'};
+    >  9 |  const pending=page.waitForEvent('download');await page.getByRole('menuitem',{name:labels[format],exact:true}).click();return pending;
+         |                                                                                                                ^
+      10 | }
+      11 |
+        at exportModel (/home/lenovo/ai4s/cad-web/tests/e2e/helpers.ts:9:112)
+        at /home/lenovo/ai4s/cad-web/tests/e2e/operation-plans.spec.ts:30:66
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/operation-plans-real-gener-a12e9-estore-nonrectangular-parts/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/operation-plans-real-gener-a12e9-estore-nonrectangular-parts/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/operation-plans-real-gener-a12e9-estore-nonrectangular-parts/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/operation-plans-real-gener-a12e9-estore-nonrectangular-parts/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests/e2e/python-workflow.spec.ts:6:1 › Python task approval, actual native preview, exact patch, downloads and failure protection 
+
+    Test timeout of 45000ms exceeded.
+
+    Error: page.waitForEvent: Test timeout of 45000ms exceeded.
+    =========================== logs ===========================
+    waiting for event "download"
+    ============================================================
+
+       at helpers.ts:9
+
+       7 |  const menu=page.locator('.export-menu');if(await menu.getAttribute('open')===null)await menu.locator('summary').click();
+       8 |  const labels:Record<string,string>={FCStd:'导出 FreeCAD 文档（.FCStd）',STEP:'导出 STEP（.step）',GLB:'导出 GLB（.glb）'};
+    >  9 |  const pending=page.waitForEvent('download');await page.getByRole('menuitem',{name:labels[format],exact:true}).click();return pending;
+         |                     ^
+      10 | }
+      11 |
+        at exportModel (/home/lenovo/ai4s/cad-web/tests/e2e/helpers.ts:9:21)
+        at /home/lenovo/ai4s/cad-web/tests/e2e/python-workflow.spec.ts:32:61
+
+    Error: locator.click: Test timeout of 45000ms exceeded.
+    Call log:
+      - waiting for getByRole('menuitem', { name: '导出 STEP（.step）', exact: true })
+
+
+       at helpers.ts:9
+
+       7 |  const menu=page.locator('.export-menu');if(await menu.getAttribute('open')===null)await menu.locator('summary').click();
+       8 |  const labels:Record<string,string>={FCStd:'导出 FreeCAD 文档（.FCStd）',STEP:'导出 STEP（.step）',GLB:'导出 GLB（.glb）'};
+    >  9 |  const pending=page.waitForEvent('download');await page.getByRole('menuitem',{name:labels[format],exact:true}).click();return pending;
+         |                                                                                                                ^
+      10 | }
+      11 |
+        at exportModel (/home/lenovo/ai4s/cad-web/tests/e2e/helpers.ts:9:112)
+        at /home/lenovo/ai4s/cad-web/tests/e2e/python-workflow.spec.ts:32:61
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/python-workflow-Python-tas-bf7ec-oads-and-failure-protection/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/python-workflow-Python-tas-bf7ec-oads-and-failure-protection/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/python-workflow-Python-tas-bf7ec-oads-and-failure-protection/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/python-workflow-Python-tas-bf7ec-oads-and-failure-protection/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) tests/e2e/text-to-cad.spec.ts:5:1 › chat creates editable plate, property edit commits, failed candidate protects official model, downloads reopen 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('已提交', { exact: true })
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('已提交', { exact: true }) with timeout 10000ms
+      - waiting for getByText('已提交', { exact: true })
+
+
+       6 |  const id='text-'+Date.now();await createDocument(request,id);await login(page,id);
+       7 |  await page.getByLabel('建模指令').fill(prompt);await page.getByRole('button',{name:'发送任务'}).click();await expect(page.getByTestId('display-revision')).toHaveText('正式版本 0');await page.getByRole('button',{name:'批准并开始建模'}).click();await expect(page.getByTestId('display-revision')).toHaveText('正式版本 1');
+    >  8 |  await expect(page.getByTestId('mesh-stats')).toContainText('WebGL');await expect(page.getByText('已提交',{exact:true})).toBeVisible();
+         |                                                                                                                       ^
+       9 |  await page.getByRole('button',{name:'hole 草图'}).click();await page.getByLabel('diameter (mm)').fill('8');await page.getByRole('button',{name:'提交 diameter 修改'}).click();
+      10 |  await page.getByRole('button',{name:'批准并开始建模'}).click();
+      11 |  await expect(page.getByTestId('display-revision')).toHaveText('正式版本 2');await expect(page.getByLabel('diameter (mm)')).toHaveValue('8');
+        at /home/lenovo/ai4s/cad-web/tests/e2e/text-to-cad.spec.ts:8:119
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/text-to-cad-chat-creates-e-af109-cial-model-downloads-reopen/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/text-to-cad-chat-creates-e-af109-cial-model-downloads-reopen/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/text-to-cad-chat-creates-e-af109-cial-model-downloads-reopen/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/text-to-cad-chat-creates-e-af109-cial-model-downloads-reopen/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    tests/e2e/assembly.spec.ts:5:1 › two real parametric components, approval, BOM, native interference and exports 
+    tests/e2e/operation-plans.spec.ts:8:1 › real general operation plans approve, cut, edit, download and restore nonrectangular parts 
+    tests/e2e/python-workflow.spec.ts:6:1 › Python task approval, actual native preview, exact patch, downloads and failure protection 
+    tests/e2e/text-to-cad.spec.ts:5:1 › chat creates editable plate, property edit commits, failed candidate protects official model, downloads reopen 
+  17 passed (3.4m)

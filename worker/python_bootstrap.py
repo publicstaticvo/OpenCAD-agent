@@ -12,6 +12,8 @@ import traceback
 import zipfile
 from xml.etree import ElementTree
 
+validation_stage = 'not-run'
+
 sys.path.insert(0, '/runtime/usr/lib')
 
 
@@ -134,7 +136,7 @@ def render(shape, destination):
 
 
 def main():
-    global App, Part, Import, Image, ImageDraw
+    global App, Part, Import, Image, ImageDraw, validation_stage
     phase = sys.argv[1]
     restrict_process()
     import FreeCAD as App
@@ -142,11 +144,27 @@ def main():
     import Import
     from PIL import Image, ImageDraw
     if phase == 'execute':
-        source = Path('/input/script.py').read_text()
-        code = compile(source, 'script.py', 'exec')
+        project_file = Path('/input/project.json')
+        if project_file.is_file():
+            project = json.loads(project_file.read_text())
+            entrypoint = project.get('entrypoint')
+            project_root = Path('/input/project').resolve()
+            script_path = project_root.joinpath(*entrypoint.split('/')).resolve()
+            if not script_path.is_relative_to(project_root) or not script_path.is_file():
+                raise ValueError('Invalid project entrypoint')
+            sys.path.insert(0, str(project_root))
+            os.chdir(project_root)
+            script_name = entrypoint
+            source = script_path.read_text()
+            script_file = str(script_path)
+        else:
+            script_name = 'script.py'
+            script_file = '/input/script.py'
+            source = Path(script_file).read_text()
+        code = compile(source, script_name, 'exec')
         with open('/out/script.stdout.log', 'w') as stdout, open('/out/script.stderr.log', 'w') as stderr:
             with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-                exec(code, {'__name__': '__main__', '__file__': '/input/script.py'})
+                exec(code, {'__name__': '__main__', '__file__': script_file})
         documents = list(App.listDocuments().values())
         if len(documents) != 1:
             raise ValueError('Script must leave exactly one output document')
@@ -154,6 +172,7 @@ def main():
         doc.recompute()
         doc.saveAs('/out/model.FCStd')
         return
+    validation_stage = 'health'
     criteria = json.loads(Path('/input/criteria.json').read_text())
     check_saved_document('/input/model.FCStd')
     doc = App.openDocument('/input/model.FCStd')
@@ -168,15 +187,19 @@ def main():
         raise ValueError('No exportable solids')
     shape = Part.makeCompound([o.Shape for o in objects])
     actual = metrics(shape)
-    if any(abs(a - b) > 1e-6 for a, b in zip(actual['bbox'], criteria['bbox'])):
-        raise ValueError('Bounding box acceptance mismatch')
-    if abs(actual['volume'] - criteria['volume']) > max(1e-6, criteria['volume'] * 1e-9):
-        raise ValueError('Volume acceptance mismatch')
     rows = observe_document(doc)
-    for parameter in criteria.get('parameters', []):
-        value = next((r['parameters'].get(parameter['parameter']) for r in rows if r['id'] == parameter['feature']), None)
-        if value is None or abs(value - parameter['value']) > 1e-6:
-            raise ValueError('Parameter acceptance mismatch')
+    validation_stage = 'acceptance'
+    acceptance_errors = []
+    if criteria is not None:
+        if any(abs(a - b) > 1e-6 for a, b in zip(actual['bbox'], criteria['bbox'])):
+            acceptance_errors.append('Bounding box acceptance mismatch')
+        if abs(actual['volume'] - criteria['volume']) > max(1e-6, criteria['volume'] * 1e-9):
+            acceptance_errors.append('Volume acceptance mismatch')
+        for parameter in criteria.get('parameters', []):
+            value = next((r['parameters'].get(parameter['parameter']) for r in rows if r['id'] == parameter['feature']), None)
+            if value is None or abs(value - parameter['value']) > 1e-6:
+                acceptance_errors.append('Parameter acceptance mismatch: ' + parameter['parameter'])
+    validation_stage = 'delivery'
     Import.export(objects, '/out/model.step')
     reopened = App.newDocument('StepCheck')
     Import.insert('/out/model.step', reopened.Name)
@@ -193,7 +216,9 @@ def main():
     render(shape, '/out/observation.png')
     # The trusted verifier writes a fresh saved document and independent report.
     doc.saveAs('/out/model.FCStd')
-    validation = dict(actual, step=step, healthy=True, acceptance=True, reopened=True,
+    validation = dict(actual, step=step, healthy=True, acceptance=criteria is not None and not acceptance_errors, reopened=True,
+                      acceptanceStatus='not-run' if criteria is None else 'failed' if acceptance_errors else 'passed',
+                      acceptanceErrors=acceptance_errors,
                       python=True, verifierPid=os.getpid(), meshFeatureId=objects[0].Name,
                       bounds=dict(XMin=shape.BoundBox.XMin, XMax=shape.BoundBox.XMax,
                                   YMin=shape.BoundBox.YMin, YMax=shape.BoundBox.YMax,
@@ -207,8 +232,9 @@ if __name__ == '__main__':
         main()
     except Exception as error:
         frames = traceback.extract_tb(error.__traceback__)
-        position = next((frame for frame in reversed(frames) if frame.filename == 'script.py'), frames[-1])
+        position = next((frame for frame in reversed(frames) if frame.filename.endswith('.py') or frame.filename.endswith('.FCMacro')), frames[-1])
         record = dict(stage=sys.argv[1], type=type(error).__name__, message=str(error),
+                      checkStage=validation_stage,
                       file=getattr(error, 'filename', None) or position.filename,
                       line=getattr(error, 'lineno', None) or position.lineno, traceback=traceback.format_exc())
         Path('/out/error.json').write_text(json.dumps(record))

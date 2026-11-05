@@ -29,8 +29,8 @@ test('project write ownership covers queued jobs, conversations and restore, pre
   expect((store.listDocuments().find((p:any)=>p.id==='alpha') as any).activeTasks).toBe(1);
   expect(store.listConversations('alpha').find(c=>c.id===first.id).activeTasks).toBe(1);
   const next=supervisor.submit('alpha',0,'second',plate,second.id);
-  expect(()=>supervisor.approveJob('alpha','second',next.plan!.planHash)).toThrow('项目正在修改');
-  expect(()=>store.restoreRevision('alpha',1,0,'restore')).toThrow('项目正在修改');
+  expect(()=>supervisor.approveJob('alpha','second',next.plan!.planHash)).toThrow('项目已有运行任务');
+  expect(()=>store.restoreRevision('alpha',1,0,'restore')).toThrow('项目已有运行任务');
   supervisor.cancelJob('alpha','first');await supervisor.waitForJob('alpha','first');
   expect(supervisor.submit('alpha',0,'second',plate,second.id).conversationId).toBe(second.id);
   supervisor.approveJob('alpha','second',next.plan!.planHash);

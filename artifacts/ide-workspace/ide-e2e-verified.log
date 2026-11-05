@@ -1,0 +1,65 @@
+[WebServer] (node:569889) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] [plugin builtin:vite-reporter] 
+[WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+[WebServer] (node:569994) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] (node:570005) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 33 tests using 1 worker
+
+(node:570015) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/33] tests/e2e/approval-preview.spec.ts:7:1 › approved native candidate remains observable after commit and browser refresh
+tests/e2e/approval-preview.spec.ts:7:1 › approved native candidate remains observable after commit and browser refresh
+(node:570151) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:570170) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/33] tests/e2e/assembly.spec.ts:5:1 › two real parametric components, approval, BOM, native interference and exports
+[3/33] tests/e2e/assembly.spec.ts:26:1 › collision assembly reports actual overlap and preserves the formal revision
+[4/33] tests/e2e/ide-workspace.spec.ts:9:1 › workspace shows a real saved CAD model at the reference viewport
+[5/33] tests/e2e/ide-workspace.spec.ts:18:1 › cross-file undo retains independent state through saves and tab switches
+[6/33] tests/e2e/ide-workspace.spec.ts:32:1 › Explorer inline names, clipboard, dirty drag moves and file tab close commands
+[7/33] tests/e2e/ide-workspace.spec.ts:54:1 › current Python and FCMacro entries run frozen projects without changing the project default
+[8/33] tests/e2e/ide-workspace.spec.ts:69:1 › Explorer cut, drag, conflicts and tab close variants protect saved and unsaved files
+[9/33] tests/e2e/ide-workspace.spec.ts:88:1 › editor menus use real clipboard and CodeMirror commands while saves keep Diff and checkpoint semantics
+[10/33] tests/e2e/operation-plans.spec.ts:8:1 › real general operation plans approve, cut, edit, download and restore nonrectangular parts
+[11/33] tests/e2e/project-workspace.spec.ts:7:1 › multi-file editor imports, diffs, runs real FreeCAD and accepts the exact candidate
+[12/33] tests/e2e/project-workspace.spec.ts:38:1 › historical file and full-project adoption preserve exact immutable snapshots
+[13/33] tests/e2e/project-workspace.spec.ts:54:1 › per-file buffers, saved files and Agent conversation remain independent of historical viewing
+[14/33] tests/e2e/project-workspace.spec.ts:69:1 › entry page searches real persisted project names
+[15/33] tests/e2e/projects.spec.ts:6:1 › project switch discards an actual delayed GLB and restores independent model and conversations
+[16/33] tests/e2e/projects.spec.ts:28:1 › separate conversations can hold read-only pending plans and stale approval cannot modify the shared model
+[17/33] tests/e2e/python-workflow.spec.ts:6:1 › Python task approval, actual native preview, exact patch, downloads and failure protection
+[18/33] tests/e2e/source-execution.spec.ts:7:1 › source saves stay idle; approved explicit version runs preview, deliver and preserve formal on errors
+[19/33] tests/e2e/source-execution.spec.ts:41:1 › Python workspace opens the project source and displays each saved parent diff
+[20/33] tests/e2e/source-execution.spec.ts:59:1 › saving conflicts preserve the editor and viewing historical diffs leaves the draft unchanged
+[21/33] tests/e2e/source-execution.spec.ts:70:1 › export menu has only formal model formats and cannot export revision zero
+[22/33] tests/e2e/source-execution.spec.ts:77:1 › a new project can import and save its initial Python source version
+[23/33] tests/e2e/source-execution.spec.ts:91:1 › CodeMirror supports undo redo search and layout changes preserve the work copy
+[24/33] tests/e2e/source-execution.spec.ts:109:1 › multiple source diffs remain individually accessible without replacing user edits
+[25/33] tests/e2e/source-execution.spec.ts:117:1 › running from the editor freezes the selected bytes while later edits remain independent
+[26/33] tests/e2e/text-to-cad.spec.ts:5:1 › chat creates editable plate, property edit commits, failed candidate protects official model, downloads reopen
+[27/33] tests/e2e/text-to-cad.spec.ts:20:1 › cancel uses persisted job state and stale/history views cannot edit
+[28/33] tests/e2e/text-to-cad.spec.ts:26:1 › a real stale submit returns 409 and refreshes without overwriting the newer revision
+[29/33] tests/e2e/viewer.spec.ts:2:1 › real browser renders GLB geometry, correct top-view hole and synchronized tree/parameters
+[30/33] tests/e2e/viewer.spec.ts:21:1 › late GLB cannot replace a newer complete revision; before/after uses complete versions
+[31/33] tests/e2e/viewer.spec.ts:31:1 › actual socket disconnect, duplicate/out-of-order events and reconnect recover authoritative snapshot
+[32/33] tests/e2e/viewer.spec.ts:39:1 › missing preview is an explicit failure and keeps the last complete version until retry
+[33/33] tests/e2e/workspace-layout.spec.ts:6:1 › workspace keeps chronological conversation, bottom composer and real model inspection
+  33 passed (3.0m)

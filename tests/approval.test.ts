@@ -35,7 +35,7 @@ test('approved program runs real FreeCAD, preserves formal package and rejects a
  const x=await setup();try{
   const a=x.service.submit('part',0,'a',plate),b=x.service.submit('part',0,'b',plate);
   x.service.approveJob('part','a',a.plan!.planHash);
-  expect(()=>x.service.approveJob('part','b',b.plan!.planHash)).toThrow(/正在修改/);
+  expect(()=>x.service.approveJob('part','b',b.plan!.planHash)).toThrow(/项目已有运行任务/);
   const result=await x.service.waitForJob('part','a');expect(result.error).toBeNull();expect(result.status).toBe('committed');
   expect(x.store.snapshot('part').revision).toBe(1);expect(()=>x.service.approveJob('part','b',b.plan!.planHash)).toThrow(/stale/);
   expect(x.store.artifactPath('part',1,'model.FCStd')).toContain('model.FCStd');

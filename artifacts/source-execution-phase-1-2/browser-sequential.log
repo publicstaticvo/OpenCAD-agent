@@ -1,0 +1,42 @@
+
+> cad-agent-workspace@0.1.0 test:e2e
+> playwright test
+
+[WebServer] (node:68065) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] [plugin builtin:vite-reporter] 
+[WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[WebServer] (node:68198) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:68209) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 16 tests using 1 worker
+
+(node:68359) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:68548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:68560) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/e2e/approval-preview.spec.ts:6:1 › approved native candidate remains observable after commit and browser refresh (7.5s)
+  ✓   2 tests/e2e/assembly.spec.ts:5:1 › two real parametric components, approval, BOM, native interference and exports (7.7s)
+  ✓   3 tests/e2e/assembly.spec.ts:27:1 › collision assembly reports actual overlap and preserves the formal revision (3.0s)
+  ✓   4 tests/e2e/operation-plans.spec.ts:8:1 › real general operation plans approve, cut, edit, download and restore nonrectangular parts (19.9s)
+  ✓   5 tests/e2e/projects.spec.ts:6:1 › project switch discards an actual delayed GLB and restores independent model and conversations (6.7s)
+  ✓   6 tests/e2e/projects.spec.ts:28:1 › separate conversations can hold read-only pending plans and stale approval cannot modify the shared model (3.0s)
+  ✓   7 tests/e2e/python-workflow.spec.ts:6:1 › Python task approval, actual native preview, exact patch, downloads and failure protection (9.3s)
+  ✓   8 tests/e2e/source-execution.spec.ts:5:1 › source saves stay idle; approved explicit version runs preview, deliver and preserve formal on errors (9.8s)
+  ✓   9 tests/e2e/text-to-cad.spec.ts:5:1 › chat creates editable plate, property edit commits, failed candidate protects official model, downloads reopen (8.9s)
+  ✓  10 tests/e2e/text-to-cad.spec.ts:20:1 › cancel uses persisted job state and stale/history views cannot edit (3.0s)
+  ✓  11 tests/e2e/text-to-cad.spec.ts:26:1 › a real stale submit returns 409 and refreshes without overwriting the newer revision (4.9s)
+  ✓  12 tests/e2e/viewer.spec.ts:2:1 › real browser renders GLB geometry, correct top-view hole and synchronized tree/parameters (3.8s)
+  ✓  13 tests/e2e/viewer.spec.ts:21:1 › late GLB cannot replace a newer complete revision; before/after uses complete versions (6.1s)
+  ✓  14 tests/e2e/viewer.spec.ts:31:1 › actual socket disconnect, duplicate/out-of-order events and reconnect recover authoritative snapshot (6.0s)
+  ✓  15 tests/e2e/viewer.spec.ts:39:1 › missing preview is an explicit failure and keeps the last complete version until retry (4.1s)
+  ✓  16 tests/e2e/workspace-layout.spec.ts:6:1 › workspace keeps chronological conversation, bottom composer and real model inspection (8.5s)
+
+  16 passed (1.9m)

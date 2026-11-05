@@ -1,6 +1,8 @@
 # OpenCAD Agent
 
-本地单用户 Text-to-CAD 工作区：React/Three.js → HTTP/WS Gateway/Pi → FreeCAD Worker → Linux 隔离进程。在线 Agent 通过 `cad_python` 提交完整 FreeCAD Python 源码或精确补丁，每次提交自动执行、独立重开、检查几何并生成 STEP、GLB 和真实几何图像。正式模型经过文件校验和 SQLite 修订提交后生效。源码、执行身份和交付文件保存在同一修订中。执行方式、隔离要求及验证边界见 [Python 建模流程](docs/python-modeling.md)。本次迁移的真实 FreeCAD 与浏览器测试使用直接脚本提交，未调用真实模型服务。
+本地单用户 Text-to-CAD 工作区：React/Three.js → HTTP/WS Gateway/Pi → FreeCAD Worker → Linux 隔离进程。在线 Agent 使用 Pi 的 `read/write/edit` 保存不可变 Python 工程快照，通过 `cad_run` 显式执行指定版本。每次执行自动检查几何、独立重开并生成 STEP、GLB 和真实几何图像。成功候选等待用户验收，验收绑定具体执行身份后生成正式修订。执行、隔离及配置见 [Python 建模流程](docs/python-modeling.md)，测试步骤与结果见 [源码与执行专项测试](docs/testing/source-execution-phase-1-2.md)。本次未调用真实模型服务。
+
+顶部布局图标可以打开可编辑 Python 源码及逐版本 Diff。Ctrl/Cmd+S 保存工作副本；运行、检查点和交给 Agent 时冻结版本。活动历史统一显示可见回复、源码修改、真实执行与检查；模型工具栏通过单一“导出”菜单交付正式修订。交互及逐项验证见[源码工作区与活动历史测试](docs/testing/source-workspace-and-activity-timeline.md)。
 
 ## 本机启动
 
@@ -24,16 +26,16 @@ npm run dev
 
 在线设置可选择 OpenAI Chat Completions 或 OpenAI Responses；保存前实际验证文本流和只读 CAD 工具往返。程序仅使用网页保存或 `CAD_MODEL_CONFIG` 显式指定的凭据。
 
-### 获批后的真实建模
+### Python 建模与候选验收
 
 1. 创建空白项目，输入 `创建一个长40 mm、宽30 mm、高10 mm的长方体。只需要一个实体，不添加其他特征。`。
-2. 检查任务卡的用户需求及基础正式版本，点击“批准并开始建模”。批准允许 Agent 在本任务中提交和修正 Python；具体源码及执行结果保存为版本记录。待批准阶段不创建候选、不启动可写 Worker；拒绝任务不改变模型。
-3. 查看实际 Python 执行记录、FreeCAD 特征与候选实体。每次提交自动生成观察结果。候选明确标记为未提交，正式特征树与下载继续对应原修订。验证、保存、独立重开和导出通过后显示正式版本 1。
-4. 输入 `在当前长方体上增加一个直径6 mm的中心贯穿孔，保留其他尺寸。`，检查并批准新计划；真实圆草图和 Pocket 通过验证后成为正式版本 2。
-5. 输入 `把已有中心贯穿孔的孔径从6 mm修改为8 mm，保留其他尺寸和特征。`，检查计划中的 6→8 修改并批准；通过验证后成为正式版本 3。
-6. 使用“查看修订”选择历史版本，检查对应参数并下载该修订的 FCStd、STEP 或 GLB。历史版本只读；选择“当前正式版本”后可提交后续请求。活动记录中的“查看实际草图检查点”保留本任务真实草图与约束。
+2. Agent 使用项目文件工具修改 Python 源码，并主动运行指定源码快照。普通建模请求直接开始任务；明确要求“等待我批准”时，先显示计划供用户批准。
+3. 查看统一活动历史中的源码 Diff、Python 执行和真实几何检查。检查成功的候选在模型视口显示，点击“验收候选并提交”生成正式修订；拒绝候选保留原正式模型。用户无需输入任何工具名称。
+4. 输入 `在当前长方体上增加一个直径6 mm的中心贯穿孔，保留其他尺寸。`，检查源码修改和实际候选，通过人工验收后成为正式版本 2。
+5. 输入 `把已有中心贯穿孔的孔径从6 mm修改为8 mm，保留其他尺寸和特征。`，检查 Diff、几何及文件检查结果，验收后成为正式版本 3。
+6. 使用“查看修订”选择历史版本，检查对应参数并下载该修订的 FCStd、STEP 或 GLB。历史版本只读；活动记录中的“查看执行源码”打开该次执行实际使用的完整工程。
 
-尺寸、体积和命名参数由任务验收条件进行实际检查；这些条件由 Agent 根据用户需求提出。通用健康检查验证几何及文件完整性，对复杂设计的全部语义要求仍需要额外验收。每个修改任务需要新批准。失败或取消保留对话和原正式模型。已有属性修改入口同样生成待批准任务。已有 Python 修订提供完整源码和父版本哈希；补丁必须精确匹配父版本。
+尺寸、体积和命名参数可以通过任务验收条件进行实际检查。缺少任务条件时报告明确标记“未执行任务验收”，健康和交付检查成功后仍需要用户验收。失败或取消保留对话和原正式模型。源码面板支持文件树、多个文件、完整历史快照与逐文件 Diff；普通保存只更新工作副本，运行指定不可变项目快照。用户可以导入 Python 文件或 ZIP 工程，打开 `.py` 或 `.FCMacro` 后点击“运行当前文件”，无需调用模型。运行菜单中的“运行项目”使用项目默认入口；文件右键菜单中的“设为项目入口”显式更新默认入口。实际执行详情位于中间工作区底部，候选由用户验收。菜单、文件操作、独立撤销记录和截图见 [CAD IDE 工作区](docs/ide-workspace.md)，执行与隔离见 [Python 工作流](docs/python-modeling.md)。
 
 ### Python 在线建模与离线操作测试
 
@@ -46,11 +48,11 @@ npm run build
 CAD_PROVIDER=live CAD_MODEL_CONFIG=advanced-model.yaml npm run dev
 ```
 
-在空白项目输入：`创建一个直角三角棱柱，XY 顶点为 (0,0)、(40,0)、(0,30) mm，沿 +Z 拉伸10 mm。使用真实参数化草图和 Pad。` 批准任务后，Agent 使用 Python 建模；独立重开与导出验证通过后切换正式版本。后续输入 `将当前三角棱柱 Pad 长度改为12 mm，保持其他尺寸。` 并批准修改任务。本轮没有重新执行这些自然语言在线样例。
+在空白项目输入：`创建一个直角三角棱柱，XY 顶点为 (0,0)、(40,0)、(0,30) mm，沿 +Z 拉伸10 mm。使用真实参数化草图和 Pad。` Agent 使用 Python 建模；独立重开与导出验证通过后显示候选，用户验收后切换正式版本。后续输入 `将当前三角棱柱 Pad 长度改为12 mm，保持其他尺寸。` 并检查、验收修改后的候选。本轮没有重新执行这些自然语言在线样例。
 
 另一项任务可在新项目输入：`创建 L 形平板支架，XY 轮廓依次为 (0,0)、(60,0)、(60,10)、(10,10)、(10,50)、(0,50) mm，闭合后沿 +Z 拉伸8 mm。各边水平或垂直，草图完全约束，先提交操作计划。` 后续可要求在 (30,5) mm 增加 Ø4 mm 贯穿孔。每个任务分别审批。
 
-旧结构化计划测试及其历史证据见[通用操作计划验收](docs/general-operations-slice.md)。这些入口继续服务离线样例和已有测试；在线 Agent 只获得 Python 建模、状态查询和最终验收工具。旧在线测试文件属于迁移前接口的验收记录，不能用于证明当前 Python Agent 链路通过在线验收。
+旧结构化计划测试及其历史证据见[通用操作计划验收](docs/general-operations-slice.md)。这些入口继续服务离线样例和已有测试；在线 Python Agent 的正常工具集合为 `read/write/edit/cad_files/cad_run`，正式验收由用户完成。旧在线测试文件属于迁移前接口的验收记录，不能用于证明当前 Python Agent 链路通过在线验收。
 
 离线启动使用 `CAD_PROVIDER=fake npm run dev`，支持明确尺寸的孔板、垫套、台阶块和指定命名参数修改；它使用固定规则选择 CAD 操作，仍需批准并执行真实 FreeCAD。`CAD_PROVIDER=none npm run dev` 禁用模型建模。离线结果不能证明真实模型能力。
 
@@ -60,7 +62,7 @@ CAD_PROVIDER=live CAD_MODEL_CONFIG=advanced-model.yaml npm run dev
 
 对应离线验证命令为 `npm run test:unit -- tests/assembly-plan.test.ts tests/assembly-workflow.test.ts`、`npm run test:cad` 和 `npm run test:e2e -- tests/e2e/assembly.spec.ts`。浏览器完整回归使用 `npm run test:e2e`。这些离线测试驱动已批准的固定操作流程并运行真实 FreeCAD。
 
-在线固定样例使用 `TMPDIR="$PWD/.work/tmp" RUN_LIVE_CAD=1 CAD_MODEL_CONFIG=advanced-model.yaml npm run test:e2e:live -- tests/live/advanced-assembly.spec.ts`。配置文件需包含 `base_url`、`api_key`、`model` 和可选 `protocol`，测试会调用该服务并自动批准样例计划。运行前创建被 Git 忽略的 `.work/tmp` 目录；已有服务不得占用测试端口 4175。测试证据与复核方法见 [多零件在线验收记录](artifacts/live-assembly-advanced/README.md)。手动使用时，按照下方在线模式启动，在模型设置中配置服务，在空白项目输入装配需求，确认计划后批准；修改销直径也需要批准新的计划。
+迁移前的在线固定装配样例及证据见 [多零件在线验收记录](artifacts/live-assembly-advanced/README.md)。其计划审批与固定操作断言适用于当时的结构化接口。当前 Python 在线工作流使用本节启动命令和 [H1–H5 验收步骤](docs/testing/source-execution-phase-1-2.md)，本轮没有执行在线验收。
 
 网页配置、YAML 启动、模型限制来源、文件权限以及真实模型测试说明见[在线模型配置与验证](docs/online-mode.md)。模型设置提供获批执行、单次模型请求、单次 CAD 操作三项超时，单位秒，默认均为 0（不设超时）。公司本地模型费用显示“未配置”。
 

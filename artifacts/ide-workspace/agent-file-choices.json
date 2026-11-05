@@ -1,0 +1,129 @@
+[
+  {
+    "documentId": "5bd04cd7-2b98-4539-9be3-7706854ead4e",
+    "operationId": "9a10049e-72dd-4a60-98c4-7b0c64885400",
+    "status": "committed",
+    "taskMatch": "L形支架",
+    "calls": [
+      {
+        "seq": 15,
+        "name": "cad_python"
+      },
+      {
+        "seq": 22,
+        "name": "cad_python"
+      },
+      {
+        "seq": 26,
+        "name": "cad_python"
+      },
+      {
+        "seq": 33,
+        "name": "cad_finish"
+      }
+    ],
+    "sourceChanges": []
+  },
+  {
+    "documentId": "c75d11d4-63c9-4a1c-b1d6-754ad6d01536",
+    "operationId": "093f3327-8398-4cc2-8c17-b8b643b723ec",
+    "status": "committed",
+    "taskMatch": "L形支架",
+    "calls": [
+      {
+        "seq": 19,
+        "name": "cad_inspect"
+      },
+      {
+        "seq": 23,
+        "name": "write",
+        "path": "script.py"
+      },
+      {
+        "seq": 28,
+        "name": "edit",
+        "path": "script.py"
+      },
+      {
+        "seq": 33,
+        "name": "cad_run"
+      },
+      {
+        "seq": 41,
+        "name": "cad_finish"
+      }
+    ],
+    "sourceChanges": [
+      {
+        "seq": 24,
+        "versionId": "a8f01039-ef04-4a1e-95c4-3033cdfcf14b"
+      },
+      {
+        "seq": 29,
+        "versionId": "e3664625-35db-4f98-9762-c080cfbc02f2"
+      }
+    ]
+  },
+  {
+    "documentId": "2fcfed71-7f42-4ded-b88a-3d0881023240",
+    "operationId": "3b5e3d50-4e17-4ae5-92f4-09883f0b04d7",
+    "status": "failed",
+    "taskMatch": "L形支架",
+    "calls": [
+      {
+        "seq": 146,
+        "name": "cad_files",
+        "operation": "list"
+      },
+      {
+        "seq": 150,
+        "name": "read",
+        "path": "script.py"
+      },
+      {
+        "seq": 161,
+        "name": "write",
+        "path": "script.py"
+      },
+      {
+        "seq": 166,
+        "name": "cad_run"
+      },
+      {
+        "seq": 176,
+        "name": "edit",
+        "path": "script.py"
+      },
+      {
+        "seq": 184,
+        "name": "cad_run"
+      },
+      {
+        "seq": 200,
+        "name": "cad_run"
+      }
+    ],
+    "sourceChanges": [
+      {
+        "seq": 162,
+        "versionId": "2d9b4ce2-f679-4def-9485-bfccf305f8cc",
+        "changes": [
+          {
+            "path": "script.py",
+            "kind": "modified"
+          }
+        ]
+      },
+      {
+        "seq": 177,
+        "versionId": "165de02b-a9d0-4391-8507-f0882a5337e3",
+        "changes": [
+          {
+            "path": "script.py",
+            "kind": "modified"
+          }
+        ]
+      }
+    ]
+  }
+]

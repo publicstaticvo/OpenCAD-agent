@@ -29,27 +29,42 @@ class Candidates:
             self.directory.mkdir(mode=0o700,exist_ok=True)
             return dict(candidateId=self.envelope['candidateId'])
         if method=='execute_script':
-            self.keys(params,{'envelope','source','criteria','executionId','seconds'})
+            if 'source' in params:
+                self.keys(params,{'envelope','source','criteria','executionId','seconds'})
+                project=dict(files={'script.py':params['source']},directories=[],entrypoint='script.py')
+                params={**{key:value for key,value in params.items() if key!='source'},'projectJson':json.dumps(project,separators=(',',':')),'sourceHash':hashlib.sha256(params['source'].encode()).hexdigest()}
+            self.keys(params,{'envelope','projectJson','sourceHash','criteria','executionId','seconds'})
             if self.envelope!=params['envelope'] or self.prepared:raise ValueError('Python candidate identity or state mismatch')
-            assert_contract('criteria',params['criteria'])
+            if params['criteria'] is not None:assert_contract('criteria',params['criteria'])
             import uuid,shutil
             execution_id=str(uuid.UUID(params['executionId']))
             if execution_id!=params['executionId']:raise ValueError('Invalid execution identity')
-            from worker.python_execution import execute_script
-            result=execute_script(self.directory/'executions'/execution_id,params['source'],params['criteria'],params['seconds'],self.directory/'base.FCStd')
+            if not isinstance(params['projectJson'],str) or len(params['projectJson'].encode())>8*1024*1024:raise ValueError('Invalid project snapshot size')
+            project=json.loads(params['projectJson'])
+            legacy=project.get('entrypoint')=='script.py' and project.get('directories')==[] and list(project.get('files',{}))==['script.py'] and not project.get('assets')
+            source_hash=hashlib.sha256(project['files']['script.py'].encode()).hexdigest() if legacy else hashlib.sha256(params['projectJson'].encode()).hexdigest()
+            if source_hash!=params['sourceHash']:raise ValueError('Project source hash mismatch')
+            from worker.python_execution import execute_project
+            result=execute_project(self.directory/'executions'/execution_id,project,params['criteria'],params['seconds'],self.directory/'base.FCStd',params['sourceHash'],self.progress)
             if result['status']=='valid':
                 directory=self.directory/'executions'/execution_id
                 for name in ('model.FCStd','model.step','preview.glb','observation.png','tree.json','validation.json'):
                     shutil.copyfile(directory/name,self.directory/name)
+                (self.directory/'project.json').write_text(params['projectJson'])
+                (self.directory/'script.py').write_text(project['files'][project['entrypoint']])
+                (self.directory/'execution.json').write_text(json.dumps(dict(executionId=execution_id,sourceHash=params['sourceHash'],entrypoint=project['entrypoint'])))
+                (self.directory/'scripts.json').write_text('[]')
             return result
         if method=='prepare_python':
             self.keys(params,{'envelope','identity','criteria'})
             if self.envelope!=params['envelope'] or self.prepared:raise ValueError('Python candidate identity or state mismatch')
             from worker.artifacts import write_json
             validation=json.loads((self.directory/'validation.json').read_text());validation.update(params['identity'])
+            if params['identity'].get('sourceVersionId'):validation['projectVersion']=1
             write_json(self.directory/'validation.json',validation);write_json(self.directory/'criteria.json',params['criteria'])
             files={}
-            for name in ('model.FCStd','model.step','preview.glb','tree.json','validation.json','criteria.json','script.py','execution.json','scripts.json','observation.png'):
+            for name in ('model.FCStd','model.step','preview.glb','tree.json','validation.json','criteria.json','script.py','project.json','execution.json','scripts.json','observation.png'):
+                if name=='project.json' and not validation.get('projectVersion'):continue
                 path=self.directory/name
                 if path.is_symlink() or not path.is_file():raise ValueError('Invalid Python artifact')
                 raw=path.read_bytes();files[name]=dict(bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest())

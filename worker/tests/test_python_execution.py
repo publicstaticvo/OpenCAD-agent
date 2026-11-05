@@ -7,7 +7,7 @@ class PythonExecutionTests(unittest.TestCase):
         native('''
 import tempfile,json
 from pathlib import Path
-from worker.python_execution import execute_script
+from worker.python_execution import execute_script, execute_project
 with tempfile.TemporaryDirectory(dir=Path.cwd()/'.work') as folder:
     root=Path(folder)
     source="import FreeCAD as App, Part\\ndoc=App.newDocument('Model')\\nobj=doc.addObject('PartDesign::Body','Body')\\nfeature=obj.newObject('PartDesign::AdditiveBox','Box')\\nfeature.Length=40;feature.Width=30;feature.Height=10\\ndoc.recompute()\\n"
@@ -32,7 +32,8 @@ with tempfile.TemporaryDirectory(dir=Path.cwd()/'.work') as folder:
     empty=execute_script(root/'empty','import FreeCAD as App; App.newDocument("Empty")',dict(bbox=[1,1,1],volume=1),10)
     assert empty['status']=='failed' and empty['error']['stage']=='verify',empty
     wrong=execute_script(root/'wrong',source,dict(bbox=[40,30,12],volume=14400),10)
-    assert wrong['status']=='failed' and 'acceptance' in wrong['error']['message'],wrong
+    assert wrong['status']=='diagnostic' and wrong['acceptanceStatus']=='failed' and 'acceptance' in wrong['error']['message'],wrong
+    assert (root/'wrong'/'preview.glb').is_file(),wrong
     circle="import FreeCAD as App, Part, Sketcher, math\\ndoc=App.newDocument('Model')\\nbody=doc.addObject('PartDesign::Body','Body')\\nsketch=body.newObject('Sketcher::SketchObject','Sketch')\\nsketch.addGeometry(Part.Circle(App.Vector(0,0,0),App.Vector(0,0,1),3),False)\\nindex=sketch.addConstraint(Sketcher.Constraint('Radius',0,3))\\nsketch.renameConstraint(index,'designRadius')\\npad=body.newObject('PartDesign::Pad','Pad')\\npad.Profile=sketch;pad.Length=10\\npad.addProperty('App::PropertyLength','customLength');pad.customLength=17\\ndoc.recompute()\\n"
     import math
     parametric=execute_script(root/'parametric',circle,dict(bbox=[6,6,10],volume=90*math.pi,parameters=[dict(feature='Sketch',parameter='designRadius',value=3),dict(feature='Pad',parameter='customLength',value=17)]),10)
@@ -44,4 +45,9 @@ with tempfile.TemporaryDirectory(dir=Path.cwd()/'.work') as folder:
     assert callback['status']=='failed' and 'Persistent Python' in callback['error']['message'],callback
     timed=execute_script(root/'timeout','while True: pass',dict(bbox=[1,1,1],volume=1),0.2)
     assert timed['error']['type']=='Timeout',timed
+    project=dict(entrypoint='main.py',directories=['cad','settings'],files={'main.py':"from cad.shape import dimensions\\nfrom pathlib import Path\\nimport FreeCAD as App, Part\\nassert Path('settings/size.txt').read_text().strip() == '40 30 10'\\ndoc=App.newDocument('Project')\\nobj=doc.addObject('PartDesign::Feature','Box')\\nobj.Shape=Part.makeBox(*dimensions())\\ndoc.recompute()\\n",'cad/__init__.py':'','cad/shape.py':'def dimensions(): return (40,30,10)\\n','settings/size.txt':'40 30 10\\n'})
+    project_hash=__import__('hashlib').sha256(json.dumps(project,ensure_ascii=False,separators=(',',':')).encode()).hexdigest()
+    project_result=execute_project(root/'project',project,None,10,expected_hash=project_hash)
+    assert project_result['status']=='valid',project_result
+    assert project_result['validation']['bbox']==[40,30,10],project_result
 ''',timeout=60)

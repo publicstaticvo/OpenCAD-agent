@@ -7,7 +7,7 @@ import socket
 import sys
 import uuid
 
-MAX_FRAME = 1048576
+MAX_FRAME = 16 * 1024 * 1024
 
 def main():
     parser = argparse.ArgumentParser()

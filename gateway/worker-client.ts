@@ -9,6 +9,16 @@ export async function resolveRuntime():Promise<string>{
  try{return JSON.parse(await readFile('runtime.local.json','utf8')).freecadRuntimeRoot;}catch{throw new Error('Configure FREECAD_RUNTIME_ROOT: verified runtime required');}
 }
 export class RpcError extends Error {constructor(public code:number,message:string){super(message);}}
+/** A bound Unix socket path can exist before its server has started listening. */
+export async function connectWorkerSocket(path:string,until:number,check:()=>void):Promise<Socket>{
+ while(true){
+  check();if(Date.now()>=until)throw new Error('Worker startup timeout');
+  const socket=createConnection(path);
+  try{await new Promise<void>((accept,reject)=>{const timer=setTimeout(()=>socket.destroy(new Error('Worker startup timeout')),Math.max(1,until-Date.now()));socket.once('connect',()=>{clearTimeout(timer);accept();});socket.once('error',error=>{clearTimeout(timer);reject(error);});});return socket;}
+  catch(error){socket.destroy();if(!['ENOENT','ECONNREFUSED'].includes((error as NodeJS.ErrnoException).code??''))throw error;}
+  await new Promise(accept=>setTimeout(accept,10));
+ }
+}
 export class WorkerClient {
  private socket!:Socket;private directory='';private closed:Error|null=null;private seq=0;private buffer=Buffer.alloc(0);
  private pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void;timer:ReturnType<typeof setTimeout>|undefined;method:string;candidateId?:string;progressSequence:number;progressIndex:number}>();
@@ -29,14 +39,7 @@ export class WorkerClient {
   c.process.once('error',e=>c.fail(e));c.process.once('exit',(code,signal)=>c.fail(new Error(`Worker exit ${code??signal}`)));
   try{
    const until=Date.now()+(opts.startupMs??budgets.startupMs);
-   while(true){
-    if(c.closed)throw new Error(`${c.closed.message}: ${c.logs}`);
-    try{await stat(c.socketPath);break;}catch{}
-    if(Date.now()>=until)throw new Error('Worker startup timeout');
-    await new Promise(r=>setTimeout(r,10));
-   }
-   c.socket=createConnection(c.socketPath);
-   await new Promise<void>((r,j)=>{c.socket.once('connect',r);c.socket.once('error',j);});
+   c.socket=await connectWorkerSocket(c.socketPath,until,()=>{if(c.closed)throw new Error(`${c.closed.message}: ${c.logs}`);});
    c.socket.on('error',e=>c.fail(e));c.socket.on('close',()=>c.fail(new Error('Worker connection closed')));
    c.socket.on('data',b=>c.receive(Buffer.isBuffer(b)?b:Buffer.from(b)));
    c.hello=await c.request('hello',{},Math.max(1,until-Date.now()));
@@ -53,6 +56,12 @@ export class WorkerClient {
    try{const msg=JSON.parse(line.toString('utf8'));
     if(msg.jsonrpc==='2.0'&&msg.method==='cad_progress'&&!Object.hasOwn(msg,'id')){
      const p=msg.params,request=this.pending.get(p?.requestId);
+     if(['python_execute','python_verify'].includes(p?.stage)){
+      if(!request||request.method!=='execute_script'||p.candidateId!==request.candidateId||!['start','complete'].includes(p.status)||!Number.isSafeInteger(p.sequence)||p.sequence<=request.progressSequence)throw new Error('Invalid Python execution notification');
+      const expected=['python_execute:start','python_execute:complete','python_verify:start','python_verify:complete'];
+      if(`${p.stage}:${p.status}`!==expected[request.progressIndex++])throw new Error('Python progress stage out of order');
+      request.progressSequence=p.sequence;this.onProgress?.(p);continue;
+     }
      if(['assembly','interference'].includes(p?.stage)){
       if(!request||request.method!=='assembly_check'&&request.method!=='assembly_stage'||p.candidateId!==request.candidateId||!Number.isSafeInteger(p.sequence)||p.sequence<=request.progressSequence)throw new Error('Invalid assembly notification');
       request.progressSequence=p.sequence;this.onProgress?.(p);continue;

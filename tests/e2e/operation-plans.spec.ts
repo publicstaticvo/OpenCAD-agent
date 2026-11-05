@@ -2,7 +2,7 @@ import {test,expect} from '@playwright/test';
 import {writeFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import {headers,createDocument,login} from './helpers.ts';
+import {headers,createDocument,login,exportModel} from './helpers.ts';
 import {bracket,bracketHole,triangle,triangleEdit} from '../fixtures/operation-plans.ts';
 
 test('real general operation plans approve, cut, edit, download and restore nonrectangular parts',async({page,request},info)=>{
@@ -27,7 +27,7 @@ test('real general operation plans approve, cut, edit, download and restore nonr
    expect(snapshots.map((e:any)=>e.data.completedStages)).toEqual(proposal.stages.map((_,i)=>i+1));
    for(const e of snapshots){expect(e.data.sketch.fullyConstrained).toBe(true);if(e.data.preview){const response=await request.get(e.data.preview.url,{headers});expect(response.status()).toBe(200);expect(createHash('sha256').update(await response.body()).digest('hex')).toBe(e.data.preview.sha256);}}
    const paths:Record<string,string>={};
-   for(const extension of ['FCStd','STEP','GLB']){const pending=page.waitForEvent('download');await page.getByRole('button',{name:`下载 ${extension}`,exact:true}).click();const download=await pending;paths[extension]=info.outputPath(`${name}-${index}-${download.suggestedFilename()}`);await download.saveAs(paths[extension]);}
+   for(const extension of ['FCStd','STEP','GLB']){const download=await exportModel(page,extension);paths[extension]=info.outputPath(`${name}-${index}-${download.suggestedFilename()}`);await download.saveAs(paths[extension]);}
    const planPath=info.outputPath(`${name}-${index}-approved-plan.json`);writeFileSync(planPath,JSON.stringify(job.plan,null,2));
    expect(execFileSync('python',['scripts/verify-operation-downloads.py',paths.FCStd,paths.STEP,paths.GLB,planPath,index===0?name:name==='triangle'?'triangle-edit':'bracket-hole'],{encoding:'utf8'})).toContain('operation-downloads: passed');
    writeFileSync(info.outputPath(`${name}-${index}-evidence.json`),JSON.stringify({job,validation:state.validation,events},null,2));

@@ -3,8 +3,11 @@ import {mkdirSync,readFileSync,writeFileSync,renameSync,existsSync,readdirSync,l
 import {resolve,join} from 'node:path';
 import {createHash,randomUUID} from 'node:crypto';
 import {assertContract,type Envelope,type DocumentSnapshot,type AppEvent} from '../shared/cad-contracts.ts';
+import {SourceVersions} from './source-versions.ts';
+import {projectHash} from './project-source.ts';
 const FILES=['model.FCStd','model.step','preview.glb','tree.json','validation.json','criteria.json'];
-const PYTHON_FILES=['script.py','execution.json','scripts.json','observation.png'];
+const PYTHON_FILES=['script.py','project.json','execution.json','scripts.json','observation.png'];
+const pythonFiles=(validation:any)=>PYTHON_FILES.filter(name=>name!=='project.json'||validation.projectVersion===1);
 const hash=(value:Uint8Array|string)=>createHash('sha256').update(value).digest('hex');
 export function stableHash(value:unknown):string{
  const canonical=(x:any):any=>Array.isArray(x)?x.map(canonical):x&&typeof x==='object'?Object.fromEntries(Object.keys(x).sort().map(k=>[k,canonical(x[k])])):x;
@@ -25,7 +28,7 @@ export class RevisionStore {
    CREATE TABLE IF NOT EXISTS jobs(document_id TEXT NOT NULL,operation_id TEXT NOT NULL,status TEXT NOT NULL,request_hash TEXT NOT NULL,job TEXT NOT NULL,PRIMARY KEY(document_id,operation_id));
    CREATE TABLE IF NOT EXISTS operations(document_id TEXT NOT NULL,operation_id TEXT NOT NULL,request_hash TEXT NOT NULL,result TEXT NOT NULL,PRIMARY KEY(document_id,operation_id));
    CREATE TABLE IF NOT EXISTS events(document_id TEXT NOT NULL,seq INTEGER NOT NULL,event TEXT NOT NULL,PRIMARY KEY(document_id,seq));`);
-  this.migrateWorkspace();this.reconcile();
+  this.migrateWorkspace();this.reconcile();new SourceVersions(this).migrateLegacy();
  }
  private id(value:string){if(typeof value!=='string'||!/^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/.test(value))throw new StoreError('invalid','Invalid identifier');}
  createDocument(id:string,name:unknown=id){this.id(id);const title=this.title(name);this.db.exec('BEGIN IMMEDIATE');try{this.db.prepare('INSERT INTO documents(id,name,created_at,updated_at) VALUES(?,?,?,?)').run(id,title,Date.now(),Date.now());this.createConversation(id,'建模对话');this.db.exec('COMMIT');}catch(e){this.db.exec('ROLLBACK');throw e;}return this.snapshot(id);}
@@ -53,9 +56,9 @@ export class RevisionStore {
    this.db.exec('PRAGMA user_version=1; COMMIT');
   }catch(e){this.db.exec('ROLLBACK');throw e;}
  }
- listDocuments(){return this.db.prepare("SELECT id,name,created_at AS createdAt,updated_at AS updatedAt,head AS revision,(SELECT COUNT(*) FROM jobs WHERE document_id=documents.id AND status IN ('approved','queued','running','validating','committing')) AS activeTasks FROM documents ORDER BY updated_at DESC,id").all();}
+ listDocuments(){return this.db.prepare("SELECT id,name,created_at AS createdAt,updated_at AS updatedAt,head AS revision,(SELECT COUNT(*) FROM jobs WHERE document_id=documents.id AND status IN ('approved','queued','running','validating','committing','awaiting_acceptance')) AS activeTasks FROM documents ORDER BY updated_at DESC,id").all();}
  renameDocument(id:string,name:unknown){this.document(id);this.db.prepare('UPDATE documents SET name=?,updated_at=? WHERE id=?').run(this.title(name),Date.now(),id);return this.snapshot(id);}
- listConversations(id:string){this.document(id);return this.db.prepare("SELECT c.*, (SELECT COUNT(*) FROM jobs WHERE conversation_id=c.id AND status IN ('approved','queued','running','validating','committing')) AS activeTasks FROM conversations c WHERE document_id=? ORDER BY created_at,id").all(id) as any[];}
+ listConversations(id:string){this.document(id);return this.db.prepare("SELECT c.*, (SELECT COUNT(*) FROM jobs WHERE conversation_id=c.id AND status IN ('approved','queued','running','validating','committing','awaiting_acceptance')) AS activeTasks FROM conversations c WHERE document_id=? ORDER BY created_at,id").all(id) as any[];}
  createConversation(id:string,title:unknown='新对话'){this.document(id);const value={id:randomUUID(),document_id:id,title:this.title(title),created_at:Date.now(),updated_at:Date.now()};this.db.prepare('INSERT INTO conversations VALUES(?,?,?,?,?)').run(value.id,id,value.title,value.created_at,value.updated_at);return value;}
  conversation(id:string,conversationId:string){this.document(id);this.id(conversationId);const row=this.db.prepare('SELECT * FROM conversations WHERE id=? AND document_id=?').get(conversationId,id) as any;if(!row)throw new StoreError('not_found','该项目中不存在此对话');return row;}
  renameConversation(id:string,conversationId:string,title:unknown){this.conversation(id,conversationId);this.db.prepare('UPDATE conversations SET title=?,updated_at=? WHERE id=?').run(this.title(title),Date.now(),conversationId);return this.conversation(id,conversationId);}
@@ -73,13 +76,13 @@ export class RevisionStore {
  health(id:string){return this.document(id).health as string;}
  candidatePath(id:string){this.id(id);return join(this.root,'staging',id);}
  private packagePath(id:string){this.id(id);return join(this.root,'revisions',id);}
- private verify(directory:string,expectedHash?:string){
+ private verify(directory:string,expectedHash?:string,requireUserAcceptance=true){
   if(lstatSync(directory).isSymbolicLink())throw new StoreError('corrupt','Unsafe package directory');
   const manifestPath=join(directory,'manifest.json');if(lstatSync(manifestPath).isSymbolicLink())throw new StoreError('corrupt','Unsafe manifest');
   const raw=readFileSync(manifestPath);if(raw.length>65536)throw new StoreError('corrupt','Manifest too large');
   if(expectedHash&&hash(raw)!==expectedHash)throw new StoreError('corrupt','Manifest hash mismatch');
   const manifest=JSON.parse(raw.toString()).files;
-  const python=!!manifest?.['script.py'];const names=python?[...FILES,...PYTHON_FILES]:FILES;
+  const python=!!manifest?.['script.py'];const names=python?[...FILES,...PYTHON_FILES.filter(name=>name!=='project.json'||!!manifest['project.json'])]:FILES;
   if(!manifest||Object.keys(manifest).sort().join('|')!==[...names].sort().join('|'))throw new StoreError('corrupt','Incomplete manifest');
   for(const name of names){
    const path=join(directory,name),stat=lstatSync(path);
@@ -91,8 +94,34 @@ export class RevisionStore {
   const assembly=validation.assembly;
   if(assembly&&(validation.solids!==2||assembly.bom?.length!==2||assembly.components?.length!==2||assembly.interference?.status!=='clear'||validation.glb?.meshes!==2||validation.step?.solids!==2))throw new StoreError('corrupt','Invalid assembly validation report');
   if(!Array.isArray(tree)||!tree.length||(!python&&validation.solids!==(assembly?2:1))||!(validation.volume>0)||!validation.glb?.triangles||!validation.step)throw new StoreError('corrupt','Missing validation report');
-  if(python){const identity=JSON.parse(readFileSync(join(directory,'execution.json'),'utf8'));if(!validation.python||!validation.healthy||!validation.acceptance||!validation.reopened||identity.sourceHash!==hash(readFileSync(join(directory,'script.py')))||identity.sourceHash!==validation.sourceHash||identity.executionId!==validation.executionId)throw new StoreError('corrupt','Python execution identity mismatch');}
+  if(python){
+   const identity=JSON.parse(readFileSync(join(directory,'execution.json'),'utf8'));
+   if(!manifest['project.json']){
+    if(validation.projectVersion||!validation.python||!validation.acceptance||!validation.reopened||identity.sourceHash!==hash(readFileSync(join(directory,'script.py')))||identity.sourceHash!==validation.sourceHash||identity.executionId!==validation.executionId)throw new StoreError('corrupt','Legacy Python execution identity mismatch');
+    return{manifestHash:hash(raw),tree,validation};
+   }
+   const project=JSON.parse(readFileSync(join(directory,'project.json'),'utf8'));
+   const versions=new SourceVersions(this),source=versions.read(identity.documentId,identity.sourceVersionId,identity.sourceHash);
+   const userAccepted=!!validation.userAcceptance&&validation.userAcceptance.executionId===identity.executionId&&validation.userAcceptance.sourceHash===identity.sourceHash;
+   if(!validation.python||!validation.healthy||!validation.reopened||validation.deliveryStatus!=='passed'||identity.sourceHash!==projectHash(project)||source.sourceHash!==identity.sourceHash||identity.sourceHash!==validation.sourceHash||identity.executionId!==validation.executionId||requireUserAcceptance&&!userAccepted||validation.acceptanceStatus==='failed')throw new StoreError('corrupt','Python execution identity or acceptance mismatch');
+  }
   return{manifestHash:hash(raw),tree,validation};
+ }
+ acceptPythonCandidate(envelope:Envelope,request:unknown,identity:{executionId:string;sourceVersionId:string;sourceHash:string}){
+  assertContract('envelope',envelope);const {documentId,candidateId,baseRevision,operationId}=envelope;
+  const previous=this.operationResult(documentId,operationId,request,baseRevision);if(previous)return previous;
+  if(this.document(documentId).head!==baseRevision)throw new StoreError('conflict','Formal model changed before candidate acceptance');
+  const stage=this.candidatePath(candidateId),verified=this.verify(stage,undefined,false),validation=verified.validation;
+  if(validation.executionId!==identity.executionId||validation.sourceVersionId!==identity.sourceVersionId||validation.sourceHash!==identity.sourceHash||!validation.healthy||validation.deliveryStatus!=='passed'||validation.acceptanceStatus==='failed')throw new StoreError('conflict','Candidate no longer matches its successful verified execution');
+  const source=new SourceVersions(this);if((source.head(documentId)?.versionId??null)!==identity.sourceVersionId)throw new StoreError('conflict','Project source changed after this execution');
+  validation.userAcceptance={actor:'user',acceptedAt:Date.now(),executionId:identity.executionId,sourceVersionId:identity.sourceVersionId,sourceHash:identity.sourceHash};
+  writeFileSync(join(stage,'validation.json'),JSON.stringify(validation));
+  const manifest=JSON.parse(readFileSync(join(stage,'manifest.json'),'utf8')),validationBytes=readFileSync(join(stage,'validation.json'));manifest.files['validation.json']={bytes:validationBytes.length,sha256:hash(validationBytes)};
+  writeFileSync(join(stage,'manifest.json'),JSON.stringify(manifest));
+  for(const name of ['validation.json','manifest.json'])this.sync(join(stage,name));this.sync(stage);
+  const row=this.db.prepare('SELECT record FROM python_executions WHERE document_id=? AND execution_id=?').get(documentId,identity.executionId) as any;
+  if(!row)throw new StoreError('conflict','Execution record is unavailable');const record=JSON.parse(row.record);record.userAcceptance=validation.userAcceptance;this.db.prepare('UPDATE python_executions SET record=? WHERE execution_id=?').run(JSON.stringify(record),identity.executionId);
+  return this.commitCandidate(envelope,request);
  }
  operationResult(documentId:string,operationId:string,request:unknown,baseRevision:number){
   this.id(documentId);this.id(operationId);const row:any=this.db.prepare('SELECT * FROM operations WHERE document_id=? AND operation_id=?').get(documentId,operationId);
@@ -101,26 +130,44 @@ export class RevisionStore {
  }
  restoreRevision(documentId:string,oldRevision:number,baseRevision:number,operationId:string){
   const request={restoreRevision:oldRevision},previous=this.operationResult(documentId,operationId,request,baseRevision);if(previous)return previous;
-  if(this.db.prepare("SELECT 1 FROM jobs WHERE document_id=? AND status IN ('approved','queued','running','validating','committing')").get(documentId))throw new StoreError('project_busy','项目正在修改，请等待当前任务结束');
+  if(this.db.prepare("SELECT 1 FROM jobs WHERE document_id=? AND status IN ('approved','queued','running','validating','committing','awaiting_acceptance')").get(documentId))throw new StoreError('project_busy','项目已有运行任务或待验收候选');
   if(this.document(documentId).head!==baseRevision)throw new StoreError('conflict','Revision conflict');
   const candidateId=randomUUID(),directory=this.candidatePath(candidateId);
   const source=this.artifactPath(documentId,oldRevision,'model.FCStd');
   mkdirSync(directory,{mode:0o700});
   const python=JSON.parse(readFileSync(join(source,'..','validation.json'),'utf8')).python;
-  for(const name of [...FILES,...(python?PYTHON_FILES:[]),'manifest.json'])copyFileSync(join(source,'..',name),join(directory,name));
-  return this.commitCandidate({documentId,baseRevision,operationId,candidateId},request);
+  const originalValidation=JSON.parse(readFileSync(join(source,'..','validation.json'),'utf8'));
+  for(const name of [...FILES,...(python?pythonFiles(originalValidation):[]),'manifest.json'])copyFileSync(join(source,'..',name),join(directory,name));
+  const origin=this.db.prepare('SELECT validation FROM revisions WHERE document_id=? AND revision=?').get(documentId,oldRevision) as any;
+  return this.publishCandidate({documentId,baseRevision,operationId,candidateId},request,{revision:oldRevision,validation:JSON.parse(origin.validation),sourceHead:new SourceVersions(this).head(documentId)?.versionId??null});
  }
  commitCandidate(envelope:Envelope,request:unknown){
+  return this.publishCandidate(envelope,request);
+ }
+ private publishCandidate(envelope:Envelope,request:unknown,restoration?:{revision:number;validation:any;sourceHead:string|null}){
   assertContract('envelope',envelope);
   const {documentId,candidateId,baseRevision,operationId}=envelope;
   const previous=this.operationResult(documentId,operationId,request,baseRevision);if(previous)return previous;
   const doc=this.document(documentId);if(doc.health!=='healthy')throw new StoreError('corrupt','Document is corrupt');
   if(doc.head!==baseRevision)throw new StoreError('conflict','Revision conflict');
   const stage=this.candidatePath(candidateId),official=this.packagePath(candidateId),verified=this.verify(stage);
+  const assertSourceExecution=()=>{
+   if(!verified.validation.python||!verified.validation.sourceVersionId)return;
+   const versions=new SourceVersions(this),v=verified.validation;
+   versions.read(documentId,v.sourceVersionId,v.sourceHash);
+   const expectedHead=restoration?restoration.sourceHead:v.sourceVersionId;
+   if((versions.head(documentId)?.versionId??null)!==expectedHead)throw new StoreError('conflict','Source version changed since execution');
+   const row=this.db.prepare('SELECT record FROM python_executions WHERE document_id=? AND execution_id=?').get(documentId,v.executionId) as any;
+   if(!row)throw new StoreError('conflict','Execution identity not found');const record=JSON.parse(row.record);
+   const origin=restoration?.validation;
+   if(restoration&&(origin.executionId!==v.executionId||origin.sourceVersionId!==v.sourceVersionId||origin.sourceHash!==v.sourceHash||origin.documentId!==documentId))throw new StoreError('corrupt','Restored execution provenance mismatch');
+   if(record.operationId!==(origin?.operationId??operationId)||record.candidateId!==(origin?.candidateId??candidateId)||record.baseRevision!==(origin?.baseRevision??baseRevision)||record.sourceVersionId!==v.sourceVersionId||record.sourceHash!==v.sourceHash||record.status!=='valid')throw new StoreError('conflict','Execution identity is stale');
+  };
+  assertSourceExecution();
   this.boundary('beforeStageWrite');
   const metadata=join(stage,'package.json'),text=JSON.stringify({envelope,requestHash:stableHash({baseRevision,request})}),fd=openSync(metadata,'w');
   try{const half=Math.floor(text.length/2);writeSync(fd,text.slice(0,half));this.boundary('stageWrite');writeSync(fd,text.slice(half));fsyncSync(fd);}finally{closeSync(fd);}
-  for(const name of [...FILES,...(verified.validation.python?PYTHON_FILES:[]),'manifest.json','package.json'])this.sync(join(stage,name));this.sync(stage);
+  for(const name of [...FILES,...(verified.validation.python?pythonFiles(verified.validation):[]),'manifest.json','package.json'])this.sync(join(stage,name));this.sync(stage);
   renameSync(stage,official);this.sync(join(this.root,'staging'));this.sync(join(this.root,'revisions'));
   this.boundary('published');
   let result:any;
@@ -130,7 +177,14 @@ export class RevisionStore {
    if(repeated){this.db.exec('ROLLBACK');return repeated;}
    const current=this.document(documentId);
    if(current.head!==baseRevision||current.health!=='healthy')throw new StoreError('conflict','Revision conflict');
+   assertSourceExecution();
    const revision=baseRevision+1;
+   if(verified.validation.sourceVersionId){
+    if(restoration){
+     this.db.prepare('INSERT INTO source_heads VALUES(?,?) ON CONFLICT(document_id) DO UPDATE SET version_id=excluded.version_id').run(documentId,verified.validation.sourceVersionId);
+     this.appendEvent(documentId,'source_selected',{versionId:verified.validation.sourceVersionId,sourceHash:verified.validation.sourceHash,previousVersionId:restoration.sourceHead,restoredFromRevision:restoration.revision,executionId:verified.validation.executionId},operationId,revision,candidateId);
+    }else{const row=this.db.prepare('SELECT record FROM python_executions WHERE execution_id=?').get(verified.validation.executionId) as any;const record=JSON.parse(row.record);record.formalRevision=revision;this.db.prepare('UPDATE python_executions SET record=? WHERE execution_id=?').run(JSON.stringify(record),record.executionId);}
+   }
    this.db.prepare('INSERT INTO revisions VALUES(?,?,?,?,?,?)').run(documentId,revision,candidateId,verified.manifestHash,JSON.stringify(verified.tree),JSON.stringify(verified.validation));
    this.db.prepare('UPDATE documents SET head=?,updated_at=? WHERE id=? AND head=?').run(revision,Date.now(),documentId,baseRevision);
    const event=this.appendEvent(documentId,'committed',{candidateId,revision,operationId},operationId,revision,candidateId);
@@ -158,10 +212,10 @@ export class RevisionStore {
  snapshot(id:string):DocumentSnapshot{
   const doc=this.document(id);if(doc.health!=='healthy')throw new StoreError('corrupt','Formal revision corrupt or missing; no silent rollback');
   let tree:any[]=[],artifacts:Record<string,string>={},validation:any;
-  if(doc.head){const row:any=this.db.prepare('SELECT * FROM revisions WHERE document_id=? AND revision=?').get(id,doc.head);this.verify(this.packagePath(row.candidate_id),row.manifest_hash);tree=JSON.parse(row.tree);validation=JSON.parse(row.validation);artifacts=Object.fromEntries([...FILES,...(validation.python?PYTHON_FILES:[])].map(name=>[name,`/api/documents/${id}/revisions/${doc.head}/artifacts/${name}`]));}
+  if(doc.head){const row:any=this.db.prepare('SELECT * FROM revisions WHERE document_id=? AND revision=?').get(id,doc.head);this.verify(this.packagePath(row.candidate_id),row.manifest_hash);tree=JSON.parse(row.tree);validation=JSON.parse(row.validation);artifacts=Object.fromEntries([...FILES,...(validation.python?pythonFiles(validation):[])].map(name=>[name,`/api/documents/${id}/revisions/${doc.head}/artifacts/${name}`]));}
   const seq:any=this.db.prepare('SELECT COALESCE(MAX(seq),0) AS seq FROM events WHERE document_id=?').get(id);
   const jobs=this.db.prepare('SELECT job FROM jobs WHERE document_id=? ORDER BY rowid').all(id).map((r:any)=>JSON.parse(r.job));
-  const progress=(this.db.prepare("SELECT event FROM events WHERE document_id=? AND json_extract(event,'$.type') IN ('agent_progress','python_execution','cad_progress','cad_operation_start','cad_operation_complete','cad_operation_failed','cad_operation_rejected','candidate_snapshot','plan_ready','plan_approved','plan_rejected','clarification_required') ORDER BY seq DESC LIMIT 500").all(id) as any[]).reverse().map(row=>JSON.parse(row.event));
+  const progress=(this.db.prepare("SELECT event FROM events WHERE document_id=? AND json_extract(event,'$.type') IN ('agent_progress','python_execution','python_diagnostic','cad_progress','cad_operation_start','cad_operation_complete','cad_operation_failed','cad_operation_rejected','candidate_snapshot','plan_ready','plan_approved','plan_rejected','clarification_required','source_saved','source_conflict_branch','committed','job_updated') ORDER BY seq DESC LIMIT 500").all(id) as any[]).reverse().map(row=>JSON.parse(row.event));
   return{documentId:id,name:doc.name,conversations:this.listConversations(id),progress,revision:doc.head,lastSeq:seq.seq,tree,artifacts,jobs,validation};
  }
  artifactPath(id:string,revision:number,name:string){
@@ -173,7 +227,7 @@ export class RevisionStore {
   this.artifactPath(id,revision,'model.FCStd');
   const row:any=this.db.prepare('SELECT tree,validation FROM revisions WHERE document_id=? AND revision=?').get(id,revision);
   const validation=JSON.parse(row.validation);
-  return{documentId:id,revision,tree:JSON.parse(row.tree),validation,artifacts:Object.fromEntries([...FILES,...(validation.python?PYTHON_FILES:[])].map(name=>[name,`/api/documents/${id}/revisions/${revision}/artifacts/${name}`]))};
+  return{documentId:id,revision,tree:JSON.parse(row.tree),validation,artifacts:Object.fromEntries([...FILES,...(validation.python?pythonFiles(validation):[])].map(name=>[name,`/api/documents/${id}/revisions/${revision}/artifacts/${name}`]))};
  }
  listRevisions(id:string){this.document(id);return this.db.prepare('SELECT revision FROM revisions WHERE document_id=? ORDER BY revision DESC').all(id);}
  private sync(path:string){const fd=openSync(path,'r');try{fsyncSync(fd);}finally{closeSync(fd);}}

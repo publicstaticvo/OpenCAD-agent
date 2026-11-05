@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test';
 import {mkdirSync,writeFileSync} from 'node:fs';
 import {resolve} from 'node:path';
-import {createDocument,login,programJob} from './helpers.ts';
+import {createDocument,login,programJob,showActivity} from './helpers.ts';
 
 test('workspace keeps chronological conversation, bottom composer and real model inspection',async({page,request})=>{
  test.setTimeout(60000);
@@ -22,26 +22,24 @@ test('workspace keeps chronological conversation, bottom composer and real model
  })));
  writeFileSync(resolve(directory,'layout.json'),JSON.stringify(metrics,null,2));
  if(phase==='before')return;
- await expect(page.locator('.job>strong')).toHaveText(instructions);
+ await expect(page.locator('[data-activity="user"]>p')).toHaveText(instructions);
  expect(metrics['.properties'].x).toBeLessThan(metrics['.model-panel'].x);
  expect(metrics['.model-panel'].width).toBeGreaterThan(metrics['.detail-panel'].width);
  expect(metrics['.chat-form'].y).toBeGreaterThanOrEqual(metrics['.job-list'].y+metrics['.job-list'].height-1);
  expect(metrics['.chat-form'].y+metrics['.chat-form'].height).toBeLessThanOrEqual(960);
  const history=page.locator('.job-list');
  await expect(history).toHaveAttribute('aria-label','对话历史');
- await expect(page.locator('.execution-activity')).toHaveCount(2);
- await page.locator('.execution-activity').last().locator('summary').first().click();
- await expect(page.locator('.execution-activity').last().locator('.progress-entry').first()).toBeVisible();
+ await showActivity(page);await expect(page.getByLabel('项目活动历史').getByLabel('统一活动历史')).toHaveCount(1);
+ const group=page.locator('.execution-activity').last();await expect(group).toHaveAttribute('open','');await group.locator('summary').first().click();await expect(group).not.toHaveAttribute('open','');await group.locator('summary').first().click();await expect(group.locator('ol')).toBeVisible();
  await page.screenshot({path:resolve(directory,'activity.png'),fullPage:true});
  await history.evaluate(element=>element.scrollTop=0);
- await expect(page.getByRole('button',{name:'查看最新消息',exact:true})).toBeVisible();
+ const overflowing=await history.evaluate(element=>element.scrollHeight>element.clientHeight+48);if(overflowing)await expect(page.getByRole('button',{name:'查看最新消息',exact:true})).toBeVisible();
  await programJob(request,id,2,'external-edit',{operations:[{op:'set_parameter',feature:'hole',parameter:'diameter',value:10}],criteria:{bbox:[80,60,10],volume:48000-Math.PI*25*10}});
  await expect(page.getByTestId('display-revision')).toHaveText('正式版本 3');
  expect(await history.evaluate(element=>element.scrollTop)).toBeLessThan(4);
- await page.getByRole('button',{name:'查看最新消息',exact:true}).click();
- await expect.poll(()=>history.evaluate(element=>element.scrollHeight-element.scrollTop-element.clientHeight)).toBeLessThan(4);
+ if(overflowing){await page.getByRole('button',{name:'查看最新消息',exact:true}).click();await expect.poll(()=>history.evaluate(element=>element.scrollHeight-element.scrollTop-element.clientHeight)).toBeLessThan(4);}
  await page.reload();await expect(page.getByTestId('display-revision')).toHaveText('正式版本 3');
- await expect(page.locator('.job>strong')).toHaveText([...instructions,'结构化建模任务']);
+ await expect(page.getByLabel('对话历史').locator('[data-activity="user"]>p')).toHaveText(instructions);
  await page.setViewportSize({width:1024,height:768});await page.screenshot({path:resolve(directory,'compact.png'),fullPage:true});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });

@@ -9,7 +9,7 @@
     "x": 198,
     "y": 65,
     "width": 882,
-    "height": 895
+    "height": 640
   },
   ".detail-panel": {
     "x": 1080,
@@ -21,7 +21,7 @@
     "x": 0,
     "y": 388,
     "width": 197,
-    "height": 445
+    "height": 554
   },
   ".chat-form": {
     "x": 1081,

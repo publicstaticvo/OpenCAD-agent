@@ -1,0 +1,27 @@
+[WebServer] (node:336099) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] [plugin builtin:vite-reporter] 
+[WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+[WebServer] (node:336160) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] (node:336171) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 4 tests using 1 worker
+
+(node:336181) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/4] tests/e2e/project-workspace.spec.ts:7:1 › multi-file editor imports, diffs, runs real FreeCAD and accepts the exact candidate
+[2/4] tests/e2e/project-workspace.spec.ts:38:1 › historical file and full-project adoption preserve exact immutable snapshots
+[3/4] tests/e2e/project-workspace.spec.ts:54:1 › per-file buffers, saved files and Agent conversation remain independent of historical viewing
+[4/4] tests/e2e/project-workspace.spec.ts:69:1 › entry page searches real persisted project names
+  4 passed (17.0s)

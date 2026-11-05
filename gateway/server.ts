@@ -4,6 +4,8 @@ import {resolve,join,dirname} from 'node:path';
 import {timingSafeEqual,randomUUID,createHash} from 'node:crypto';
 import {WebSocketServer} from 'ws';
 import {RevisionStore,StoreError} from './revision-store.ts';import {Supervisor} from './supervisor.ts';import {EventHub} from './events.ts';
+import {SourceVersions} from './source-versions.ts';
+import {projectFileHashes} from './project-source.ts';
 export interface Gateway {baseUrl:string;store:RevisionStore;supervisor:Supervisor;close():Promise<void>}
 import type {TextRunner} from './agent.ts';
 import type {ModelConfig} from './model-config.ts';
@@ -12,7 +14,7 @@ function keys(value:unknown,required:string[],optional:string[]=[]):asserts valu
 async function body(req:IncomingMessage){
  if(!req.headers['content-type']?.startsWith('application/json'))throw new StoreError('invalid','JSON body required');
  const chunks:Buffer[]=[];let size=0;
- for await(const chunk of req){size+=chunk.length;if(size>524288)throw new StoreError('invalid','Request body too large');chunks.push(chunk);}
+ for await(const chunk of req){size+=chunk.length;if(size>16*1024*1024)throw new StoreError('invalid','Request body too large');chunks.push(chunk);}
  try{return JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{throw new StoreError('invalid','Invalid JSON body');}
 }
 function json(res:ServerResponse,status:number,value:unknown){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(value));}
@@ -20,7 +22,7 @@ export async function createGateway(options:Options):Promise<Gateway>{
  if(typeof options.accessToken!=='string'||options.accessToken.length<24)throw new Error('Configure a shared access token of at least 24 characters');
  const store=new RevisionStore(options.dataDir);let supervisor:Supervisor;
  try{supervisor=await Supervisor.start(store,{textRunner:options.textRunner,taskMs:options.taskMs});}catch(e){store.close();throw e;}
- const events=new EventHub(store),wss=new WebSocketServer({noServer:true,maxPayload:1048576,handleProtocols:protocols=>protocols.has('cad-v1')?'cad-v1':false});
+ const events=new EventHub(store),wss=new WebSocketServer({noServer:true,maxPayload:16*1048576,handleProtocols:protocols=>protocols.has('cad-v1')?'cad-v1':false});
  let baseUrl='',closed=false;
  const providerMode=()=>options.modelConfig?(options.modelConfig.status().configured?'live':'none'):options.textRunner?.mode??'none';
  const allowed=(origin:string|undefined)=>!!origin&&[baseUrl,...options.allowedOrigins??[]].includes(origin);
@@ -67,17 +69,57 @@ export async function createGateway(options:Options):Promise<Gateway>{
     if(!conversation[2]&&req.method==='GET'){json(res,200,store.conversation(id,conversation[1]));return;}
     if(!conversation[2]&&req.method==='PATCH'){const input=await body(req);keys(input,['title']);json(res,200,store.renameConversation(id,conversation[1],input.title));return;}
    }
+   if(suffix==='source'&&req.method==='GET'){json(res,200,{source:new SourceVersions(store).head(id)});return;}
+   if(suffix==='source'&&req.method==='POST'){
+    const input=await body(req);keys(input,['source','parentVersionId'],['sourceHash']);
+    const versions=new SourceVersions(store),head=versions.head(id);if(head&&(Object.keys(head.project.files).length>1||head.project.assets||head.project.directories.length||head.project.entrypoint!=='script.py'))throw new StoreError('conflict','Submit the complete project snapshot to preserve every file');
+    json(res,201,versions.save(id,{source:input.source,parentVersionId:input.parentVersionId,sourceHash:input.sourceHash,actor:'user'}));return;
+   }
+   if(suffix==='source/workspace'&&req.method==='GET'){json(res,200,{workspace:new SourceVersions(store).workspace(id)});return;}
+   if(suffix==='source/workspace'&&req.method==='PUT'){
+    const input=await body(req);keys(input,['source','baseVersionId','expectedBaseVersionId','draftRevision'],['project','sourceOrigin']);json(res,200,{workspace:new SourceVersions(store).saveWorkspace(id,{source:input.source,project:input.project,baseVersionId:input.baseVersionId,expectedBaseVersionId:input.expectedBaseVersionId,draftRevision:input.draftRevision,sourceOrigin:input.sourceOrigin})});return;
+   }
+   if(suffix==='source/checkpoint'&&req.method==='POST'){
+    const input=await body(req);keys(input,['source','baseVersionId','expectedBaseVersionId','draftRevision'],['project','sourceOrigin','action','executionEntrypoint']);
+    const versions=new SourceVersions(store);
+    if(input.executionEntrypoint!==undefined&&input.action!=='run')throw new StoreError('invalid','Execution entrypoint requires a run checkpoint');
+    const checkpoint={source:input.source,project:input.project,baseVersionId:input.baseVersionId,expectedBaseVersionId:input.expectedBaseVersionId,draftRevision:input.draftRevision,sourceOrigin:input.sourceOrigin,action:input.action};
+    json(res,201,input.executionEntrypoint!==undefined?versions.checkpointRun(id,{...checkpoint,executionEntrypoint:input.executionEntrypoint}):versions.checkpointWorkspace(id,checkpoint));return;
+   }
+   const sourceAdoption=suffix.match(/^sources\/([A-Za-z0-9_-]+)\/adopt$/);
+   if(sourceAdoption&&req.method==='POST'){const input=await body(req);keys(input,['expectedHeadVersionId']);json(res,201,new SourceVersions(store).adoptBranch(id,sourceAdoption[1],input.expectedHeadVersionId));return;}
+   if(suffix==='sources'&&req.method==='GET'){json(res,200,{versions:new SourceVersions(store).list(id).map(({source,project,...version})=>({...version,entrypoint:project.entrypoint,files:Object.keys(project.files),fileHashes:projectFileHashes(project)}))});return;}
+   const sourceVersion=suffix.match(/^sources\/([A-Za-z0-9_-]+)$/);
+   if(sourceVersion&&req.method==='GET'){const versions=new SourceVersions(store),version=versions.read(id,sourceVersion[1]);json(res,200,{...version,diff:versions.diff(id,sourceVersion[1]),fileDiffs:versions.fileDiffs(id,sourceVersion[1])});return;}
+   const execution=suffix.match(/^executions\/([A-Za-z0-9_-]+)$/);
+   if(execution&&req.method==='GET'){
+    const exists=store.db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='python_executions'").get();
+    const record=exists?store.db.prepare('SELECT record FROM python_executions WHERE document_id=? AND execution_id=?').get(id,execution[1]) as any:null;
+    if(!record)throw new StoreError('not_found','Execution not found');json(res,200,JSON.parse(record.record));return;
+   }
    if(suffix==='events'&&req.method==='GET'){json(res,200,{events:store.events(id,Number(url.searchParams.get('afterSeq')??0))});return;}
    const jobEvents=suffix.match(/^jobs\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})\/events$/);
    if(jobEvents&&req.method==='GET'){json(res,200,store.jobEvents(id,jobEvents[1],Number(url.searchParams.get('afterSeq')??0),Number(url.searchParams.get('limit')??200)));return;}
+   const diagnostic=suffix.match(/^jobs\/([A-Za-z0-9_-]+)\/executions\/([A-Za-z0-9_-]+)\/preview$/);
+   if(diagnostic&&req.method==='GET'){
+    const job=supervisor.job(id,diagnostic[1]);
+    const recorded=store.db.prepare("SELECT event FROM events WHERE document_id=? AND json_extract(event,'$.jobId')=? AND json_extract(event,'$.type')='python_diagnostic' AND json_extract(event,'$.data.executionId')=?").get(id,job.operationId,diagnostic[2]) as any;
+    if(!recorded)throw new StoreError('not_found','Diagnostic preview not found');const data=JSON.parse(recorded.event).data;
+    const directory=job.status==='committed'?dirname(store.artifactPath(id,job.result.revision,'model.FCStd')):store.candidatePath(job.candidateId);
+    const path=join(directory,`diagnostic-${diagnostic[2]}.glb`);
+    if(!existsSync(path))throw new StoreError('not_found','Diagnostic preview has expired');
+    const info=lstatSync(path);if(info.isSymbolicLink()||!info.isFile()||info.size>64*1024*1024)throw new StoreError('corrupt','Invalid diagnostic preview');
+    const bytes=readFileSync(path);if(bytes.length!==data.preview.bytes||createHash('sha256').update(bytes).digest('hex')!==data.preview.sha256)throw new StoreError('corrupt','Diagnostic preview hash mismatch');
+    res.writeHead(200,{'Content-Type':'model/gltf-binary','Content-Length':bytes.length,'Cache-Control':'no-store','X-CAD-Candidate':job.candidateId,'X-CAD-Base-Revision':String(job.baseRevision),'X-CAD-Sequence':String(data.sequence),'X-CAD-Content-Hash':data.preview.sha256});res.end(bytes);return;
+   }
    const candidate=suffix.match(/^jobs\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})\/candidate\/(snapshot|preview)$/);
    if(candidate&&req.method==='GET'){
-    const job=supervisor.job(id,candidate[1]);if(!job.candidateId||!['running','validating','committing','committed'].includes(job.status))throw new StoreError('not_found','Candidate preview unavailable');
+    const job=supervisor.job(id,candidate[1]);if(!job.candidateId||!['running','validating','committing','committed','answered','failed','cancelled','awaiting_acceptance','rejected'].includes(job.status))throw new StoreError('not_found','Candidate preview unavailable');
     if(candidate[2]==='snapshot'){json(res,200,{status:job.status,snapshot:job.candidateSnapshot??null});return;}
     const sequence=Number(url.searchParams.get('sequence'));if(!Number.isSafeInteger(sequence)||sequence<1)throw new StoreError('not_found','Candidate sequence unavailable');
     const recorded:any=store.db.prepare("SELECT event FROM events WHERE document_id=? AND json_extract(event,'$.jobId')=? AND json_extract(event,'$.type')='candidate_snapshot' AND json_extract(event,'$.data.sequence')=?").get(id,job.operationId,sequence);
     const snapshot=recorded?JSON.parse(recorded.event).data:null;
-    if(!snapshot?.preview||snapshot.candidateId!==job.candidateId||(job.plan?.kind!=='python'&&snapshot.planHash!==job.plan?.planHash))throw new StoreError('not_found','Candidate sequence unavailable');
+    if(!snapshot?.preview||snapshot.candidateId!==job.candidateId||(job.plan&&job.plan.kind!=='python'&&snapshot.planHash!==job.plan.planHash))throw new StoreError('not_found','Candidate sequence unavailable');
     if(job.status==='committed'&&(job.result?.candidateId!==job.candidateId||job.result?.operationId!==job.operationId))throw new StoreError('corrupt','Recorded candidate identity mismatch');
     const directory=job.status==='committed'?dirname(store.artifactPath(id,job.result.revision,'model.FCStd')):store.candidatePath(job.candidateId);
     const path=join(directory,`candidate-${sequence}.glb`);
@@ -87,14 +129,17 @@ export async function createGateway(options:Options):Promise<Gateway>{
     res.writeHead(200,{'Content-Type':'model/gltf-binary','Content-Length':bytes.length,'Cache-Control':'no-store','X-CAD-Candidate':job.candidateId,'X-CAD-Base-Revision':String(job.baseRevision),'X-CAD-Sequence':String(sequence),'X-CAD-Content-Hash':snapshot.preview.sha256,'X-Content-Type-Options':'nosniff'});res.end(bytes);return;
    }
    if(suffix==='jobs'&&req.method==='POST'){
-    const input=await body(req);keys(input,['baseRevision','operationId'],['program','text','plan','python','conversationId']);
-    if(['program','text','plan','python'].filter(key=>Object.hasOwn(input,key)).length!==1)throw new StoreError('invalid','Choose exactly one program, text, plan or python task');
+    const input=await body(req);keys(input,['baseRevision','operationId'],['program','text','plan','python','run','conversationId']);
+    if(['program','text','plan','python','run'].filter(key=>Object.hasOwn(input,key)).length!==1)throw new StoreError('invalid','Choose exactly one program, text, plan, python or run task');
+    if(Object.hasOwn(input,'run')){json(res,202,supervisor.submitPython(id,input.baseRevision,input.operationId,{kind:'run',run:input.run},input.conversationId));return;}
     if(Object.hasOwn(input,'python')){json(res,202,supervisor.submitPython(id,input.baseRevision,input.operationId,{kind:'python',submission:input.python},input.conversationId));return;}
     if(Object.hasOwn(input,'text')&&providerMode()==='none')throw new StoreError('unavailable','请先配置模型服务');
     json(res,202,Object.hasOwn(input,'text')?supervisor.submitText(id,input.baseRevision,input.operationId,input.text,input.conversationId):Object.hasOwn(input,'plan')?supervisor.submitOperationPlan(id,input.baseRevision,input.operationId,input.plan,input.conversationId):supervisor.submit(id,input.baseRevision,input.operationId,input.program,input.conversationId));return;
    }
    const approval=suffix.match(/^jobs\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})\/(approve|reject)$/);
    if(approval&&req.method==='POST'){const input=await body(req);keys(input,['planHash']);json(res,200,approval[2]==='approve'?supervisor.approveJob(id,approval[1],input.planHash):supervisor.rejectJob(id,approval[1],input.planHash));return;}
+   const candidateDecision=suffix.match(/^jobs\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})\/(accept|reject-candidate)$/);
+   if(candidateDecision&&req.method==='POST'){const input=await body(req);keys(input,[]);json(res,200,candidateDecision[2]==='accept'?supervisor.acceptCandidate(id,candidateDecision[1]):supervisor.rejectCandidate(id,candidateDecision[1]));return;}
    const job=suffix.match(/^jobs\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})(\/cancel)?$/);
    if(job){if(!job[2]&&req.method==='GET'){json(res,200,supervisor.job(id,job[1]));return;}if(job[2]&&req.method==='POST'){const input=await body(req);keys(input,[]);json(res,200,supervisor.cancelJob(id,job[1]));return;}}
    if(suffix==='revisions'&&req.method==='GET'){json(res,200,{revisions:store.listRevisions(id)});return;}

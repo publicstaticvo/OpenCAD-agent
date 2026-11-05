@@ -1,0 +1,13 @@
+
+> cad-agent-workspace@0.1.0 test:unit
+> vitest run
+
+
+ RUN  v4.1.12 /home/lenovo/ai4s/cad-web
+
+
+ Test Files  40 passed (40)
+      Tests  182 passed (182)
+   Start at  23:49:39
+   Duration  214.92s (transform 1.25s, setup 0ms, import 19.67s, tests 188.99s, environment 5ms)
+

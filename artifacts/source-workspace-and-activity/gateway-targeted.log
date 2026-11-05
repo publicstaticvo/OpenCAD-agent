@@ -1,0 +1,13 @@
+
+> cad-agent-workspace@0.1.0 test:unit
+> vitest run tests/source-gateway.test.ts
+
+
+ RUN  v4.1.12 /home/lenovo/ai4s/cad-web
+
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  13:58:01
+   Duration  10.12s (transform 395ms, setup 0ms, import 1.15s, tests 8.83s, environment 0ms)
+

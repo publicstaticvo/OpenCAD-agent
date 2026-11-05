@@ -36,7 +36,7 @@ export function assertContract(kind: string, value: unknown): void {
   const schema = registry[kind];
   if (!schema || !isJson(value) || !check(schema,value)) throw new Error(`Invalid ${kind}: strict CAD schema`);
 }
-export const budgets = {maxToolCalls:20, taskMs:0, operationMs:0, startupMs:15000, frameBytes:1048576} as const;
+export const budgets = {maxToolCalls:20, taskMs:0, operationMs:0, startupMs:15000, frameBytes:16*1048576} as const;
 export interface CadOperation { op:string; [key:string]:unknown }
 export interface Criteria { bbox:[number,number,number]; volume:number; parameters?:{feature:string;parameter:string;value:number}[] }
 export interface ModelProgram {operations:CadOperation[];criteria:Criteria}

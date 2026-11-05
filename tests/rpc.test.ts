@@ -49,7 +49,7 @@ describe('real native Worker boundary',()=>{
    socket.write(req(7).slice(0,12));socket.write(req(7).slice(12)+req(8)+'{bad}\n'+JSON.stringify({jsonrpc:'1.0',id:9,method:'hello',params:{}})+'\n');
    for(let i=0;i<100&&results.length<4;i++)await new Promise(r=>setTimeout(r,10));
    expect(results.map(x=>x.id)).toEqual([7,8,null,9]);expect(results[2].error.code).toBe(-32700);expect(results[3].error.code).toBe(-32600);
-   const closed=new Promise(r=>socket!.once('close',r));socket.write('x'.repeat(1048577));await closed;
+   const closed=new Promise(r=>socket!.once('close',r));socket.write('x'.repeat(16*1024*1024+1));await closed;
    expect(results.at(-1).error.code).toBe(-32001);
   }finally{socket?.destroy();child.kill('SIGKILL');await new Promise(r=>child.exitCode!==null||child.signalCode!==null?r(null):child.once('exit',r));await rm(dir,{recursive:true,force:true});}
  });

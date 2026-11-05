@@ -2,6 +2,7 @@ import {test,expect} from '@playwright/test';
 import {mkdtempSync,readdirSync,existsSync,mkdirSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {spawn} from 'node:child_process';
+import {showActivity} from './helpers.ts';
 
 test('approved native candidate remains observable after commit and browser refresh',async({page})=>{
  const root=mkdtempSync(resolve('.work/browser-approved-')),token='approved-preview-local-token-012345';
@@ -27,8 +28,7 @@ test('approved native candidate remains observable after commit and browser refr
   await page.getByRole('button',{name:'查看候选模型',exact:true}).click();await expect(page.getByTestId('candidate-panel')).toBeVisible();child.send({release:true});
   await expect(page.getByTestId('display-revision')).toHaveText('正式版本 1');await expect(page.getByTestId('candidate-panel')).toHaveCount(0);
   await page.reload();await expect(page.getByTestId('display-revision')).toHaveText('正式版本 1');
-  await page.locator('.execution-activity').last().locator('summary').first().click();
-  const checkpoint=page.getByTestId('recorded-checkpoint').last();await checkpoint.locator('summary').click();
+  await showActivity(page);const checkpoint=page.getByTestId('recorded-checkpoint').last();await checkpoint.locator('summary').click();
   await checkpoint.getByRole('button',{name:'查看实际候选实体',exact:true}).click();
   const recorded=checkpoint.getByTestId('recorded-candidate');await expect(recorded).toContainText('基于正式版本 0');
   await expect(recorded.getByTestId('mesh-stats')).toContainText('WebGL');expect(Number(await recorded.getByTestId('mesh-stats').getAttribute('data-triangles'))).toBe(12);

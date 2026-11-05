@@ -9,9 +9,10 @@ import {join,resolve} from 'node:path';
 import {defaultTimeouts,type TimeoutSettings} from './timeouts.ts';
 import {createPlan,createProgramPlan,authorizeOperations,approvedStages,assertPlanIntegrity,assertCandidateSnapshot,type CadPlan} from './plan.ts';
 import {PythonSession} from './python-session.ts';
+import {createSourceTools} from './source-tools.ts';
 export interface Job{documentId:string;conversationId?:string;operationId:string;status:string;candidateId:string;baseRevision:number;request:any;result:any;error:string|null;agent?:any;planningAgent?:any;plan?:CadPlan;approval?:{planHash:string;decision:'approved'|'rejected';decidedAt:number};candidateSequence?:number;candidateSnapshot?:any;stage?:number}
 type Options={metadataBoundary?:(phase:string)=>void;textRunner?:TextRunner;timeouts?:()=>TimeoutSettings;operationMs?:number;taskMs?:number;observe?:(phase:string,job:Job)=>void|Promise<void>};
-const terminal=new Set(['committed','answered','rejected','failed','cancelled','interrupted']);
+const terminal=new Set(['committed','answered','rejected','failed','cancelled','interrupted','awaiting_acceptance']);
 function startTime(pid:number){try{const data=readFileSync(`/proc/${pid}/stat`,'utf8'),fields=data.slice(data.lastIndexOf(')')+2).split(' ');return ['Z','X'].includes(fields[0])?null:fields[19];}catch{return null;}}
 export class Supervisor{
  activeWorker:WorkerClient|null=null;
@@ -45,7 +46,10 @@ export class Supervisor{
    }
    store.db.exec('BEGIN IMMEDIATE');
    try{
-    for(const row of store.db.prepare("SELECT job FROM jobs WHERE status NOT IN ('committed','answered','rejected','failed','cancelled','interrupted','awaiting_approval')").all() as any[]){const job:Job=JSON.parse(row.job);job.status='interrupted';job.error='Gateway restarted; no side effects replayed';s.persist(job);store.appendEvent(job.documentId,'job_updated',job,job.operationId);}
+    if(store.db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='python_executions'").get()){
+     for(const row of store.db.prepare("SELECT execution_id,record FROM python_executions WHERE json_extract(record,'$.status')='running'").all() as any[]){const record=JSON.parse(row.record);record.status='interrupted';record.result={status:'interrupted',error:{stage:'lifecycle',type:'GatewayRestart',message:'Gateway restarted during execution'}};store.db.prepare('UPDATE python_executions SET record=? WHERE execution_id=?').run(JSON.stringify(record),row.execution_id);store.appendEvent(record.documentId,'python_execution',{...record,...record.result},record.operationId);}
+    }
+    for(const row of store.db.prepare("SELECT job FROM jobs WHERE status NOT IN ('committed','answered','rejected','failed','cancelled','interrupted','awaiting_approval','awaiting_acceptance')").all() as any[]){const job:Job=JSON.parse(row.job);job.status='interrupted';job.error='Gateway restarted; no side effects replayed';s.persist(job);store.appendEvent(job.documentId,'job_updated',job,job.operationId);}
     store.db.exec('COMMIT');
    }catch(e){store.db.exec('ROLLBACK');throw e;}
    store.quarantineOrphans();s.prune();return s;
@@ -58,12 +62,27 @@ export class Supervisor{
  }
  private persist(job:Job){this.store.db.prepare('UPDATE jobs SET status=?,job=? WHERE document_id=? AND operation_id=?').run(job.status,JSON.stringify(job),job.documentId,job.operationId);}
  private state(job:Job,status:string,error:string|null=null){
-  if(terminal.has(this.job(job.documentId,job.operationId).status))return;
+  const current=this.job(job.documentId,job.operationId).status;
+  if(terminal.has(current)&&!(current==='awaiting_acceptance'&&['rejected','cancelled'].includes(status)))return;
   job.status=status;job.error=error;
   this.store.db.exec('BEGIN IMMEDIATE');try{this.persist(job);this.store.appendEvent(job.documentId,'job_updated',job,job.operationId);this.store.db.exec('COMMIT');}catch(e){this.store.db.exec('ROLLBACK');throw e;}
  }
  submitText(documentId:string,baseRevision:number,operationId:string,text:string,conversationId?:string):Job{
+  if(/(?:等待我批准|等我确认方案|先给.*方案.*批准|approval before|wait for my approval)/i.test(text))return this.submitPlanningText(documentId,baseRevision,operationId,text,conversationId);
+  if(this.options.textRunner?.mode==='live')return this.submitPython(documentId,baseRevision,operationId,{kind:'text',text},conversationId);
   return this.submitPlannedText(documentId,baseRevision,operationId,text,conversationId);
+ }
+ private submitPlanningText(documentId:string,baseRevision:number,operationId:string,text:string,conversationId?:string):Job{
+  if(this.closed)throw new StoreError('closed','Gateway closed');
+  if(!this.options.textRunner)throw new StoreError('unavailable','No explicitly configured model provider');
+  if(typeof text!=='string'||!text.trim()||text.length>8000)throw new StoreError('invalid','Invalid task text (1–8000 characters)');
+  const conversation=conversationId??this.store.listConversations(documentId)[0].id;this.store.conversation(documentId,conversation);
+  const request={kind:'text',text},requestHash=stableHash({baseRevision,request}),prior:any=this.store.db.prepare('SELECT * FROM jobs WHERE document_id=? AND operation_id=?').get(documentId,operationId);
+  if(prior){if(prior.request_hash!==requestHash||prior.conversation_id!==conversation)throw new StoreError('idempotency','Operation ID reused with different content or conversation');return JSON.parse(prior.job);}
+  if(this.store.snapshot(documentId).revision!==baseRevision)throw new StoreError('conflict','Revision conflict');
+  const job:Job={documentId,baseRevision,operationId,candidateId:'',conversationId:conversation,status:'planning',request,result:null,error:null};
+  this.store.db.exec('BEGIN IMMEDIATE');try{this.store.db.prepare('INSERT INTO jobs(document_id,operation_id,status,request_hash,job,conversation_id) VALUES(?,?,?,?,?,?)').run(documentId,operationId,job.status,requestHash,JSON.stringify(job),conversation);this.store.saveTranscript(job,[]);this.store.appendEvent(documentId,'job_updated',job,operationId);this.store.db.exec('COMMIT');}catch(e){this.store.db.exec('ROLLBACK');throw e;}
+  this.schedule(job,()=>this.runPlanning(job));return job;
  }
  submitPlannedText(documentId:string,baseRevision:number,operationId:string,text:string,conversationId?:string):Job{
   if(this.closed)throw new StoreError('closed','Gateway closed');
@@ -94,11 +113,14 @@ export class Supervisor{
   const snapshot=()=>this.store.snapshot(job.documentId);
   const blocked=async()=>{throw new Error('CAD writing is prohibited before user approval');};
   try{
-   const session:CadSession={mode:'planning',baseRevision:job.baseRevision,history:this.store.conversationContext(job.documentId,job.conversationId!,job.operationId),snapshot:async()=>snapshot(),inspect:async()=>({tree:snapshot().tree,revision:snapshot().revision,operationModel:snapshot().validation?.operationModel}),apply:blocked,prepare:blocked,propose:async proposal=>{
+   const session:CadSession={mode:'planning',pythonPlanning:this.options.textRunner!.mode==='live',baseRevision:job.baseRevision,history:this.store.conversationContext(job.documentId,job.conversationId!,job.operationId),snapshot:async()=>snapshot(),inspect:async()=>({tree:snapshot().tree,revision:snapshot().revision,operationModel:snapshot().validation?.operationModel}),apply:blocked,prepare:blocked,propose:async proposal=>{
     this.check();if(job.plan)throw new Error('Only one plan per task');
     const current=snapshot();if(current.revision!==job.baseRevision)throw new Error('Revision conflict during planning');
     const identity={documentId:job.documentId,operationId:job.operationId,requestHash:stableHash({baseRevision:job.baseRevision,request:job.request})};
-    if((proposal as any)?.kind==='program'){
+    if(this.options.textRunner!.mode==='live'){
+     const value=proposal as any;if(!value||Object.keys(value).join(',')!=='goal'||typeof value.goal!=='string'||!value.goal.trim()||value.goal.length>8000)throw new Error('Python plan requires a nonempty goal and modeling approach');
+     const content={version:1 as const,kind:'python' as const,...identity,baseRevision:job.baseRevision,goal:value.goal,dimensions:{length:0,width:0,height:0,unit:'mm' as const},criteria:{bbox:[0,0,0] as [number,number,number],volume:0}};job.plan={...content,planHash:stableHash(content)};
+    }else if((proposal as any)?.kind==='program'){
      if(this.options.textRunner!.mode!=='fake'||Object.keys(proposal as object).sort().join(',')!=='kind,program')throw new Error('Live planning requires a supported structured design');
      job.plan=createProgramPlan((proposal as any).program,identity,current.revision);
     }else job.plan=createPlan(proposal,identity,current);
@@ -117,7 +139,7 @@ export class Supervisor{
    if(job.approval?.decision==='approved'){this.store.db.exec('COMMIT');return job;}
    if(job.status!=='awaiting_approval')throw new StoreError('conflict','Job is not awaiting approval');
    if(this.store.snapshot(documentId).revision!==job.baseRevision)throw new StoreError('conflict','Plan base revision is stale');
-   if(this.store.db.prepare("SELECT 1 FROM jobs WHERE document_id=? AND status IN ('approved','queued','running','validating','committing')").get(documentId))throw new StoreError('project_busy','项目正在修改，请等待当前任务结束');
+   if(this.store.db.prepare("SELECT 1 FROM jobs WHERE document_id=? AND status IN ('approved','queued','running','validating','committing','awaiting_acceptance')").get(documentId))throw new StoreError('project_busy','项目已有运行任务或待验收候选');
    job.candidateId=randomUUID();job.approval={planHash,decision:'approved',decidedAt:Date.now()};job.status='approved';job.stage=0;
    this.persist(job);this.store.appendEvent(documentId,'plan_approved',job,operationId);this.store.db.exec('COMMIT');
   }catch(e){this.store.db.exec('ROLLBACK');throw e;}
@@ -132,48 +154,62 @@ export class Supervisor{
   if(this.closed)throw new StoreError('closed','Gateway closed');
   assertContract('envelope',{documentId,baseRevision,operationId,candidateId:'pending'});
   if(request.kind==='python')assertContract('pythonSubmission',request.submission);
+  if(request.kind==='run')assertContract('pythonRun',request.run);
   const conversation=conversationId??this.store.listConversations(documentId)[0].id;this.store.conversation(documentId,conversation);
   const requestHash=stableHash({baseRevision,request});
   const prior:any=this.store.db.prepare('SELECT * FROM jobs WHERE document_id=? AND operation_id=?').get(documentId,operationId);
   if(prior){if(prior.request_hash!==requestHash||prior.conversation_id!==conversation)throw new StoreError('idempotency','Python operation identity reused');return JSON.parse(prior.job);}
   if(this.store.snapshot(documentId).revision!==baseRevision)throw new StoreError('conflict','Revision conflict');
-  const content={version:1,kind:'python',documentId,operationId,requestHash,baseRevision,goal:request.text??'执行提交的 Python 脚本'};
-  const job:Job={documentId,operationId,baseRevision,candidateId:'',conversationId:conversation,status:'awaiting_approval',request,result:null,error:null,plan:{...content,planHash:stableHash(content)} as CadPlan};
+  if(this.store.db.prepare("SELECT 1 FROM jobs WHERE document_id=? AND status IN ('queued','approved','running','validating','committing','awaiting_acceptance')").get(documentId))throw new StoreError('project_busy','项目已有运行任务或待验收候选');
+  const job:Job={documentId,operationId,baseRevision,candidateId:randomUUID(),conversationId:conversation,status:'queued',request,result:null,error:null};
   this.store.db.exec('BEGIN IMMEDIATE');try{
    this.store.db.prepare('INSERT INTO jobs(document_id,operation_id,status,request_hash,job,conversation_id) VALUES(?,?,?,?,?,?)').run(documentId,operationId,job.status,requestHash,JSON.stringify(job),conversation);
    this.store.saveTranscript(job,[]);this.store.appendEvent(documentId,'job_updated',job,operationId);this.store.db.exec('COMMIT');
   }catch(error){this.store.db.exec('ROLLBACK');throw error;}
-  return job;
+  this.schedule(job,()=>this.runPythonCandidate(job));return job;
  }
  private async runPythonCandidate(job:Job){
-  if(this.closed||this.job(job.documentId,job.operationId).status!=='approved')return;
+  if(this.closed||!['approved','queued'].includes(this.job(job.documentId,job.operationId).status))return;
   this.active=job;this.controller=new AbortController();let session:PythonSession|undefined;
   const settings=this.options.timeouts?.()??this.options.textRunner?.timeouts?.()??defaultTimeouts;
   const taskMs=this.options.taskMs??settings.taskSeconds*1000;
   const timer=taskMs>0?setTimeout(()=>{this.controller?.abort(new Error('Task timeout'));void this.pythonSession?.close();},taskMs):undefined;
   try{
-   this.assertApproval(job);this.state(job,'running');
+   if(job.plan)this.assertApproval(job);this.state(job,'running');
    session=this.pythonSession=new PythonSession(this.store,job,(type,data)=>{
     if(terminal.has(this.job(job.documentId,job.operationId).status))return;
-    this.assertApproval(job);
+    if(job.plan)this.assertApproval(job);else if(this.store.snapshot(job.documentId).revision!==job.baseRevision)throw new Error('Formal model changed during execution');
     if(type==='python_worker'){this.activeWorker=this.pythonSession!.client!;writeLeaseJson(join(this.store.root,'worker-lease.json'),{pid:data.pid,start:startTime(data.pid)},this.options.metadataBoundary);}
     if(type==='candidate_snapshot'){job.candidateSnapshot=data;job.candidateSequence=data.sequence;this.persist(job);}
     this.store.appendEvent(job.documentId,type,data,job.operationId,undefined,job.candidateId);
    },this.controller.signal,settings.cadSeconds);
-   const finish=async(criteria:any)=>{this.assertApproval(job);const result=await session!.finish(criteria);this.state(job,'validating');return result;};
    if(job.request.kind==='text'){
-    const cad:CadSession={mode:'python',baseRevision:job.baseRevision,history:this.store.conversationContext(job.documentId,job.conversationId!,job.operationId),inspect:async()=>session!.inspect(),python:input=>session!.submit(input),snapshot:async()=>this.store.snapshot(job.documentId),apply:async()=>{throw new Error('Use cad_python');},prepare:finish,progress:event=>this.progress(job,event),transcript:report=>this.saveAgent(job,report,false)};
+   const cad:CadSession={mode:'python',operationId:job.operationId,baseRevision:job.baseRevision,sourceTools:createSourceTools(session.sources,job.documentId,job.operationId),history:this.store.conversationContext(job.documentId,job.conversationId!,job.operationId),inspect:async()=>session!.inspect(),run:input=>session!.run(input),snapshot:async()=>this.store.snapshot(job.documentId),apply:async()=>{throw new Error('Use cad_run');},prepare:async executionId=>{this.assertApproval(job);const result=await session!.finishExecution(executionId);this.state(job,'validating');return result;},progress:event=>this.progress(job,event),transcript:report=>this.saveAgent(job,report,false)};
     const criteria=await this.options.textRunner!(job,cad,this.controller.signal);
-    if(criteria===undefined){this.state(job,'answered');return;}
+   if(criteria===undefined){const latest=session.inspect().latest;if(latest?.operationId===job.operationId&&(latest.status==='failed'||latest.result?.acceptanceStatus==='failed'))throw new Error(JSON.stringify(latest.result?.error));if(latest?.operationId!==job.operationId||latest.status!=='valid'){this.state(job,'answered');return;}}
    }else{
-    const result=await session.submit(job.request.submission);
-    if(result.status!=='valid')throw new Error(JSON.stringify(result.error));
-    await finish(job.request.submission.criteria);
+   const result=job.request.kind==='run'?await session.run(job.request.run):await session.submit(job.request.submission);
+    if(result.status!=='valid')throw new Error(JSON.stringify(result.error??{stage:'validation',type:'CandidateRejected',message:'Python execution did not produce a valid candidate'}));
+   if(job.plan)this.assertApproval(job);await session.finishExecution(result.executionId);this.state(job,'validating');
    }
-   this.assertApproval(job);if(this.controller.signal.aborted)throw this.controller.signal.reason;
-   this.state(job,'committing');this.store.commitCandidate(session.envelope,job.request);
+   if(job.plan)this.assertApproval(job);if(this.controller.signal.aborted)throw this.controller.signal.reason;
+   if(session.candidate){await session.finishExecution(session.candidate.executionId);this.state(job,'validating');}
+   const candidate=session.candidate;if(!candidate)throw new Error('Verified execution did not produce a candidate');
+   job.result={candidateId:job.candidateId,executionId:candidate.executionId,sourceVersionId:candidate.sourceVersionId,sourceHash:candidate.sourceHash,validation:candidate.geometry,preview:candidate.preview};
+   this.state(job,'awaiting_acceptance');this.store.appendEvent(job.documentId,'candidate_ready',job.result,job.operationId,undefined,job.candidateId);
   }catch(error){if(!terminal.has(this.job(job.documentId,job.operationId).status))this.state(job,this.closed?'interrupted':'failed',String(this.controller?.signal.aborted?this.controller.signal.reason:(error as Error).message));}
   finally{clearTimeout(timer);await session?.close();this.pythonSession=null;this.activeWorker=null;this.active=null;this.controller=null;const lease=join(this.store.root,'worker-lease.json');if(existsSync(lease))unlinkSync(lease);this.prune();}
+ }
+ acceptCandidate(documentId:string,operationId:string):Job{
+  const job=this.job(documentId,operationId);if(job.status==='committed')return job;
+  if(job.status!=='awaiting_acceptance'||!job.candidateId||!job.result?.executionId)throw new StoreError('conflict','Job has no verified candidate awaiting user acceptance');
+  const result=this.store.acceptPythonCandidate({documentId,operationId,baseRevision:job.baseRevision,candidateId:job.candidateId},job.request,{executionId:job.result.executionId,sourceVersionId:job.result.sourceVersionId,sourceHash:job.result.sourceHash});
+  const updated=this.job(documentId,operationId);updated.result=result;updated.status='committed';this.persist(updated);return updated;
+ }
+ rejectCandidate(documentId:string,operationId:string):Job{
+  const job=this.job(documentId,operationId);if(job.status==='rejected')return job;
+  if(job.status!=='awaiting_acceptance')throw new StoreError('conflict','Job has no candidate awaiting user decision');
+  this.state(job,'rejected','User rejected the candidate; formal revision unchanged');this.store.appendEvent(documentId,'candidate_rejected',{candidateId:job.candidateId,executionId:job.result?.executionId},operationId,undefined,job.candidateId);return this.job(documentId,operationId);
  }
  submitOperationPlan(documentId:string,baseRevision:number,operationId:string,proposal:unknown,conversationId?:string):Job{
   if(this.closed)throw new StoreError('closed','Gateway closed');
@@ -205,7 +241,7 @@ export class Supervisor{
  }
  async waitForJob(doc:string,op:string){await this.running.get(this.key(doc,op));return this.job(doc,op);}
  cancelJob(doc:string,op:string){
-  const job=this.job(doc,op);if(terminal.has(job.status))return job;
+  const job=this.job(doc,op);if(terminal.has(job.status)&&job.status!=='awaiting_acceptance')return job;
   this.state(job,'cancelled','Cancelled; no automatic resume');
   if(this.active?.documentId===doc&&this.active.operationId===op){this.controller?.abort(new Error('Cancelled'));void this.activeWorker?.close();void this.pythonSession?.close();}
   return this.job(doc,op);

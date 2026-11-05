@@ -58,7 +58,7 @@ test('only one Supervisor owns a data directory and a project rejects concurrent
  const x=await setup();try{
   await expect(Supervisor.start(x.store)).rejects.toThrow(/already owns/i);
   approvedProgram(x.s,'plate',0,'one',plate);
-  expect(()=>approvedProgram(x.s,'plate',0,'second',plate)).toThrow('项目正在修改');
+  expect(()=>approvedProgram(x.s,'plate',0,'second',plate)).toThrow('项目已有运行任务');
   expect((await x.s.waitForJob('plate','one')).status).toBe('committed');
   expect(()=>x.s.submit('plate',0,'stale',plate)).toThrow(/conflict/i);
   expect(x.store.snapshot('plate').revision).toBe(1);
