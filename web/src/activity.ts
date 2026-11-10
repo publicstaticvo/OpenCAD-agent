@@ -13,7 +13,7 @@ export function buildActivityRows(jobs:any[],events:AppEvent[]):ActivityRow[]{
  for(const event of ordered){
   const jobId=event.jobId??'';const data=event.data as any;
   if(!event.jobId||!byId.has(jobId)){if(!event.jobId&&['source_saved','source_conflict_branch','source_workspace_saved'].includes(event.type))rows.push({seq:event.seq,jobId:'',kind:'source',data:{...data,eventType:event.type},event});continue;}
-  if(event.type==='job_updated'&&rows.every(row=>row.jobId!==jobId))rows.push({seq:event.seq,jobId,kind:'user',data:{text:byId.get(jobId)?.request?.text??(byId.get(jobId)?.request?.kind==='run'?'运行指定项目源码快照':'提交 Python 建模任务')},event});
+  if(event.type==='job_updated'&&rows.every(row=>row.jobId!==jobId)){const request=byId.get(jobId)?.request;rows.push({seq:event.seq,jobId,kind:'user',data:{text:request?.text??(request?.kind==='run'?'运行指定项目源码快照':'提交 Python 建模任务'),...(request?.ideContext?{ideContext:request.ideContext}:{})},event});}
   if(event.type==='job_updated'&&data.agent?.messages&&!ordered.some(item=>item.jobId===jobId&&item.type==='agent_progress'&&['text_delta','message_end'].includes((item.data as any).type))){
    for(const message of data.agent.messages){if(message.role!=='assistant')continue;const text=(message.content??[]).filter((part:any)=>part.type==='text').map((part:any)=>part.text).join('');if(text.trim()&&!rows.some(row=>row.jobId===jobId&&row.kind==='assistant'&&row.data.text===text))rows.push({seq:event.seq,jobId,kind:'assistant',data:{text,recovered:true},event});}
   }
@@ -53,6 +53,6 @@ export function buildActivityRows(jobs:any[],events:AppEvent[]):ActivityRow[]{
   if(event.type==='clarification_required'){rows.push({seq:event.seq,jobId,kind:'clarification',data,event});continue;}
   if(event.type==='job_updated'&&['failed','cancelled','interrupted','rejected'].includes(data.status))rows.push({seq:event.seq,jobId,kind:'terminal',data,event});
  }
- for(const job of jobs)if(!rows.some(row=>row.jobId===job.operationId&&row.kind==='user'))rows.push({seq:Number.MAX_SAFE_INTEGER,jobId:job.operationId,kind:'user',data:{text:job.request?.text??'结构化建模任务'}});
+ for(const job of jobs)if(!rows.some(row=>row.jobId===job.operationId&&row.kind==='user'))rows.push({seq:Number.MAX_SAFE_INTEGER,jobId:job.operationId,kind:'user',data:{text:job.request?.text??'结构化建模任务',...(job.request?.ideContext?{ideContext:job.request.ideContext}:{})}});
  return rows.sort((a,b)=>a.seq-b.seq||a.jobId.localeCompare(b.jobId));
 }

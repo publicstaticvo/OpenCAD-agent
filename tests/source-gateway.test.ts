@@ -24,6 +24,17 @@ test('explicit Python plan approval performs no source edits before approval and
   app.supervisor.approveJob('project','approved',planned.plan!.planHash);const completed=await app.supervisor.waitForJob('project','approved');expect(completed.error).toBeNull();expect(completed.status).toBe('awaiting_acceptance');app.supervisor.approveJob('project','approved',planned.plan!.planHash);expect(app.store.events('project',0).filter(event=>event.type==='python_execution'&&(event.data as any).status==='running')).toHaveLength(1);expect(app.store.snapshot('project').revision).toBe(0);
  }finally{await app.close();}
 },20000);
+test('IDE active-file context must match the current persisted project file and draft identity',async()=>{
+ const app=await createGateway({dataDir:directory(),accessToken:token,port:0,textRunner:runner(()=>({text:'unused'}))});
+ try{
+  app.store.createDocument('project');const versions=new SourceVersions(app.store),draft=versions.workspace('project'),saved=versions.saveWorkspace('project',{source:'',project:{files:{'design/plate.py':'width = 40\n'},directories:['design'],entrypoint:''},baseVersionId:draft.baseVersionId,expectedBaseVersionId:draft.baseVersionId,draftRevision:draft.draftRevision});
+  const context:any={projectId:'project',activeFile:{path:'design/plate.py',saved:true,unsaved:false,sourceVersionId:saved.baseVersionId,draftRevision:saved.draftRevision,contentHash:createHash('sha256').update('width = 40\n').digest('hex'),createdBy:'user',empty:false},geometryReferences:[]};
+  expect(()=>app.supervisor.submitText('project',0,'missing','modify the selected file',undefined,{...context,activeFile:{...context.activeFile,path:'missing.py'}})).toThrow(/not present/);
+  expect(()=>app.supervisor.submitText('project',0,'stale','modify the selected file',undefined,{...context,activeFile:{...context.activeFile,draftRevision:0}})).toThrow(/outdated/);
+  expect(()=>app.supervisor.submitText('project',0,'changed','modify the selected file',undefined,{...context,activeFile:{...context.activeFile,contentHash:'b'.repeat(64)}})).toThrow(/content changed/);
+  expect(app.store.snapshot('project').jobs).toHaveLength(0);
+ }finally{await app.close();}
+});
 test.each(['创建长方体的源码，只做诊断分析，不要启动执行','创建模型的脚本，仅供只读检查','Create model source for diagnostic analysis only'])('source-only Agent task has no execution: %s',async(text)=>{
  const app=await createGateway({dataDir:directory(),accessToken:token,port:0,textRunner:runner(index=>index===0?{calls:[{name:'write',args:{path:'script.py',content:source}}]}:{text:'Source saved for inspection.'})});
  try{app.store.createDocument('project');app.supervisor.submitText('project',0,'source-only',text);const job=await app.supervisor.waitForJob('project','source-only');expect(job.error).toBeNull();expect(job.status).toBe('answered');expect(app.store.events('project',0).filter(event=>event.type==='python_execution')).toHaveLength(0);expect(app.store.snapshot('project').revision).toBe(0);}finally{await app.close();}

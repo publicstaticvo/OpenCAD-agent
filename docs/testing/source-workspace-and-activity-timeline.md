@@ -82,3 +82,37 @@
 Python Agent 工具为 `read/write/edit/cad_files/cad_run`。建模请求无需用户指定工具名；保存与执行分开记录。`cad_run` 自动检查、重开、导出和返回观察结果；Agent 没有正式提交权限。没有任务条件时 `acceptanceStatus=not-run`，健康检查不能证明用户尺寸需求已经自动通过。失败执行保留源码、诊断和已有有效模型。
 
 Pi 核心源码、模型服务配置和协议适配保持不变。旧固定操作仍供兼容和离线规则样例使用，未注册到新 Python Agent 正常工具集合。
+
+## IDE 上下文与几何引用补充记录
+
+本轮在同一项目工作副本和活动事件流上增加 IDE 上下文与真实面引用。`shared/ide-context.ts` 定义请求快照；`SourceWorkspace` 从当前 CodeMirror EditorState 采集激活文件、完整缓冲区 SHA-256、未保存状态和代码选区；`Gateway.submitText` 校验项目、文件路径、选区与模型来源；`pi-adapter.mjs` 将冻结对象加入 Agent 首轮用户输入。当前文件只作为提示，选区只指向代码范围，模型选择不会授予修改权限。
+
+FreeCAD 验证 Worker 在面数不超过 2048 时将每个实际 BRep 面作为独立 GLB 节点导出，节点名包含源对象名与 `FaceN`；对象高于该上限时导出命名对象节点并仅开放对象级选择。前端依据节点名称建立拾取表，不使用渲染三角形 `faceIndex` 推断 `FaceN`。面引用的面积、中心、法向和包围盒来自 FreeCAD BRep；点击点来自三角网格拾取，单位换算为毫米，并明确标注为近似预览点。正式引用绑定模型 GLB 内容哈希与修订号，候选引用绑定执行号、候选号和预览哈希；Gateway 在接收任务时再次检查对象与面属于该快照。
+
+确认新文件名后，文件立即以空内容保存到项目工作副本并记录来源事件；不会创建源码检查点或执行任务。取消命名不写入项目。任务活动行关联 `operationId`，其中每个执行行保留唯一 `executionId`；用户可在原任务位置打开对应执行，运行面板按执行号选择记录，选任务时显示其最近一次执行。保存通知使用绝对定位 Toast。
+
+本轮实际验证：
+
+| 检查 | 命令或证据 | 结果 |
+|---|---|---|
+| IDE 上下文结构校验、Pi 实际输入及活动执行身份 | `npx vitest run shared/ide-context.test.ts tests/source-tools.test.ts tests/activity.test.ts tests/ide-files.test.ts` | PASS；包含代码范围、未保存缓冲区和正式模型面引用；同任务多次执行保留不同执行号 |
+| FreeCAD 面测量及真实 GLB 映射 | `npm run test:cad` | PASS，32 项；真实 BRep 面数据和带身份 GLB 输出已检查 |
+| 真实 FreeCAD 模型的浏览器拾取、引用请求与空文件保存 | `npx playwright test tests/e2e/ide-workspace.spec.ts --grep "real saved CAD model|empty work-copy" --reporter=line` | PASS，2 项；截图：`artifacts/context-geometry/after/face-selection.png` |
+| TypeScript 类型检查 | `npm run typecheck` | BLOCKED；剩余错误位于未改动的 `pi/packages/ai/src/api/openai-client.ts:8:15`，OpenAI SDK 7.19.0 的 `fetch` 为私有成员 |
+
+面级选择证据仅适用于预览导出中保留了命名对象和面的修订。既有 GLB 若没有该映射，界面会拒绝创建面引用；FreeCAD `FaceN` 仍只对绑定的模型快照有效，后续修订不会自动迁移旧引用。用户在聊天输入后选面时引用会加入当前待发送上下文；空白画布点击会清空引用。没有调用真实模型服务，在线模型对该结构化上下文的理解能力尚未验证。
+
+## 上下文与几何引用回归结果
+
+本次完成后在 Linux Chrome/SwiftShader 环境重新运行完整离线浏览器回归。真实 FreeCAD 面映射和空文件工作副本检查均通过；几何选择截图为 `artifacts/context-geometry/after/face-selection.png`。
+
+| 命令 | 实际结果 |
+|---|---|
+| `npm run test:cad` | PASS，32 项真实 FreeCAD 测试 |
+| `npx playwright test --reporter=line` | PASS，34 项浏览器端到端测试，约 2.6 分钟 |
+| `npm run build` | PASS；Vite 提示压缩后主 JavaScript 文件超过 500 kB |
+| `git diff --check` | PASS |
+| `npm run test:unit` | PASS，42 个测试文件、190 项测试 |
+| `npm run typecheck` | BLOCKED，唯一报告为未改动的 `pi/packages/ai/src/api/openai-client.ts:8:15`：当前 OpenAI SDK 类型将 `fetch` 声明为私有成员 |
+
+没有未修复的自动化测试失败。没有调用真实模型服务。

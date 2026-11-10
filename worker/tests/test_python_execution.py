@@ -16,6 +16,10 @@ with tempfile.TemporaryDirectory(dir=Path.cwd()/'.work') as folder:
     assert (root/'ok'/'preview.glb').stat().st_size>0
     assert (root/'ok'/'observation.png').stat().st_size>0
     assert result['validation']['step']['solids']==1
+    assert result['validation']['faceMapping'] is True,result
+    tree=json.loads((root/'ok'/'tree.json').read_text())
+    faces=next(row['faces'] for row in tree if row['id']=='Body')
+    assert faces and all(face['subElement'].startswith('Face') and face['area']>0 and len(face['center'])==3 and len(face['normal'])==3 and len(face['bbox'])==6 for face in faces),faces
     assert result['stdout'].strip()=='native stdout evidence',result
     failed=execute_script(root/'bad','raise RuntimeError("failure evidence")',dict(bbox=[40,30,10],volume=12000),10)
     assert failed['status']=='failed' and failed['error']['type']=='RuntimeError',failed

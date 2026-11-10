@@ -3,13 +3,15 @@ import type {TextRunner,CadSession} from './agent.ts';
 import {WorkerClient} from './worker-client.ts';
 import {RevisionStore,StoreError,stableHash} from './revision-store.ts';
 import {assertContract,budgets,type Envelope,type ModelProgram} from '../shared/cad-contracts.ts';
-import {randomUUID} from 'node:crypto';
+import {createHash,randomUUID} from 'node:crypto';
 import {readFileSync,mkdirSync,copyFileSync,unlinkSync,existsSync,rmSync,closeSync,readdirSync} from 'node:fs';
 import {join,resolve} from 'node:path';
 import {defaultTimeouts,type TimeoutSettings} from './timeouts.ts';
 import {createPlan,createProgramPlan,authorizeOperations,approvedStages,assertPlanIntegrity,assertCandidateSnapshot,type CadPlan} from './plan.ts';
 import {PythonSession} from './python-session.ts';
 import {createSourceTools} from './source-tools.ts';
+import {SourceVersions} from './source-versions.ts';
+import {validateAgentIDEContext,type AgentIDEContext} from '../shared/ide-context.ts';
 export interface Job{documentId:string;conversationId?:string;operationId:string;status:string;candidateId:string;baseRevision:number;request:any;result:any;error:string|null;agent?:any;planningAgent?:any;plan?:CadPlan;approval?:{planHash:string;decision:'approved'|'rejected';decidedAt:number};candidateSequence?:number;candidateSnapshot?:any;stage?:number}
 type Options={metadataBoundary?:(phase:string)=>void;textRunner?:TextRunner;timeouts?:()=>TimeoutSettings;operationMs?:number;taskMs?:number;observe?:(phase:string,job:Job)=>void|Promise<void>};
 const terminal=new Set(['committed','answered','rejected','failed','cancelled','interrupted','awaiting_acceptance']);
@@ -67,32 +69,57 @@ export class Supervisor{
   job.status=status;job.error=error;
   this.store.db.exec('BEGIN IMMEDIATE');try{this.persist(job);this.store.appendEvent(job.documentId,'job_updated',job,job.operationId);this.store.db.exec('COMMIT');}catch(e){this.store.db.exec('ROLLBACK');throw e;}
  }
- submitText(documentId:string,baseRevision:number,operationId:string,text:string,conversationId?:string):Job{
-  if(/(?:等待我批准|等我确认方案|先给.*方案.*批准|approval before|wait for my approval)/i.test(text))return this.submitPlanningText(documentId,baseRevision,operationId,text,conversationId);
-  if(this.options.textRunner?.mode==='live')return this.submitPython(documentId,baseRevision,operationId,{kind:'text',text},conversationId);
-  return this.submitPlannedText(documentId,baseRevision,operationId,text,conversationId);
+ submitText(documentId:string,baseRevision:number,operationId:string,text:string,conversationId?:string,rawIdeContext?:unknown):Job{
+  const ideContext=rawIdeContext===undefined?undefined:validateAgentIDEContext(rawIdeContext,documentId);
+  if(ideContext?.activeFile){const workspace=new SourceVersions(this.store).workspace(documentId),file=workspace.project.files[ideContext.activeFile.path];if(file===undefined)throw new StoreError('invalid','IDE active file is not present in the project work copy');if(ideContext.activeFile.sourceVersionId!==workspace.baseVersionId||ideContext.activeFile.draftRevision!==workspace.draftRevision)throw new StoreError('conflict','IDE active file belongs to an outdated project work copy');if(ideContext.activeFile.saved&&(createHash('sha256').update(file).digest('hex')!==ideContext.activeFile.contentHash||ideContext.activeFile.empty!==(file.length===0)))throw new StoreError('conflict','IDE active file content changed before the task was submitted');}
+  if(ideContext)for(const reference of ideContext.geometryReferences){
+   const source=reference.source;
+   if(source.kind==='revision'){
+    if(source.revision!==baseRevision)throw new StoreError('conflict','所选几何引用属于已过期的正式修订');
+    const snapshot=this.store.revisionSnapshot(documentId,source.revision),preview=this.store.artifactPath(documentId,source.revision,'preview.glb'),hash=createHash('sha256').update(readFileSync(preview)).digest('hex');
+    if(hash!==reference.modelHash)throw new StoreError('conflict','所选几何引用与正式预览文件不匹配');
+    const component=snapshot.validation?.assembly?.components?.find((item:any)=>item.id===reference.objectId),object=snapshot.tree.find((item:any)=>item.id===reference.objectId);
+    if(!component&&!object)throw new StoreError('invalid','几何引用中的 FreeCAD 对象不属于该正式修订');
+    const faces=component?.faces??object?.faces??[];
+    if(reference.selectionType==='face'&&!faces.some((face:any)=>face.subElement===reference.subElement))throw new StoreError('invalid','几何引用中的 FaceN 不属于该正式修订对象');
+    if(reference.featureId&&!snapshot.tree.some((item:any)=>item.id===reference.featureId))throw new StoreError('invalid','几何引用中的特征不属于该正式修订');
+   }
+   if(source.kind==='execution'){
+    const records=this.store.db.prepare('SELECT job FROM jobs WHERE document_id=?').all(documentId) as any[];
+    const candidate=records.map(row=>JSON.parse(row.job)).find(job=>job.candidateId===source.candidateId&&job.result?.executionId===source.executionId&&job.result?.preview?.sha256===reference.modelHash);
+    if(!candidate)throw new StoreError('conflict','所选候选几何引用已过期或身份不匹配');
+    const object=candidate.candidateSnapshot?.tree?.find((item:any)=>item.id===reference.objectId),component=candidate.candidateSnapshot?.geometry?.assembly?.components?.find((item:any)=>item.id===reference.objectId);
+    if(!object&&!component)throw new StoreError('invalid','几何引用中的 FreeCAD 对象不属于该候选执行');
+    const faces=object?.faces??component?.faces??[];
+    if(reference.selectionType==='face'&&!faces.some((face:any)=>face.subElement===reference.subElement))throw new StoreError('invalid','几何引用中的 FaceN 不属于该候选对象');
+    if(reference.featureId&&!candidate.candidateSnapshot?.tree?.some((item:any)=>item.id===reference.featureId))throw new StoreError('invalid','几何引用中的特征不属于该候选执行');
+   }
+  }
+  if(/(?:等待我批准|等我确认方案|先给.*方案.*批准|approval before|wait for my approval)/i.test(text))return this.submitPlanningText(documentId,baseRevision,operationId,text,conversationId,ideContext);
+  if(this.options.textRunner?.mode==='live')return this.submitPython(documentId,baseRevision,operationId,{kind:'text',text,...(ideContext?{ideContext}:{})},conversationId);
+  return this.submitPlannedText(documentId,baseRevision,operationId,text,conversationId,ideContext);
  }
- private submitPlanningText(documentId:string,baseRevision:number,operationId:string,text:string,conversationId?:string):Job{
+ private submitPlanningText(documentId:string,baseRevision:number,operationId:string,text:string,conversationId?:string,ideContext?:AgentIDEContext):Job{
   if(this.closed)throw new StoreError('closed','Gateway closed');
   if(!this.options.textRunner)throw new StoreError('unavailable','No explicitly configured model provider');
   if(typeof text!=='string'||!text.trim()||text.length>8000)throw new StoreError('invalid','Invalid task text (1–8000 characters)');
   const conversation=conversationId??this.store.listConversations(documentId)[0].id;this.store.conversation(documentId,conversation);
-  const request={kind:'text',text},requestHash=stableHash({baseRevision,request}),prior:any=this.store.db.prepare('SELECT * FROM jobs WHERE document_id=? AND operation_id=?').get(documentId,operationId);
+  const request={kind:'text',text,...(ideContext?{ideContext}:{})},requestHash=stableHash({baseRevision,request}),prior:any=this.store.db.prepare('SELECT * FROM jobs WHERE document_id=? AND operation_id=?').get(documentId,operationId);
   if(prior){if(prior.request_hash!==requestHash||prior.conversation_id!==conversation)throw new StoreError('idempotency','Operation ID reused with different content or conversation');return JSON.parse(prior.job);}
   if(this.store.snapshot(documentId).revision!==baseRevision)throw new StoreError('conflict','Revision conflict');
   const job:Job={documentId,baseRevision,operationId,candidateId:'',conversationId:conversation,status:'planning',request,result:null,error:null};
   this.store.db.exec('BEGIN IMMEDIATE');try{this.store.db.prepare('INSERT INTO jobs(document_id,operation_id,status,request_hash,job,conversation_id) VALUES(?,?,?,?,?,?)').run(documentId,operationId,job.status,requestHash,JSON.stringify(job),conversation);this.store.saveTranscript(job,[]);this.store.appendEvent(documentId,'job_updated',job,operationId);this.store.db.exec('COMMIT');}catch(e){this.store.db.exec('ROLLBACK');throw e;}
   this.schedule(job,()=>this.runPlanning(job));return job;
  }
- submitPlannedText(documentId:string,baseRevision:number,operationId:string,text:string,conversationId?:string):Job{
+ submitPlannedText(documentId:string,baseRevision:number,operationId:string,text:string,conversationId?:string,ideContext?:AgentIDEContext):Job{
   if(this.closed)throw new StoreError('closed','Gateway closed');
   if(!this.options.textRunner)throw new StoreError('unavailable','No explicitly configured model provider');
   if(typeof text!=='string'||!text.trim()||text.length>8000)throw new StoreError('invalid','Invalid task text (1–8000 characters)');
-  if(this.options.textRunner.mode==='live')return this.submitPython(documentId,baseRevision,operationId,{kind:'text',text},conversationId);
+  if(this.options.textRunner.mode==='live')return this.submitPython(documentId,baseRevision,operationId,{kind:'text',text,...(ideContext?{ideContext}:{})},conversationId);
   assertContract('envelope',{documentId,baseRevision,operationId,candidateId:'pending'});
   const envelope={documentId,baseRevision,operationId,candidateId:''};
   const conversation=conversationId??this.store.listConversations(documentId)[0].id;this.store.conversation(documentId,conversation);
-  const request={kind:'text',text};const requestHash=stableHash({baseRevision,request});
+  const request={kind:'text',text,...(ideContext?{ideContext}:{})};const requestHash=stableHash({baseRevision,request});
   const prior:any=this.store.db.prepare('SELECT * FROM jobs WHERE document_id=? AND operation_id=?').get(documentId,operationId);
   if(prior){if(prior.request_hash!==requestHash||prior.conversation_id!==conversation)throw new StoreError('idempotency','Operation ID reused with different content or conversation');return JSON.parse(prior.job);}
   if(this.store.snapshot(documentId).revision!==baseRevision)throw new StoreError('conflict','Revision conflict');

@@ -80,7 +80,7 @@ export class SourceVersions{
     const nextRevision=currentRevision+1,updatedAt=Date.now();
     this.store.db.prepare(`INSERT INTO source_workspaces VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(document_id) DO UPDATE SET source=excluded.source,source_hash=excluded.source_hash,base_version_id=excluded.base_version_id,draft_revision=excluded.draft_revision,updated_at=excluded.updated_at,source_origin=excluded.source_origin,project_json=excluded.project_json`).run(documentId,source,sourceHash,input.baseVersionId,nextRevision,updatedAt,input.sourceOrigin??current?.source_origin??'edit',JSON.stringify(project));
     const previous=current?projectSnapshot(current.project_json?JSON.parse(current.project_json):singleFileProject(current.source)):priorProject;
-    if(projectHash(previous)!==sourceHash)this.store.appendEvent(documentId,'source_workspace_saved',{actor:'user',draftRevision:nextRevision,createdAt:updatedAt,baseVersionId:input.baseVersionId,sourceHash,entrypoint:project.entrypoint,directories:project.directories,changes:projectDiff(previous,project)});
+    if(projectHash(previous)!==sourceHash)this.store.appendEvent(documentId,'source_workspace_saved',{actor:'user',sourceOrigin:input.sourceOrigin??current?.source_origin??'edit',draftRevision:nextRevision,createdAt:updatedAt,baseVersionId:input.baseVersionId,sourceHash,entrypoint:project.entrypoint,directories:project.directories,changes:projectDiff(previous,project)});
    }
    this.store.db.exec('COMMIT');return this.workspace(documentId);
   }catch(error){this.store.db.exec('ROLLBACK');throw error;}

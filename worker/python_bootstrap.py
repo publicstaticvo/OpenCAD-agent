@@ -97,7 +97,19 @@ def check_saved_document(path):
                 raise ValueError('Persistent Python objects are not allowed in deliverable FCStd')
 
 
-def observe_document(doc):
+def face_observation(face):
+    center = face.CenterOfMass
+    bounds = face.BoundBox
+    u, v = face.Surface.parameter(center)
+    normal = face.normalAt(u, v)
+    return dict(area=face.Area, center=[center.x, center.y, center.z],
+                normal=[normal.x, normal.y, normal.z],
+                bbox=[bounds.XMin, bounds.YMin, bounds.ZMin,
+                      bounds.XMax, bounds.YMax, bounds.ZMax])
+
+
+def observe_document(doc, export_objects):
+    export_ids = {obj.Name for obj in export_objects}
     rows = []
     for obj in doc.Objects:
         parameters = {}
@@ -113,9 +125,48 @@ def observe_document(doc):
                         raise ValueError('Ambiguous parameter name: ' + constraint.Name)
                     parameters[constraint.Name] = obj.getDatum(index).Value
         parent = next((p.Name for p in obj.InList if p.TypeId == 'PartDesign::Body'), None)
-        rows.append(dict(id=obj.Name, label=obj.Label, type=obj.TypeId, parent=parent,
-                         parameters=parameters, dependencies=[o.Name for o in obj.OutList], state=list(obj.State)))
+        row = dict(id=obj.Name, label=obj.Label, type=obj.TypeId, parent=parent,
+                   parameters=parameters, dependencies=[o.Name for o in obj.OutList], state=list(obj.State))
+        if obj.Name in export_ids:
+            row['faces'] = [dict(subElement='Face' + str(index), **face_observation(face))
+                            for index, face in enumerate(obj.Shape.Faces, 1)]
+        rows.append(row)
     return rows
+
+
+def export_selection_preview(objects, destination):
+    import Import
+    face_count = sum(len(obj.Shape.Faces) for obj in objects)
+    mesh_doc = App.newDocument('SelectionMeshExport')
+    try:
+        mesh_objects = []
+        if face_count <= 2048:
+            for source in objects:
+                if not source.Name.replace('_', '').isalnum():
+                    raise ValueError('FreeCAD object name cannot be encoded for geometry selection')
+                for index, face in enumerate(source.Shape.Faces, 1):
+                    name = 'CADREF__' + source.Name + '__Face' + str(index)
+                    mesh = mesh_doc.addObject('Part::Feature', name)
+                    mesh.Label = name
+                    mesh.Shape = face.copy()
+                    mesh.Shape.tessellate(0.1)
+                    mesh_objects.append(mesh)
+            if not mesh_objects:
+                raise ValueError('No BRep faces are available for selection preview')
+            Import.export(mesh_objects, destination)
+            return True
+        for source in objects:
+            name = 'CADOBJ__' + source.Name
+            mesh = mesh_doc.addObject('Part::Feature', name)
+            mesh.Label = name
+            mesh.Shape = source.Shape.copy()
+            mesh.Shape.tessellate(0.1)
+            mesh_objects.append(mesh)
+        mesh_doc.recompute()
+        Import.export(mesh_objects, destination)
+        return False
+    finally:
+        App.closeDocument(mesh_doc.Name)
 
 
 def render(shape, destination):
@@ -187,7 +238,7 @@ def main():
         raise ValueError('No exportable solids')
     shape = Part.makeCompound([o.Shape for o in objects])
     actual = metrics(shape)
-    rows = observe_document(doc)
+    rows = observe_document(doc, objects)
     validation_stage = 'acceptance'
     acceptance_errors = []
     if criteria is not None:
@@ -210,9 +261,7 @@ def main():
     tolerance = max(1e-6, actual['volume'] * 1e-9)
     if shape.cut(exported).Volume > tolerance or exported.cut(shape).Volume > tolerance:
         raise ValueError('STEP geometry differs from FCStd')
-    for obj in objects:
-        obj.Shape.tessellate(0.1)
-    Import.export(objects, '/out/preview.glb')
+    face_mapping = export_selection_preview(objects, '/out/preview.glb')
     render(shape, '/out/observation.png')
     # The trusted verifier writes a fresh saved document and independent report.
     doc.saveAs('/out/model.FCStd')
@@ -220,6 +269,7 @@ def main():
                       acceptanceStatus='not-run' if criteria is None else 'failed' if acceptance_errors else 'passed',
                       acceptanceErrors=acceptance_errors,
                       python=True, verifierPid=os.getpid(), meshFeatureId=objects[0].Name,
+                      faceMapping=face_mapping,
                       bounds=dict(XMin=shape.BoundBox.XMin, XMax=shape.BoundBox.XMax,
                                   YMin=shape.BoundBox.YMin, YMax=shape.BoundBox.YMax,
                                   ZMin=shape.BoundBox.ZMin, ZMax=shape.BoundBox.ZMax))

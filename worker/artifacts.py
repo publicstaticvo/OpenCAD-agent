@@ -84,7 +84,7 @@ def verify_saved(directory,progress=lambda stage,status: None):
             validation=validate_assembly(doc,criteria,design)
             progress('reopen','complete')
             exported=export_assembly(doc,directory,progress)
-            validation.update(step=exported['step'],glb=exported['glb'],verifierPid=os.getpid(),meshFeatureId='Assembly')
+            validation.update(step=exported['step'],glb=exported['glb'],faceMapping=exported['faceMapping'],verifierPid=os.getpid(),meshFeatureId='Assembly')
             write_json(directory/'tree.json',inspect_document(doc));write_json(directory/'validation.json',validation)
             return validation
         finally:App.closeDocument(doc.Name)

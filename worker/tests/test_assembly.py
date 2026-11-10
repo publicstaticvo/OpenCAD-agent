@@ -18,6 +18,8 @@ doc=build_demo(80,60,10,8,7,20)
 result=prepare_revision(doc,directory,criteria)
 assert result['validation']['solids']==2
 assert result['validation']['assembly']['interference']['status']=='clear'
+assert result['validation']['faceMapping'] is True
+assert result['validation']['glb']['meshes']==sum(len(component['faces']) for component in result['validation']['assembly']['components'])
 assert len(verify_package(directory))==6
 App.closeDocument(doc.Name)
 directory=Path(mkdtemp(dir='.work',prefix='assembly-collision-package-'))
@@ -78,7 +80,7 @@ for diameter,expected in [(7,0),(9,math.pi*(4.5**2-4**2)*10)]:
  reopened=App.openDocument(str(path.resolve()))
  assert inspect_assembly(reopened)==report
  exports=export_assembly(reopened,directory/f'exports-{diameter}')
- assert exports['step']['solids']==2 and exports['glb']['meshes']==2,exports
+ assert exports['step']['solids']==2 and exports['glb']['meshes']==sum(len(component['faces']) for component in report['components']) and exports['faceMapping'],exports
  assert reopened.Fixed.JointType=='Fixed' and reopened.Ground.ObjectToGround==reopened.PlateComponent
  assert reopened.PinComponent.LinkedObject==reopened.Pin
  assert reopened.Assembly.solve()==0

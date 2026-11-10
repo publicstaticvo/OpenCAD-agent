@@ -129,12 +129,13 @@ export async function createGateway(options:Options):Promise<Gateway>{
     res.writeHead(200,{'Content-Type':'model/gltf-binary','Content-Length':bytes.length,'Cache-Control':'no-store','X-CAD-Candidate':job.candidateId,'X-CAD-Base-Revision':String(job.baseRevision),'X-CAD-Sequence':String(sequence),'X-CAD-Content-Hash':snapshot.preview.sha256,'X-Content-Type-Options':'nosniff'});res.end(bytes);return;
    }
    if(suffix==='jobs'&&req.method==='POST'){
-    const input=await body(req);keys(input,['baseRevision','operationId'],['program','text','plan','python','run','conversationId']);
+    const input=await body(req);keys(input,['baseRevision','operationId'],['program','text','plan','python','run','conversationId','ideContext']);
     if(['program','text','plan','python','run'].filter(key=>Object.hasOwn(input,key)).length!==1)throw new StoreError('invalid','Choose exactly one program, text, plan, python or run task');
     if(Object.hasOwn(input,'run')){json(res,202,supervisor.submitPython(id,input.baseRevision,input.operationId,{kind:'run',run:input.run},input.conversationId));return;}
     if(Object.hasOwn(input,'python')){json(res,202,supervisor.submitPython(id,input.baseRevision,input.operationId,{kind:'python',submission:input.python},input.conversationId));return;}
     if(Object.hasOwn(input,'text')&&providerMode()==='none')throw new StoreError('unavailable','请先配置模型服务');
-    json(res,202,Object.hasOwn(input,'text')?supervisor.submitText(id,input.baseRevision,input.operationId,input.text,input.conversationId):Object.hasOwn(input,'plan')?supervisor.submitOperationPlan(id,input.baseRevision,input.operationId,input.plan,input.conversationId):supervisor.submit(id,input.baseRevision,input.operationId,input.program,input.conversationId));return;
+    if(Object.hasOwn(input,'ideContext')&&!Object.hasOwn(input,'text'))throw new StoreError('invalid','IDE context is only accepted with a text task');
+    json(res,202,Object.hasOwn(input,'text')?supervisor.submitText(id,input.baseRevision,input.operationId,input.text,input.conversationId,input.ideContext):Object.hasOwn(input,'plan')?supervisor.submitOperationPlan(id,input.baseRevision,input.operationId,input.plan,input.conversationId):supervisor.submit(id,input.baseRevision,input.operationId,input.program,input.conversationId));return;
    }
    const approval=suffix.match(/^jobs\/([A-Za-z0-9][A-Za-z0-9_-]{0,63})\/(approve|reject)$/);
    if(approval&&req.method==='POST'){const input=await body(req);keys(input,['planHash']);json(res,200,approval[2]==='approve'?supervisor.approveJob(id,approval[1],input.planHash):supervisor.rejectJob(id,approval[1],input.planHash));return;}

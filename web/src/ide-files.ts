@@ -8,7 +8,7 @@ export function createPath(project:Project,parent:string,name:string,directory:b
  const path=safePath(parent?`${parent}/${name}`:name);
  if(projectEntries(project).some(entry=>entry.path===path))throw new Error('目标位置已有同名文件或目录');
  if(parent&&!projectEntries(project).some(entry=>entry.path===parent&&entry.directory))throw new Error('父目录不存在');
- return directory?{...project,directories:[...project.directories,path]}:{...project,files:{...project.files,[path]:''},entrypoint:project.entrypoint||(executable(path)?path:'')};
+ return directory?{...project,directories:[...project.directories,path]}:{...project,files:{...project.files,[path]:''}};
 }
 export function transferPath(project:Project,source:string,destination:string,copy:boolean):Project{
  safePath(source);safePath(destination);const entries=projectEntries(project);

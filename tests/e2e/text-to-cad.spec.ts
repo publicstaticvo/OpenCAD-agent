@@ -19,7 +19,7 @@ test('chat creates editable plate, property edit commits, failed candidate prote
 });
 test('cancel uses persisted job state and stale/history views cannot edit',async({page,request})=>{
  const id='cancel-'+Date.now();await createDocument(request,id);await login(page,id);await page.getByLabel('建模指令').fill(prompt);await page.getByRole('button',{name:'发送任务'}).click();await page.getByRole('button',{name:'取消任务'}).first().click();
- await expect(page.getByText('已取消',{exact:true})).toBeVisible();await expect(page.getByTestId('display-revision')).toHaveText('正式版本 0');
+ await expect(page.locator('.activity-status').getByText('已取消',{exact:true})).toBeVisible();await expect(page.getByTestId('display-revision')).toHaveText('正式版本 0');
  await page.getByLabel('建模指令').fill(prompt);await page.getByRole('button',{name:'发送任务'}).click();await page.getByRole('button',{name:'批准并开始建模'}).click();await expect(page.getByTestId('display-revision')).toHaveText('正式版本 1');
  await page.getByRole('button',{name:'hole 草图'}).click();await page.getByLabel('查看修订').selectOption('1');await expect(page.getByTestId('display-revision')).toHaveText('历史版本 1');await expect(page.getByLabel('diameter (mm)')).toBeDisabled();await expect(page.getByLabel('建模指令')).toBeEnabled();
 });

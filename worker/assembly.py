@@ -16,6 +16,10 @@ def identify(obj,stable_id):
     obj.CadFeatureId=stable_id
     return obj
 
+def face_observation(face):
+    center=face.CenterOfMass;bounds=face.BoundBox;u,v=face.Surface.parameter(center);normal=face.normalAt(u,v)
+    return dict(area=face.Area,center=[center.x,center.y,center.z],normal=[normal.x,normal.y,normal.z],bbox=[bounds.XMin,bounds.YMin,bounds.ZMin,bounds.XMax,bounds.YMax,bounds.ZMax])
+
 def sketch(body,name,z=0):
     obj=identify(body.newObject('Sketcher::SketchObject',name),name)
     obj.Placement.Base=App.Vector(0,0,z)
@@ -174,7 +178,7 @@ def inspect_assembly(doc):
         shape=component.Shape
         if shape.isNull() or not shape.isValid() or len(shape.Solids)!=1:raise ValueError('Invalid component geometry')
         position=component.Placement.Base
-        report.append(dict(id=component.Name,partId=body.CadFeatureId,position=[position.x,position.y,position.z],rotation=list(component.Placement.Rotation.Q),volume=shape.Volume))
+        report.append(dict(id=component.Name,bodyId=body.Name,partId=body.CadFeatureId,name=body.Label,type=body.TypeId,position=[position.x,position.y,position.z],rotation=list(component.Placement.Rotation.Q),volume=shape.Volume,faces=[dict(subElement='Face'+str(index),**face_observation(face)) for index,face in enumerate(shape.Faces,1)]))
         parameters={}
         for obj in body.Group:
             if obj.TypeId=='Sketcher::SketchObject':
@@ -211,10 +215,19 @@ def export_preview(doc,path):
     try:
         mesh_objects=[]
         for component in components:
-            obj=mesh_doc.addObject('Part::Feature',component.Name)
-            shape=component.Shape.copy();placement=shape.Placement;shape.Placement=App.Placement()
-            obj.Shape=shape.transformGeometry(placement.toMatrix());obj.Label=component.Label
-            obj.Shape.tessellate(0.1);mesh_objects.append(obj)
+            if not component.Name.replace('_','').isalnum():raise ValueError('Component name cannot be encoded for geometry selection')
+            shape=component.Shape
+            if sum(len(value.Shape.Faces) for value in components)<=2048:
+                for index,face in enumerate(shape.Faces,1):
+                    name='CADREF__'+component.Name+'__Face'+str(index)
+                    obj=mesh_doc.addObject('Part::Feature',name);obj.Label=name
+                    face_copy=face.copy();placement=shape.Placement;face_copy.Placement=App.Placement()
+                    obj.Shape=face_copy.transformGeometry(placement.toMatrix());obj.Shape.tessellate(0.1);mesh_objects.append(obj)
+            else:
+                name='CADOBJ__'+component.Name
+                obj=mesh_doc.addObject('Part::Feature',name);obj.Label=name
+                shape_copy=shape.copy();placement=shape_copy.Placement;shape_copy.Placement=App.Placement()
+                obj.Shape=shape_copy.transformGeometry(placement.toMatrix());obj.Shape.tessellate(0.1);mesh_objects.append(obj)
         mesh_doc.recompute();Import.export(mesh_objects,str(Path(path).resolve()))
     finally:App.closeDocument(mesh_doc.Name)
     return Part.makeCompound([component.Shape for component in components])
@@ -246,9 +259,11 @@ def export_assembly(doc,directory,progress=lambda stage,status:None):
     # The compound is a metrics-only aggregate; the FCStd retains independent linked Bodies.
     aggregate=Part.makeCompound([component.Shape for component in components])
     mesh=glb_metrics(directory/'preview.glb',aggregate)
-    if mesh['meshes']!=len(components):raise ValueError('Assembly GLB component count mismatch')
+    face_mapping=sum(len(component.Shape.Faces) for component in components)<=2048
+    expected_meshes=sum(len(component.Shape.Faces) for component in components) if face_mapping else len(components)
+    if mesh['meshes']!=expected_meshes:raise ValueError('Assembly GLB selectable mesh count mismatch')
     progress('export_glb','complete')
-    return dict(step=dict(solids=len(solids)),glb=mesh,assembly=report)
+    return dict(step=dict(solids=len(solids)),glb=mesh,faceMapping=face_mapping,assembly=report)
 
 def validate_assembly(doc,criteria,design):
     from worker.validation import compare

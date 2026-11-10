@@ -1,5 +1,6 @@
 import type {Object3D} from 'three';import type {DocumentSnapshot,AppEvent} from '../../shared/cad-contracts.ts';
-export interface ModelAsset{scene:Object3D;triangles:number;bounds:number[][];dispose():void}
+export interface GeometryPickTarget{objectId:string;subElement?:string;}
+export interface ModelAsset{scene:Object3D;triangles:number;bounds:number[][];modelHash:string;pickTargets:WeakMap<Object3D,GeometryPickTarget>;dispose():void}
 export interface LoadedRevision{snapshot:DocumentSnapshot;asset:ModelAsset|null}
 export interface WorkspaceApi{snapshot(signal?:AbortSignal):Promise<DocumentSnapshot>;asset(url:string,revision:number,signal?:AbortSignal):Promise<ModelAsset>;watch?(after:()=>number,onEvent:(e:AppEvent)=>void,onConnection:(connected:boolean)=>void):()=>void}
 export interface WorkspaceState{current:LoadedRevision|null;previous:LoadedRevision|null;error:string|null;pendingRevision:number|null;connected:boolean;jobs:unknown[];progress:AppEvent[]}

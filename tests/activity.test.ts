@@ -53,3 +53,14 @@ test('automatic execution requests keep their system origin and exact source ide
  const rows=buildActivityRows([{operationId:'job'}],[event(1,'job_updated',{status:'running'}),event(2,'agent_progress',{type:'python_execution_requested',automatic:true,sourceVersionId:'source-1',sourceHash:'hash-1'}),event(3,'python_execution',{executionId:'execution-1',sourceVersionId:'source-1',status:'valid'})]);
  expect(rows.map(row=>row.kind)).toEqual(['user','execution_request','execution']);expect(rows[1].data).toMatchObject({automatic:true,sourceVersionId:'source-1',sourceHash:'hash-1'});
 });
+
+test('a task keeps separate execution identities in chronological order',()=>{
+ const rows=buildActivityRows([{operationId:'task-1',request:{kind:'text',text:'Create and repair'}}],[event(1,'job_updated',{status:'running'},'task-1'),event(2,'python_execution',{executionId:'execution-1',candidateId:'candidate-1',status:'failed'},'task-1'),event(3,'python_execution',{executionId:'execution-2',candidateId:'candidate-2',status:'valid'},'task-1')]);
+ const executions=rows.filter(row=>row.kind==='execution');expect(executions.map(row=>row.data.executionId)).toEqual(['execution-1','execution-2']);expect(executions.map(row=>row.data.candidateId)).toEqual(['candidate-1','candidate-2']);expect(executions.every(row=>row.jobId==='task-1')).toBe(true);
+});
+
+test('the user request row preserves snapshot-bound geometry references for history',()=>{
+ const ideContext={projectId:'project',geometryReferences:[{projectId:'project',source:{kind:'revision',revision:3},modelHash:'a'.repeat(64),objectId:'Body',displayName:'主体',objectType:'PartDesign::Body',selectionType:'face',subElement:'Face6'}]};
+ const rows=buildActivityRows([{operationId:'task-face',request:{kind:'text',text:'Add a hole on this face',ideContext}}],[event(1,'job_updated',{status:'planning'},'task-face')]);
+ expect(rows[0].data.ideContext).toEqual(ideContext);
+});

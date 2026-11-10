@@ -92,7 +92,7 @@ export class RevisionStore {
   }
   const tree=JSON.parse(readFileSync(join(directory,'tree.json'),'utf8')),validation=JSON.parse(readFileSync(join(directory,'validation.json'),'utf8'));
   const assembly=validation.assembly;
-  if(assembly&&(validation.solids!==2||assembly.bom?.length!==2||assembly.components?.length!==2||assembly.interference?.status!=='clear'||validation.glb?.meshes!==2||validation.step?.solids!==2))throw new StoreError('corrupt','Invalid assembly validation report');
+  if(assembly){const mapped=validation.faceMapping===true,expectedMeshes=mapped?assembly.components?.reduce((sum:any,item:any)=>sum+(Array.isArray(item.faces)?item.faces.length:0),0):2;if(validation.solids!==2||assembly.bom?.length!==2||assembly.components?.length!==2||assembly.interference?.status!=='clear'||validation.glb?.meshes!==expectedMeshes||validation.step?.solids!==2||mapped&&assembly.components.some((item:any)=>!Array.isArray(item.faces)||!item.faces.length))throw new StoreError('corrupt','Invalid assembly validation report');}
   if(!Array.isArray(tree)||!tree.length||(!python&&validation.solids!==(assembly?2:1))||!(validation.volume>0)||!validation.glb?.triangles||!validation.step)throw new StoreError('corrupt','Missing validation report');
   if(python){
    const identity=JSON.parse(readFileSync(join(directory,'execution.json'),'utf8'));

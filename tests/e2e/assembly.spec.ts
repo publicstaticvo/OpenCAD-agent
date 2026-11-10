@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test';
 import {mkdirSync} from 'node:fs';
 import {resolve} from 'node:path';
-import {createDocument,login,exportModel,showActivity} from './helpers.ts';
+import {createDocument,login,exportModel,showActivity,headers} from './helpers.ts';
 test('two real parametric components, approval, BOM, native interference and exports',async({page,request},info)=>{
  const id=`assembly-browser-${Date.now()}`;await createDocument(request,id);await login(page,id);
  await page.getByLabel('建模指令').fill('装配：80×60×10 mm 底板，中心孔8 mm，圆柱销直径7 mm，长20 mm');
@@ -10,6 +10,7 @@ test('two real parametric components, approval, BOM, native interference and exp
  await expect(page.getByTestId('display-revision')).toHaveText('正式版本 0');
  await page.getByRole('button',{name:'批准并开始建模'}).click();
  await expect(page.getByTestId('display-revision')).toHaveText('正式版本 1');
+ const assemblySnapshot=await(await request.get(`/api/documents/${id}`,{headers})).json();expect(assemblySnapshot.validation.faceMapping).toBe(true);expect(assemblySnapshot.validation.glb.meshes).toBe(assemblySnapshot.validation.assembly.components.reduce((sum:number,component:any)=>sum+component.faces.length,0));
  await expect(page.getByTestId('mesh-stats')).toContainText('WebGL');
  await page.locator('.model-assembly>summary').click();
  const panel=page.locator('.model-assembly').getByTestId('assembly-panel');

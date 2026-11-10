@@ -53,6 +53,16 @@ test('B13 E34 actual Pi registration uses standard edits and has no legacy model
  }finally{store.close();}
 });
 
+test('Pi receives the frozen IDE context as part of its actual initial user request',async()=>{
+ mkdirSync('.work/source-execution-phase-1-2',{recursive:true});const store=new RevisionStore(mkdtempSync(resolve('.work/source-execution-phase-1-2/ide-context-')));store.createDocument('project');
+ try{
+  const versions=new SourceVersions(store),tools=createSourceTools(versions,'project'),context:any={projectId:'project',activeFile:{path:'design/plate.py',saved:false,unsaved:true,sourceVersionId:null,draftRevision:1,contentHash:'a'.repeat(64),createdBy:'user',empty:false},selectedCode:{path:'design/plate.py',from:{line:1,column:1},to:{line:1,column:8},text:'width=40',before:'',after:'',fileHash:'a'.repeat(64),sourceVersionId:null,draftRevision:1,unsaved:true},geometryReferences:[{projectId:'project',source:{kind:'revision',revision:1},modelHash:'b'.repeat(64),objectId:'Plate',displayName:'底板',objectType:'PartDesign::Body',selectionType:'face',subElement:'Face6',geometry:{area:2400,center:[30,20,8],normal:[0,0,1],bbox:[0,0,8,60,40,8]}}]};
+  const provider=makeFauxProvider([{text:'Context received.'}]);let request='';const stream=provider.streamFn;provider.streamFn=async(model:any,contextValue:any,options:any)=>{request=JSON.stringify(contextValue);return stream(model,contextValue,options);};
+  await runPiLoop({task:'Use the selected CAD face and source range',ideContext:context,session:{mode:'python',baseRevision:0,sourceTools:tools,snapshot:async()=>store.snapshot('project'),inspect:async()=>({source:versions.head('project')})},signal:new AbortController().signal,provider});
+  expect(request).toContain('ideContext');expect(request).toContain('width=40');expect(request).toContain('Face6');
+ }finally{store.close();}
+});
+
 test('Agent project tools preserve modules, directory operations and entrypoint changes as full source versions',async()=>{
  mkdirSync('.work/source-execution-phase-1-2',{recursive:true});const store=new RevisionStore(mkdtempSync(resolve('.work/source-execution-phase-1-2/multi-tools-')));store.createDocument('project');
  try{

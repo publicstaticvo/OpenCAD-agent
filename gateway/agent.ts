@@ -4,7 +4,7 @@ export interface Turn{calls?:{name:string;args:any;id?:string}[];text?:string}
 export interface CadSession{baseRevision:number;operationId?:string;mode?:'planning'|'execution'|'python';pythonPlanning?:boolean;sourceTools?:ReturnType<typeof import('./source-tools.ts').createSourceTools>;run?(submission:any):Promise<any>;plan?:import('./plan.ts').CadPlan;stages?:unknown;stage?:number;propose?(proposal:unknown):Promise<any>;history?:any[];inspect():Promise<any>;apply(operations:unknown,stepId:string):Promise<any>;prepare(criteria:any):Promise<any>;snapshot():Promise<any>;progress(event:any):void;transcript(report:any):void}
 export type TextRunner=((job:Job,session:CadSession,signal:AbortSignal)=>Promise<Criteria|undefined>)&{mode:'fake'|'live';timeouts?:()=>import('./timeouts.ts').TimeoutSettings};
 export async function runTextJob(job:Job,session:CadSession,signal:AbortSignal,provider:PiProvider,options:{maxToolCalls?:number}={}){
- return runPiLoop({task:job.request.text,session,signal,provider,...options,onProgress:session.progress,onTranscript:session.transcript});
+ return runPiLoop({task:job.request.text,ideContext:job.request.ideContext,session,signal,provider,...options,onProgress:session.progress,onTranscript:session.transcript});
 }
 export function scriptedTextRunner(turns:Turn[]|((job:Job,session:CadSession)=>Turn[]),options:{maxToolCalls?:number;tokensPerSecond?:number;planningProgram?:import('../shared/cad-contracts.ts').ModelProgram}={}):TextRunner{
  const runner=async(job:Job,session:CadSession,signal:AbortSignal)=>{

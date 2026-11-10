@@ -1,7 +1,7 @@
 import {test,expect} from 'vitest';import {WorkspaceStore,type ModelAsset} from '../web/src/store.ts';
 import type {DocumentSnapshot,AppEvent} from '../shared/cad-contracts.ts';import {Group} from 'three';
 const snapshot=(revision:number,lastSeq=revision):DocumentSnapshot=>({documentId:'doc',revision,lastSeq,tree:[{id:'hole',label:'hole',type:'Sketcher::SketchObject',parent:'Body',parameters:{diameter:revision===1?6:8}}],artifacts:{'preview.glb':`/api/documents/doc/revisions/${revision}/artifacts/preview.glb`},jobs:[]});
-function asset(){let disposed=false;return{scene:new Group(),triangles:12,bounds:[[0,0,0],[.08,.01,.06]],dispose(){disposed=true;},get disposed(){return disposed;}} as ModelAsset&{disposed:boolean};}
+function asset(){let disposed=false;return{scene:new Group(),triangles:12,bounds:[[0,0,0],[.08,.01,.06]],modelHash:'a'.repeat(64),pickTargets:new WeakMap(),dispose(){disposed=true;},get disposed(){return disposed;}} as ModelAsset&{disposed:boolean};}
 function deferred<T>(){let resolve!:(v:T)=>void;const promise=new Promise<T>(r=>resolve=r);return{promise,resolve};}
 test('late GLB cannot replace newer snapshot; tree/parameters/mesh switch together',async()=>{
  const first=deferred<ModelAsset>(),second=deferred<ModelAsset>();let n=0;

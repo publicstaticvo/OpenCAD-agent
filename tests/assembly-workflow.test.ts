@@ -26,10 +26,10 @@ test('native assembly commits only after approval and complete ordered checks',a
     expect(done.error).toBeNull();expect(done.status).toBe('committed');
     const snapshot=gateway.store.snapshot(id);expect(snapshot.revision).toBe(1);expect(snapshot.validation.assembly.interference.status).toBe('clear');
     expect(snapshot.validation.assembly.components[1].position).toEqual([40,30,0]);
-    expect(snapshot.validation.glb.meshes).toBe(2);
+    expect(snapshot.validation.glb.meshes).toBe(snapshot.validation.assembly.components.reduce((sum:number,component:any)=>sum+component.faces.length,0));expect(snapshot.validation.faceMapping).toBe(true);
     const bytes=readFileSync(gateway.store.artifactPath(id,1,'preview.glb'));
     const gltf=await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
-    const componentBounds=new Map<string,Box3>();gltf.scene.updateMatrixWorld(true);gltf.scene.traverse(object=>{if(object instanceof Mesh){const parent=object.parent;if(parent?.type!=='Group'||!['PlateComponent','PinComponent'].includes(parent.name))return;const box=new Box3().setFromObject(object);componentBounds.set(parent.name,componentBounds.has(parent.name)?componentBounds.get(parent.name)!.union(box):box);}});
+    const componentBounds=new Map<string,Box3>();gltf.scene.updateMatrixWorld(true);gltf.scene.traverse(object=>{if(object instanceof Mesh){const match=object.name.match(/^CADREF__(PlateComponent|PinComponent)__Face([1-9][0-9]*)$/);expect(match).not.toBeNull();const component=match![1],box=new Box3().setFromObject(object);componentBounds.set(component,componentBounds.has(component)?componentBounds.get(component)!.union(box):box);}});
     expect([...componentBounds.keys()].sort()).toEqual(['PinComponent','PlateComponent']);
     const plate=componentBounds.get('PlateComponent')!,pin=componentBounds.get('PinComponent')!;
     for(const [axis,value] of [...plate.min.toArray(),...plate.max.toArray()].entries())expect(value).toBeCloseTo([0,0,-.06,.08,.01,0][axis],4);
